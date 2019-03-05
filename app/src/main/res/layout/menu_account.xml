@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/accountTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="128dp"
+        android:text="@string/accountTitle"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/accountName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/menu_account_name_error"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/accountTitle"
+        app:layout_constraintTop_toBottomOf="@+id/accountTitle" />
+
+    <Button
+        android:id="@+id/accountEditAccountName"
+        style="@style/StyledBorderlessButtonIcon"
+        android:layout_width="0dp"
+        android:layout_marginTop="64dp"
+        android:drawableStart="@drawable/edit"
+        android:text="@string/accountEditAccountName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accountName" />
+
+    <Button
+        android:id="@+id/accountEditPrivacy"
+        style="@style/StyledBorderlessButtonIcon"
+        android:layout_width="0dp"
+        android:drawableStart="@drawable/account"
+        android:text="@string/accountEditPrivacy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accountEditAccountName" />
+
+    <Button
+        android:id="@+id/accountLogout"
+        style="@style/StyledBorderlessButtonIcon"
+        android:layout_width="0dp"
+        android:drawableStart="@drawable/exit"
+        android:text="@string/accountLogout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accountEditPrivacy" />
+
+</android.support.constraint.ConstraintLayout>

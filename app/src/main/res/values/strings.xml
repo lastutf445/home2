@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">home2</string>
+    <string name="app_build">Developer Build</string>
+    <string name="app_version">0.1</string>
+
+    <string name="dashboard_empty">Dashboard is empty</string>
+    <string name="dashboard_status_not_available">Not available</string>
+    <string name="dashboard_status_desc_no_content">No content</string>
+
+    <string name="dashboard_temp_sensor">Temperature sensor</string>
+    <string name="dashboard_humidity_sensor">Humidity sensor</string>
+    <string name="dashboard_unknown_sensor">Unknown sensor</string>
+
+    <string name="menu_user_is_not_authorized">You are not authorized</string>
+    <string name="menu_account_name_error">Account name is empty</string>
+    <string name="menu_user_is_guest">Guest</string>
+    <string name="menu_user_hello">Hello,</string>
+
+    <string name="dashboard">Dashboard</string>
+    <string name="messages">Messages</string>
+    <string name="notifications">Notifications</string>
+    <string name="storage">Storage</string>
+    <string name="modules">Modules</string>
+    <string name="sync">Sync</string>
+    <string name="about">About</string>
+
+    <string name="authTitle">Authorization</string>
+    <string name="authSubtitle">Login or enter as guest</string>
+    <string name="authLogin">Login</string>
+    <string name="authPassword">Password</string>
+    <string name="authEnter">Send</string>
+    <string name="authEnterAsGuest">Enter as guest</string>
+    <string name="authRestore">Restore password</string>
+    <string name="auth_enter_as_guest_failed">Can\'t enter as guest</string>
+
+    <string name="accountTitle">Account</string>
+    <string name="accountEditAccountName">Edit account name</string>
+    <string name="accountEditPrivacy">Privacy</string>
+    <string name="accountLogout">Logout</string>
+
+    <string name="accountEditNameTitle">Your current account name</string>
+    <string name="accountEditNameNew">Type your new name</string>
+    <string name="accountEditNameApply">Apply it</string>
+
+    <string name="notificationsNotifications">Enable notifications</string>
+
+    <string name="modules_unknown">Unknown module</string>
+
+    <string name="modulesAddTitle">Scanner</string>
+
+    <string name="syncSync">Automatic synchronization</string>
+    <string name="syncDashboard">Sync Dashboard</string>
+    <string name="syncMessages">Sync Messages</string>
+    <string name="syncNotifications">Sync Notifications</string>
+
+    <string name="syncMasterServer">Connect to Master Server</string>
+    <string name="syncMasterServerSettings">Connection settings</string>
+
+    <string name="aboutSubtitle">Make your home intelligent</string>
+    <string name="aboutCreator">Creating by: lastutf445</string>
+    <string name="aboutThanksTo">Thanks to:</string>
+    <string name="aboutThanksList">Denikin\nDenikina</string>
+    <string name="aboutVersion">Version:</string>
+</resources>

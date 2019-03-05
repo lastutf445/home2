@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/syncTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/sync"
+        android:textAllCaps="false"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/syncContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/syncTitle">
+
+        <LinearLayout
+            android:id="@+id/syncSync"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/syncSyncSwitcher"
+                style="@style/StyledSwitch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/syncSync" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/syncDashboard"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/syncDashboardCheckbox"
+                style="@style/StyledCheckbox"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/syncDashboard" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/syncMessages"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/syncMessagesCheckbox"
+                style="@style/StyledCheckbox"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/syncMessages" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/syncNotifications"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/syncNotificationsCheckbox"
+                style="@style/StyledCheckbox"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/syncNotifications" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
+
+        <LinearLayout
+            android:id="@+id/syncMasterServer"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/syncMasterServerSwitcher"
+                style="@style/StyledSwitch"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/syncMasterServer" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/syncMasterServerSettings"
+            style="@style/StyledBorderlessButtonIcon"
+            android:layout_width="match_parent"
+            android:drawableEnd="@drawable/chevron_right"
+            android:text="@string/syncMasterServerSettings"
+            android:textAppearance="@android:style/TextAppearance.Material" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
