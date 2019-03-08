@@ -44,10 +44,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         manager = getSupportFragmentManager();
         nav = findViewById(R.id.nav);
 
-        Database.init(this);
-
+        Database.init();
         Data.refreshOptions();
-        Modules.refreshModules(this);
+        Modules.refreshNodes();
+        Modules.refreshModules();
 
         initFragmentSystem();
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onResume() {
         super.onResume();
-        Notifications.makeToast( manager.getFragments().size() + "");
+        Notifications.makeToast( manager.getFragments().size() + " fragments are injected");
     }
 
     private void initFragmentSystem() {

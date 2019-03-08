@@ -4,7 +4,7 @@ import org.json.JSONArray;
 
 abstract public class SyncListener {
 
-    public void onRecieve(JSONArray data, int node) {
+    public void onReceive(JSONArray data, int node) {
 
     }
 }

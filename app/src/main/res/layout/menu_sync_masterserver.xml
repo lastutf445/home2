@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/masterserverTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/masterServerTitle"
+        android:textAllCaps="false"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/masterserverScreenDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:text="@string/masterServerScreenDesc"
+        app:layout_constraintStart_toStartOf="@+id/masterserverTitle"
+        app:layout_constraintTop_toBottomOf="@+id/masterserverTitle" />
+
+    <EditText
+        android:id="@+id/masterserverIP"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:digits="1234567890."
+        android:ems="10"
+        android:hint="@string/masterServerIP"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="@+id/masterserverTitle"
+        app:layout_constraintTop_toBottomOf="@+id/masterserverScreenDesc" />
+
+    <EditText
+        android:id="@+id/masterServerPort"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="24dp"
+        android:digits="1234567890"
+        android:ems="10"
+        android:hint="@string/masterServerPort"
+        android:inputType="number|numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toEndOf="@+id/masterserverIP"
+        app:layout_constraintTop_toTopOf="@+id/masterserverIP" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="@string/masterServerExternalDesc"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="@+id/masterserverIP"
+        app:layout_constraintTop_toBottomOf="@+id/masterserverIP" />
+
+    <EditText
+        android:id="@+id/masterServerExternalIP"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:digits="1234567890."
+        android:ems="10"
+        android:hint="@string/masterServerIP"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <EditText
+        android:id="@+id/masterServerPort2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="24dp"
+        android:digits="1234567890"
+        android:ems="10"
+        android:hint="@string/masterServerPort"
+        android:inputType="number|numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/masterServerExternalIP"
+        app:layout_constraintTop_toTopOf="@+id/masterServerExternalIP" />
+
+    <Button
+        android:id="@+id/masterServerApply"
+        style="@style/StyledBorderlessButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/accountEditNameApply"
+        app:layout_constraintStart_toStartOf="@+id/masterserverIP"
+        app:layout_constraintTop_toBottomOf="@+id/masterServerExternalIP" />
+
+</android.support.constraint.ConstraintLayout>

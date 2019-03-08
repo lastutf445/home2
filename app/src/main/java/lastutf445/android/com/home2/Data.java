@@ -23,15 +23,16 @@ public final class Data {
         ops.put("AccountName", null);
         // Master server
         ops.put("MasterServer", false);
-        ops.put("MasterServerMacAddress", null);
-        ops.put("MasterServerIP", null);
+        ops.put("MasterServerIP", "");
+        ops.put("MasterServerPort", "");
         // Proxy server
         ops.put("ProxyServer", false);
         ops.put("ProxyServerIP", null);
         // Synchronisation
-        ops.put("AutoSyncDashboard", true);
-        ops.put("AutoSyncMessages", true); // requires master
-        ops.put("AutoSyncNotifications", true); // semi-requires master
+        ops.put("Sync", true);
+        ops.put("SyncDashboard", true);
+        ops.put("SyncMessages", true); // requires master
+        ops.put("SyncNotifications", true); // semi-requires master
         // Notifications
         ops.put("NotificationsEnabled", true); // use notifications
         ops.put("NotificationsCounter", true);

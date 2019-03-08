@@ -53,8 +53,15 @@
     <string name="syncMessages">Sync Messages</string>
     <string name="syncNotifications">Sync Notifications</string>
 
-    <string name="syncMasterServer">Connect to Master Server</string>
+    <string name="syncMasterServer">Master Server</string>
     <string name="syncMasterServerSettings">Connection settings</string>
+
+    <string name="masterServerTitle">Master Server</string>
+    <string name="masterServerScreenDesc">Destination of your local server</string>
+    <string name="masterServerIP">IP address</string>
+    <string name="masterServerPort">Port</string>
+    <string name="masterServerExternalEnabler">Use another address outside the LAN</string>
+    <string name="masterServerExternalDesc">External address (optionally)</string>
 
     <string name="aboutSubtitle">Make your home intelligent</string>
     <string name="aboutCreator">Creating by: lastutf445</string>

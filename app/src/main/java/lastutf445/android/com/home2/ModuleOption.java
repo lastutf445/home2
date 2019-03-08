@@ -1,14 +1,15 @@
 package lastutf445.android.com.home2;
 
-public class ModuleOption {
-    private int serial;
-    private String type, ip, mac, title, state;
+import java.net.InetAddress;
 
-    ModuleOption(int serial, String type, String ip, String mac, String title, String state) {
+public class ModuleOption {
+    private int serial, nodeId;
+    private String type, title, state;
+
+    ModuleOption(int serial, String type, int nodeId, String title, String state) {
         this.serial = serial;
         this.type = type;
-        this.ip = ip;
-        this.mac = mac;
+        this.nodeId = nodeId;
         this.title = title;
         this.state = state;
     }
@@ -21,12 +22,13 @@ public class ModuleOption {
         return type;
     }
 
-    public String getIp() {
-        return ip;
+    public int getNodeId() {
+        return nodeId;
     }
 
-    public String getMac() {
-        return mac;
+    public InetAddress getIp() {
+        NodeOption node = Modules.getNode(nodeId);
+        return node != null ? node.getIp() : null;
     }
 
     public String getTitle() {

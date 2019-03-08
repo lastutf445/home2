@@ -6,18 +6,19 @@ import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.SimpleAdapter;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -158,6 +159,9 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
                 break;
             case R.layout.menu_sync:
                 setupSyncScreen(uv, view);
+                break;
+            case R.layout.menu_sync_masterserver:
+                setupSyncMasterServerScreen(uv, view);
                 break;
             case R.layout.menu_about:
                 setupAboutScreen(uv, view);
@@ -316,7 +320,163 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
     }
 
     private void setupSyncScreen(UniversalViewer uv, View view) {
+        class ExtendedListener extends UniversalViewerListener {
+            ExtendedListener(UniversalViewer uv, View view) {
+                super(uv, view);
+            }
 
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.syncSync:
+                        Switch s = v.findViewById(R.id.syncSyncSwitcher);
+                        s.toggle();
+                        Data.set("Sync", s.isChecked());
+                        updateSyncState(view);
+                        break;
+                    case R.id.syncDashboard:
+                        CheckBox dashboard = v.findViewById(R.id.syncDashboardCheckbox);
+                        if (dashboard.isEnabled() || Data.getBoolean("MasterServer", false)) {
+                            dashboard.toggle();
+                            Data.set("SyncDashboard", dashboard.isChecked());
+                            updateSyncState(view);
+                        }
+                        break;
+                    case R.id.syncMessages:
+                        CheckBox messages = v.findViewById(R.id.syncMessagesCheckbox);
+                        if (messages.isEnabled() || Data.getBoolean("MasterServer", false)) {
+                            messages.toggle();
+                            Data.set("SyncMessages", messages.isChecked());
+                            updateSyncState(view);
+                        }
+                        break;
+                    case R.id.syncNotifications:
+                        CheckBox notifications = v.findViewById(R.id.syncNotificationsCheckbox);
+                        if (notifications.isEnabled() || Data.getBoolean("MasterServer", false)) {
+                            notifications.toggle();
+                            Data.set("SyncNotifications", notifications.isChecked());
+                            updateSyncState(view);
+                        }
+                        break;
+                    case R.id.syncMasterServer:
+                        Switch masterServer = v.findViewById(R.id.syncMasterServerSwitcher);
+                        masterServer.toggle();
+                        Data.set("MasterServer", masterServer.isChecked());
+                        updateMasterServerState(view);
+                        break;
+                    case R.id.syncMasterServerSettings:
+                        Intent i = new Intent(getContext(), UniversalViewer.class);
+                        i.putExtra("layout", R.layout.menu_sync_masterserver);
+                        uv.startActivity(i);
+                        break;
+                }
+
+                Data.recordOptions();
+            }
+
+            private void updateSyncState(View v) {
+                Switch enabler = v.findViewById(R.id.syncSyncSwitcher);
+                CheckBox dashboard = v.findViewById(R.id.syncDashboardCheckbox);
+                CheckBox messages = v.findViewById(R.id.syncMessagesCheckbox);
+                CheckBox notifications = v.findViewById(R.id.syncNotificationsCheckbox);
+
+                if (enabler.isChecked()) {
+                    dashboard.setEnabled(true);
+                    messages.setEnabled(Data.getBoolean("MasterServer", false));
+                    notifications.setEnabled(Data.getBoolean("MasterServer", false));
+                }
+
+                else {
+                    dashboard.setEnabled(false);
+                    messages.setEnabled(false);
+                    notifications.setEnabled(false);
+                }
+/*
+                Dashboard.setSync(dashboard.isChecked());
+                Messages.setSync(dashboard.isChecked());
+                Notifications.setSync(dashboard.isChecked());*/
+            }
+
+            private void updateMasterServerState(View v) {
+                v.findViewById(R.id.syncMasterServerSettings).setEnabled(
+                        ((Switch) v.findViewById(R.id.syncMasterServerSwitcher)).isChecked()
+                );
+
+                updateSyncState(v);
+            }
+        }
+
+        ((Switch) view.findViewById(R.id.syncSyncSwitcher)).setChecked(
+                Data.getBoolean("Sync", false)
+        );
+
+        ((CheckBox) view.findViewById(R.id.syncDashboardCheckbox)).setChecked(
+                Data.getBoolean("SyncDashboard", false)
+        );
+
+        ((CheckBox) view.findViewById(R.id.syncMessagesCheckbox)).setChecked(
+                Data.getBoolean("SyncMessages", false)
+        );
+
+        ((CheckBox) view.findViewById(R.id.syncNotificationsCheckbox)).setChecked(
+                Data.getBoolean("SyncNotifications", false)
+        );
+
+        ((Switch) view.findViewById(R.id.syncMasterServerSwitcher)).setChecked(
+                Data.getBoolean("MasterServer", false)
+        );
+
+        ExtendedListener c = new ExtendedListener(uv, view);
+
+        c.updateMasterServerState(view);
+        c.updateSyncState(view);
+
+        int[] buttons = {
+                R.id.syncSync,
+                R.id.syncDashboard,
+                R.id.syncMessages,
+                R.id.syncNotifications,
+                R.id.syncMasterServer,
+                R.id.syncMasterServerSettings
+
+        };
+
+        for (int i: buttons) {
+            view.findViewById(i).setOnClickListener(c);
+        }
+
+
+    }
+
+    private void setupSyncMasterServerScreen(UniversalViewer uv, View view) {
+        InputFilter[] filters = new InputFilter[1];
+
+        filters[0] = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                if (end > start) {
+                    String destTxt = dest.toString();
+                    String resultingTxt = destTxt.substring(0, dstart) + source.subSequence(start, end) + destTxt.substring(dend);
+
+                    if (!resultingTxt.matches("^\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3})?)?)?)?)?)?")) {
+                        return "";
+                    }
+
+                    else {
+                        String[] splits = resultingTxt.split("\\.");
+                        for (int i = 0; i < splits.length; i++) {
+                            if (Integer.valueOf(splits[i]) > 255) {
+                                return "";
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+
+        };
+
+        ((EditText)view.findViewById(R.id.masterserverIP)).setFilters(filters);
     }
 
     private void setupAboutScreen(UniversalViewer uv, View view) {
