@@ -41,7 +41,7 @@ public final class Database {
     public static void onCreate() {
         db.execSQL("CREATE TABLE IF NOT EXISTS core (option TEXT PRIMARY KEY, value TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS nodes (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT, title TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, nodeId INTEGER, ip TEXT, title TEXT, state TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, nodeId INTEGER, title TEXT, state TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS dashboard (id INTEGER PRIMARY KEY, type TEXT, modules string)");
     }
 
@@ -122,6 +122,7 @@ public final class Database {
             e.printStackTrace();
         }
 
+        cursor.close();
         return ops;
     }
 

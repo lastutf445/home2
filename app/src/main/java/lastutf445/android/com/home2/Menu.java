@@ -11,7 +11,6 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -336,26 +335,26 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
                         break;
                     case R.id.syncDashboard:
                         CheckBox dashboard = v.findViewById(R.id.syncDashboardCheckbox);
-                        if (dashboard.isEnabled() || Data.getBoolean("MasterServer", false)) {
+                        if (dashboard.isEnabled() && Data.getBoolean("MasterServer", false)) {
                             dashboard.toggle();
                             Data.set("SyncDashboard", dashboard.isChecked());
-                            updateSyncState(view);
+                            //Dashboard.setSync(dashboard.isChecked());
                         }
                         break;
                     case R.id.syncMessages:
                         CheckBox messages = v.findViewById(R.id.syncMessagesCheckbox);
-                        if (messages.isEnabled() || Data.getBoolean("MasterServer", false)) {
+                        if (messages.isEnabled() && Data.getBoolean("MasterServer", false)) {
                             messages.toggle();
                             Data.set("SyncMessages", messages.isChecked());
-                            updateSyncState(view);
+                            //Messages.setSync(dashboard.isChecked());
                         }
                         break;
                     case R.id.syncNotifications:
                         CheckBox notifications = v.findViewById(R.id.syncNotificationsCheckbox);
-                        if (notifications.isEnabled() || Data.getBoolean("MasterServer", false)) {
+                        if (notifications.isEnabled() && Data.getBoolean("MasterServer", false)) {
                             notifications.toggle();
                             Data.set("SyncNotifications", notifications.isChecked());
-                            updateSyncState(view);
+                            //Notifications.setSync(dashboard.isChecked());
                         }
                         break;
                     case R.id.syncMasterServer:
@@ -391,10 +390,6 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
                     messages.setEnabled(false);
                     notifications.setEnabled(false);
                 }
-/*
-                Dashboard.setSync(dashboard.isChecked());
-                Messages.setSync(dashboard.isChecked());
-                Notifications.setSync(dashboard.isChecked());*/
             }
 
             private void updateMasterServerState(View v) {
@@ -464,8 +459,8 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
 
                     else {
                         String[] splits = resultingTxt.split("\\.");
-                        for (int i = 0; i < splits.length; i++) {
-                            if (Integer.valueOf(splits[i]) > 255) {
+                        for (String i : splits) {
+                            if (Integer.valueOf(i) > 255) {
                                 return "";
                             }
                         }
