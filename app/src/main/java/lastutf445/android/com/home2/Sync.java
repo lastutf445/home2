@@ -1,11 +1,17 @@
 package lastutf445.android.com.home2;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.net.NetworkRequest;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Handler;
-import android.os.Message;
+import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,205 +19,299 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import static java.lang.Thread.sleep;
 
 public class Sync {
 
-    private static Thread syncReceiver;
-    private static Thread syncSender;
+    /**
+     * INIT SYNCHRONIZATION MAGIC
+     * update network status
+     */
 
-    private static DatagramSocket socket;
-    private static int port = 44501;
-    private static int sleep = 5;
+    private static ConnectivityManager connectivityManager = ((ConnectivityManager) MainActivity.getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE));
+    private static WifiManager wifiManager = ((WifiManager) MainActivity.getAppContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE));
 
-    // {op: {id: listener}}
-    private static HashMap<String, HashMap<Integer, SyncListener>> subs = new HashMap<>();
+    private static boolean networkStateCheckerEnabled = false;
+    private static InetAddress broadcastAddress;
+    private static String networkBSSID = null;
+    private static int networkState = 0;
 
-    // {nodeId: syncQuery}
-    private static HashMap<Integer, JSONObject> pubs = new HashMap<>();
+    public static void init() {
+        if (networkStateCheckerEnabled) return;
 
+        NetworkRequest.Builder builder = new NetworkRequest.Builder();
+        builder.addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR);
+        builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
 
-    private static class wHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-        }
+        connectivityManager.registerNetworkCallback(
+                builder.build(),
+                new ConnectivityManager.NetworkCallback() {
+                    @Override
+                    public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
+                        super.onCapabilitiesChanged(network, networkCapabilities);
+                        updateNetworkState();
+                    }
+
+                    @Override
+                    public void onAvailable(Network network) {
+                        super.onAvailable(network);
+                        updateNetworkState();
+                    }
+
+                    @Override
+                    public void onUnavailable() {
+                        super.onUnavailable();
+                        updateNetworkState();
+                    }
+
+                    @Override
+                    public void onLost(Network network) {
+                        super.onLost(network);
+                        updateNetworkState();
+                    }
+                }
+        );
+
+        updateNetworkState();
+        networkStateCheckerEnabled = true;
     }
 
-    private static Runnable receiver = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                socket = new DatagramSocket(port);
+    private synchronized static void setNetworkState(int mode, String bssid) {
+        Log.d("LOGTAG", mode + " - networkstate, " + (bssid != null ? bssid : "non-bssid"));
+        networkState = mode;
+        networkBSSID = bssid;
+    }
 
-            } catch (SocketException e) {
+    private static InetAddress getBroadcastAddress() throws UnknownHostException {
+        DhcpInfo dhcp = wifiManager.getDhcpInfo();
+
+        if(dhcp == null) {
+            return InetAddress.getByName("255.255.255.255");
+        }
+
+        int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
+        byte[] quads = new byte[4];
+
+        for (int k = 0; k < 4; k++) {
+            quads[k] = (byte) (broadcast >> (k * 8));
+        }
+
+        return InetAddress.getByAddress(quads);
+
+    }
+
+    private synchronized static void updateNetworkState() {
+        NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+
+        if (networkInfo != null && wifiInfo != null && networkInfo.isConnected()) {
+            setNetworkState(2, wifiInfo.getBSSID());
+
+            try {
+                broadcastAddress = getBroadcastAddress();
+
+            } catch (UnknownHostException e) {
+                broadcastAddress = null;
                 e.printStackTrace();
             }
 
-            while (!socket.isClosed() && !Thread.interrupted()) {
-                try {
-                    byte[] buf = new byte[2048];
-                    DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                    socket.receive(packet);
+            return;
+        }
 
-                    JSONObject obj = new JSONObject(new String(buf));
-                    JSONObject data = obj.getJSONObject("data");
+        networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            setNetworkState(1, null);
+            return;
+        }
 
-                    Iterator<String> i = data.keys();
+        setNetworkState(0, null);
+    }
 
-                    while (i.hasNext()) {
-                        String id = i.next();
-                        if (hasSubscribers(id)) {
-                            for (SyncListener listener: getSubscribers(id).values()) {
-                                listener.onReceive(
-                                        data.getJSONArray(id),
-                                        obj.getInt("node")
-                                );
-                            }
-                        }
+    /**
+     * SYNCHRONIZATION THREADS
+     * get and send data
+     */
+
+    private static Thread receiver;
+    private static Thread sender;
+
+    private static HashMap<Integer, SyncProvider> subs = new HashMap<>();
+    private static HashMap<Integer, SyncProvider> pubs = new HashMap<>();
+
+    private static Integer port;
+    private static Integer sleep;
+
+    public synchronized static void start() {
+        port = Data.getInt("SyncClientPort", 44501);
+        sleep = Data.getInt("SyncSleepTime", 5000);
+
+        if (!receiver.isAlive()) {
+            receiver = new Thread(new Runnable() {
+
+                private DatagramSocket socket;
+
+                @Override
+                public void run() {
+                    try {
+                        socket = new DatagramSocket(port);
+
+                    } catch (SocketException e) {
+                        e.printStackTrace();
                     }
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            socket.close();
-        }
-    };
-
-    private static Runnable sender = new Runnable() {
-        @Override
-        public void run() {
-            HashMap<Integer, JSONObject> queries = new HashMap<>(pubs);
-
-            while (!Thread.interrupted()) {
-                try {
-                    for (Map.Entry<Integer, JSONObject> i : queries.entrySet()) {
+                    while (!socket.isConnected() && !Thread.interrupted()) {
                         try {
-                            send(i.getValue().toString());
+                            byte[] buf = new byte[2048];
+                            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                            socket.receive(packet);
+
+                            JSONObject obj = new JSONObject(new String(buf));
+                            int nodeSerial = obj.getInt("nodeSerial");
+                            JSONObject data = obj.getJSONObject("data");
+
+                            if (subs.containsKey(nodeSerial)) {
+                                subs.get(nodeSerial).onReceive(data, nodeSerial);
+                            }
 
                         } catch (IOException e) {
+                            e.printStackTrace();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                        } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
                     }
 
-                    sleep(sleep);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    socket.close();
                 }
-            }
+            });
+
+            //receiver.setDaemon(true);
+            receiver.start();
         }
 
-        private void send(String msg) throws IOException {
-            DatagramSocket socket = new DatagramSocket();
-            socket.setBroadcast(true);
-            byte[] data = msg.getBytes();
+        if (!sender.isAlive()) {
+            sender = new Thread(new Runnable() {
+                private HashMap<Integer, SyncProvider> local;
 
-            DatagramPacket packet = new DatagramPacket(
-                    data, data.length, getBroadcastAddress(), port
-            );
+                @Override
+                public void run() {
+                    while (!Thread.interrupted()) {
+                        local = new HashMap<>(pubs);
 
-            socket.send(packet);
+                        for (SyncProvider i: local.values()) {
+                            try {
+                                JSONObject obj = i.getQuery();
+                                i.onPublish(send(obj));
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                i.onPublish(0);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                i.onPublish(0);
+
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                                i.onPublish(0);
+                            }
+                        }
+
+                        try {
+                            sleep(sleep);
+
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                private int send(JSONObject query) throws IOException, JSONException {
+                    DatagramSocket socket = new DatagramSocket();
+                    DatagramPacket packet;
+
+                    byte[] msg = query.toString().getBytes();
+                    int port = query.has("port") ? query.getInt("port") : Sync.port;
+
+                    if (query.has("broadcast")) {
+                        if (!networkBSSID.equals(Data.getString("SyncHomeNetwork", "false"))) {
+                            return -1;
+                        }
+
+                        socket.setBroadcast(true);
+
+                        packet = new DatagramPacket(
+                                msg, msg.length, broadcastAddress, port
+                        );
+
+                        socket.send(packet);
+                        return 1;
+                    }
+
+                    else if (query.has("address")) {
+                        if (networkBSSID.equals(Data.getString("SyncHomeNetwork", "false"))) {
+                            packet = new DatagramPacket(
+                                    msg, msg.length, InetAddress.getByName(query.getString("address")), port
+                            );
+                        }
+                        else if (Data.getString("SyncExternalAddress", null) != null) {
+                            packet = new DatagramPacket(
+                                    msg, msg.length, InetAddress.getByName(Data.getString("SyncExternalAddress", null)), port
+                            );
+                        }
+                        else {
+                            return -2;
+                        }
+                    }
+
+                    else {
+                        return -3;
+                    }
+
+
+                    return 1;
+                }
+
+            });
+            // TODO: error codes system
+            sender.start();
+        }
+    }
+
+    public synchronized static void restart() {
+        if (receiver != null && receiver.isAlive()) {
+            receiver.interrupt();
         }
 
-        private InetAddress getBroadcastAddress() throws UnknownHostException {
-            WifiManager wifi = (WifiManager) MainActivity.getAppContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            DhcpInfo dhcp = wifi.getDhcpInfo();
-
-            if(dhcp == null) {
-                return InetAddress.getByName("255.255.255.255");
-            }
-
-            int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
-            byte[] quads = new byte[4];
-
-            for (int k = 0; k < 4; k++) {
-                quads[k] = (byte) (broadcast >> (k * 8));
-            }
-
-            return InetAddress.getByAddress(quads);
-        }
-    };
-
-    public static void subscribe(String op, int id, SyncListener listener) {
-        if (!subs.containsKey(op)) {
-            subs.put(op, new HashMap<Integer, SyncListener>());
+        if (sender != null && sender.isAlive()) {
+            sender.interrupt();
         }
 
-        subs.get(op).put(id, listener);
+        start();
     }
 
-    public static void unsubscribe(String op, int id) {
-        if (subs.containsKey(op) && subs.get(op).containsKey(id)) {
-            subs.get(op).remove(id);
-        }
+    public synchronized static void subscribe(int id, SyncProvider provider) {
+        subs.put(id, provider);
     }
 
-    public static boolean hasSubscribers(String op) {
-        return subs.containsKey(op) && !subs.get(op).isEmpty();
+    public synchronized static void publish(int id, SyncProvider provider) {
+        pubs.put(id, provider);
     }
 
-    public static boolean isSubscribed(String op, int id) {
-        return subs.containsKey(op) && subs.get(op).containsKey(id);
+    public synchronized static void unsubscribe(int id) {
+        subs.remove(id);
     }
 
-    public static HashMap<Integer, SyncListener> getSubscribers(String op) {
-        return Sync.subs.get(op);
-    }
-
-    public static void publish(int id, JSONObject query) {
-        pubs.put(id, query);
-    }
-
-    public static void unpublish(int id) {
+    public synchronized static void unpublish(int id) {
         pubs.remove(id);
     }
-
-    public synchronized static boolean start() {
-        if (!syncReceiver.isAlive()) {
-            syncReceiver = new Thread(receiver);
-            syncReceiver.setDaemon(true);
-            syncReceiver.start();
-        }
-
-        if (syncSender != null && syncSender.isAlive()) {
-            return false;
-        }
-
-        syncSender = new Thread(sender);
-        syncSender.start();
-
-        return syncSender.isAlive();
-    }
-
-    public synchronized static boolean reset() {
-        if (stop() && start()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public synchronized static boolean stop() {
-        Thread dummy = syncSender;
-        syncSender = null;
-
-        if (dummy != null) {
-            dummy.interrupt();
-        }
-
-        return true;
-    }
-
 }

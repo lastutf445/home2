@@ -39,8 +39,8 @@ public final class Modules {
         return false;
     }
 
-    public static NodeOption getNode(int id) {
-        return nodes.get(id);
+    public static NodeOption getNode(int serial) {
+        return nodes.get(serial);
     }
 
     public static HashMap<Integer, NodeOption> getNodes() {

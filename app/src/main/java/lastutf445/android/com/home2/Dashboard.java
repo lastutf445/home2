@@ -221,4 +221,8 @@ public class Dashboard extends NavigationFragment {
 
         return false;
     }
+
+    public synchronized static void setSync(boolean checked) {
+
+    }
 }

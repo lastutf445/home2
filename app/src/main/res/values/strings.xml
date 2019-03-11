@@ -66,6 +66,10 @@
     <string name="masterServerCurrentNetwork">Current network: </string>
     <string name="masterServerHomeNetwork">Home network: </string>
 
+    <string name="sync_init">Sync initialization</string>
+    <string name="sync_sender_waiting_for_home_network">Waiting for home network</string>
+    <string name="sync_sender_home_network_is_undefined">Home network is undefined</string>
+
     <string name="aboutSubtitle">Make your home intelligent</string>
     <string name="aboutCreator">Creating by: lastutf445</string>
     <string name="aboutThanksTo">Thanks to:</string>

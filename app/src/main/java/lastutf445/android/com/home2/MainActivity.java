@@ -1,9 +1,12 @@
 package lastutf445.android.com.home2;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.net.wifi.WifiManager;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +21,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -48,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Data.refreshOptions();
         Modules.refreshNodes();
         Modules.refreshModules();
+        Sync.init();
 
         initFragmentSystem();
 

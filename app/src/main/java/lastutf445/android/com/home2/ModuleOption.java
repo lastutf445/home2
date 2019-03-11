@@ -3,13 +3,13 @@ package lastutf445.android.com.home2;
 import java.net.InetAddress;
 
 public class ModuleOption {
-    private int serial, nodeId;
+    private int serial, nodeSerial;
     private String type, title, state;
 
-    ModuleOption(int serial, String type, int nodeId, String title, String state) {
+    ModuleOption(int serial, String type, int nodeSerial, String title, String state) {
         this.serial = serial;
         this.type = type;
-        this.nodeId = nodeId;
+        this.nodeSerial = nodeSerial;
         this.title = title;
         this.state = state;
     }
@@ -22,12 +22,12 @@ public class ModuleOption {
         return type;
     }
 
-    public int getNodeId() {
-        return nodeId;
+    public int getNodeSerial() {
+        return nodeSerial;
     }
 
     public InetAddress getIp() {
-        NodeOption node = Modules.getNode(nodeId);
+        NodeOption node = Modules.getNode(nodeSerial);
         return node != null ? node.getIp() : null;
     }
 

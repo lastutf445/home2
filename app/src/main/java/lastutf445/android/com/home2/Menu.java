@@ -335,10 +335,10 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
                         break;
                     case R.id.syncDashboard:
                         CheckBox dashboard = v.findViewById(R.id.syncDashboardCheckbox);
-                        if (dashboard.isEnabled() && Data.getBoolean("MasterServer", false)) {
+                        if (dashboard.isEnabled()) {
                             dashboard.toggle();
                             Data.set("SyncDashboard", dashboard.isChecked());
-                            //Dashboard.setSync(dashboard.isChecked());
+                            Dashboard.setSync(dashboard.isChecked());
                         }
                         break;
                     case R.id.syncMessages:

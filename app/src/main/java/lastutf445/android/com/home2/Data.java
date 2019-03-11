@@ -28,11 +28,14 @@ public final class Data {
         // Proxy server
         ops.put("ProxyServer", false);
         ops.put("ProxyServerIP", null);
-        // Synchronisation
+        // Synchronization
         ops.put("Sync", true);
         ops.put("SyncDashboard", true);
         ops.put("SyncMessages", true); // requires master
         ops.put("SyncNotifications", true); // semi-requires master
+        ops.put("SyncHomeNetwork", null);
+        ops.put("SyncClientPort", 44501);
+        ops.put("SyncSleepTime", 5000);
         // Notifications
         ops.put("NotificationsEnabled", true); // use notifications
         ops.put("NotificationsCounter", true);

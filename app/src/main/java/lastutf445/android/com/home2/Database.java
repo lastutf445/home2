@@ -18,7 +18,7 @@ import java.util.Map;
 
 public final class Database {
 
-    private static int DATABASE_VERSION = 2;
+    private static int DATABASE_VERSION = 3;
     private static String DATABASE_NAME = "app.db";
     private static String DATABASE_PATH;
 
@@ -40,8 +40,8 @@ public final class Database {
 
     public static void onCreate() {
         db.execSQL("CREATE TABLE IF NOT EXISTS core (option TEXT PRIMARY KEY, value TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS nodes (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT, title TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, nodeId INTEGER, title TEXT, state TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS nodes (serial INTEGER PRIMARY KEY, ip TEXT, title TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, nodeSerial INTEGER, title TEXT, state TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS dashboard (id INTEGER PRIMARY KEY, type TEXT, modules string)");
     }
 
@@ -97,9 +97,9 @@ public final class Database {
         while (!cursor.isAfterLast()) {
 
             try {
-                ops.put(cursor.getInt(cursor.getColumnIndex("id")),
+                ops.put(cursor.getInt(cursor.getColumnIndex("serial")),
                         new NodeOption(
-                                cursor.getInt(cursor.getColumnIndex("id")),
+                                cursor.getInt(cursor.getColumnIndex("serial")),
                                 cursor.getString(cursor.getColumnIndex("ip")),
                                 cursor.getString(cursor.getColumnIndex("title"))
                         )
@@ -138,7 +138,7 @@ public final class Database {
                     new ModuleOption(
                     cursor.getInt(cursor.getColumnIndex("serial")),
                     cursor.getString(cursor.getColumnIndex("type")),
-                    cursor.getInt(cursor.getColumnIndex("nodeId")),
+                    cursor.getInt(cursor.getColumnIndex("nodeSerial")),
                     cursor.getString(cursor.getColumnIndex("title")),
                     cursor.getString(cursor.getColumnIndex("state"))
             ));
