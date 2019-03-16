@@ -133,6 +133,14 @@ public class Sync {
         setNetworkState(0, null);
     }
 
+    public static String getNetworkBSSID() {
+        return networkBSSID;
+    }
+
+    public static int getNetworkState() {
+        return networkState;
+    }
+
     /**
      * SYNCHRONIZATION THREADS
      * get and send data
@@ -151,7 +159,15 @@ public class Sync {
         port = Data.getInt("SyncClientPort", 44501);
         sleep = Data.getInt("SyncSleepTime", 5000);
 
-        if (!receiver.isAlive()) {
+        /** RETURN CODES
+         *  0 - Unknown exception
+         *  1 - Sent successfully
+         *  2 - Can't send broadcast being outside the home network
+         *  3 - External address is undefined
+         *  4 - Wrong destination
+         */
+
+        if (receiver == null || !receiver.isAlive()) {
             receiver = new Thread(new Runnable() {
 
                 private DatagramSocket socket;
@@ -165,7 +181,7 @@ public class Sync {
                         e.printStackTrace();
                     }
 
-                    while (!socket.isConnected() && !Thread.interrupted()) {
+                    while (socket != null && !socket.isConnected() && !Thread.interrupted()) {
                         try {
                             byte[] buf = new byte[2048];
                             DatagramPacket packet = new DatagramPacket(buf, buf.length);
@@ -198,7 +214,7 @@ public class Sync {
             receiver.start();
         }
 
-        if (!sender.isAlive()) {
+        if (sender == null || !sender.isAlive()) {
             sender = new Thread(new Runnable() {
                 private HashMap<Integer, SyncProvider> local;
 
@@ -244,7 +260,7 @@ public class Sync {
 
                     if (query.has("broadcast")) {
                         if (!networkBSSID.equals(Data.getString("SyncHomeNetwork", "false"))) {
-                            return -1;
+                            return 2;
                         }
 
                         socket.setBroadcast(true);
@@ -254,7 +270,6 @@ public class Sync {
                         );
 
                         socket.send(packet);
-                        return 1;
                     }
 
                     else if (query.has("address")) {
@@ -269,25 +284,30 @@ public class Sync {
                             );
                         }
                         else {
-                            return -2;
+                            socket.close();
+                            return 3;
                         }
+
+                        socket.send(packet);
                     }
 
                     else {
-                        return -3;
+                        socket.close();
+                        return 4;
                     }
 
-
+                    socket.close();
                     return 1;
                 }
 
             });
-            // TODO: error codes system
             sender.start();
         }
     }
 
     public synchronized static void restart() {
+        Log.d("LOGTAG", "SYNC RESTART");
+
         if (receiver != null && receiver.isAlive()) {
             receiver.interrupt();
         }

@@ -6,9 +6,9 @@ import org.json.JSONObject;
 
 abstract public class SyncProvider {
 
-    private int attempts = -1;
-    private JSONObject query;
-    private int id;
+    protected int attempts = -1;
+    protected JSONObject query;
+    protected int id;
 
     SyncProvider(int id, JSONObject query) {
         this.id = id;
@@ -21,12 +21,11 @@ abstract public class SyncProvider {
         this.attempts = attempts;
     }
 
-    public void onReceive(JSONObject data, int id) {}
+    public void onReceive(JSONObject data, int nodeSerial) {}
 
     final public void onPublish(int statusCode) {
-        if (statusCode == 0) {
-            // TODO: fail status code
-            attempts -= Integer.valueOf(Boolean.valueOf(attempts > 0).toString());
+        if (statusCode != 1) {
+            attempts -= (attempts > 0 ? 1 : 0);
 
             if (attempts == 0) {
                 Sync.unpublish(id);

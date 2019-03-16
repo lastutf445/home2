@@ -27,9 +27,9 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    private Dashboard dashboard = new Dashboard();
-    private Messages messages = new Messages();
-    private Notifications notifications = new Notifications();
+    private Dashboard dashboard = new Dashboard(); // listenerId: from -3 to -inf
+    private Messages messages = new Messages(); // listenerId: -2
+    private Notifications notifications = new Notifications(); // listenerId: -1
     private Menu menu = new Menu();
 
     private FragmentManager manager;
@@ -54,7 +54,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Data.refreshOptions();
         Modules.refreshNodes();
         Modules.refreshModules();
+
         Sync.init();
+        boolean sync = Data.getBoolean("Sync", false);
+        Dashboard.setSync(Data.getBoolean("SyncDashboard", false) && sync);
+        //Messages.setSync(Data.getBoolean("SyncMessages", false) && sync);
+        //Notifications.setSync(Data.getBoolean("SyncNotifications", false) && sync);
 
         initFragmentSystem();
 

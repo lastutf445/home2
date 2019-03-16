@@ -23,6 +23,10 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class Dashboard extends NavigationFragment {
@@ -56,27 +60,32 @@ public class Dashboard extends NavigationFragment {
     }
 
     public void createDashboardBlock(DashboardOption op) {
-        ArrayList<Integer> modules = op.modules;
-        String type = op.type;
-        View view = null;
+        try {
+            JSONArray modules = op.getOps().getJSONArray("modules");
+            String type = op.getType();
+            View view = null;
 
-        switch(type) {
-            case "row_temp":
-                view = createRowTemp(modules);
-                break;
-            case "row_humidity":
-                view = createRowHumidity(modules);
-                break;
-            case "row_space":
-                view = createRowSpace(modules);
-                break;
-            case "table_icons":
-                view = createTableIcons(modules);
-                break;
-        }
+            switch (type) {
+                case "row_temp":
+                    view = createRowTemp(modules);
+                    break;
+                case "row_humidity":
+                    view = createRowHumidity(modules);
+                    break;
+                case "row_space":
+                    view = createRowSpace(modules);
+                    break;
+                case "table_icons":
+                    view = createTableIcons(modules);
+                    break;
+            }
 
-        if (view != null) {
-            content.addView(view);
+            if (view != null) {
+                content.addView(view);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -102,14 +111,14 @@ public class Dashboard extends NavigationFragment {
         }
     }
 
-    private View createRowTemp(ArrayList<Integer> modules) {
+    private View createRowTemp(JSONArray modules) throws JSONException {
         View v = inflater.inflate(R.layout.dashboard_row_temp, content, false);
 
-        if (modules.size() == 0) {
+        if (modules.length() == 0) {
             return null;
         }
 
-        ModuleOption m = Modules.getModule(modules.get(0));
+        ModuleOption m = Modules.getModule(modules.getInt(0));
 
         ((TextView) v.findViewById(R.id.dashboardRowTempValue)).setText(
                 String.format("%s %s", m.getState(), "C")
@@ -122,14 +131,14 @@ public class Dashboard extends NavigationFragment {
         return v;
     }
 
-    private View createRowHumidity(ArrayList<Integer> modules) {
+    private View createRowHumidity(JSONArray modules) throws JSONException {
         View v = inflater.inflate(R.layout.dashboard_row_humidity, content, false);
 
-        if (modules.size() == 0) {
+        if (modules.length() == 0) {
             return null;
         }
 
-        ModuleOption m = Modules.getModule(modules.get(0));
+        ModuleOption m = Modules.getModule(modules.getInt(0));
 
         ((TextView) v.findViewById(R.id.dashboardRowHumidityValue)).setText(
                 String.format("%s %s", m.getState(), "%")
@@ -142,12 +151,12 @@ public class Dashboard extends NavigationFragment {
         return v;
     }
 
-    private View createRowSpace(ArrayList<Integer> modules) {
+    private View createRowSpace(JSONArray modules) {
         View v = inflater.inflate(R.layout.dashboard_row_space, content, false);
         return v;
     }
 
-    private View createTableIcons(ArrayList<Integer> modules) {
+    private View createTableIcons(JSONArray modules) throws JSONException {
         View v = inflater.inflate(R.layout.dashboard_table_icons, content, false);
         LinearLayout w = v.findViewById(R.id.dashboardTableIconsWrapper);
         LinearLayout row = null;
@@ -164,7 +173,7 @@ public class Dashboard extends NavigationFragment {
                 1.0f
         );
 
-        for (int i = 0; i < modules.size(); ++i) {
+        for (int i = 0; i < modules.length(); ++i) {
             if (i % 3 == 0) {
 
                 if (w != null && row != null) {
@@ -178,7 +187,7 @@ public class Dashboard extends NavigationFragment {
             ImageButton button = new ImageButton(getContext());
             button.setBackgroundResource(out.resourceId);
 
-            button.setImageResource(getIconByType(Modules.getModule(modules.get(i)).getType()));
+            button.setImageResource(getIconByType(Modules.getModule(modules.getInt(i)).getType()));
             button.setLayoutParams(params);
             row.addView(button);
         }
@@ -193,19 +202,16 @@ public class Dashboard extends NavigationFragment {
     public boolean refreshDashboard() {
 
         try {
-            ArrayList<Integer> a = new ArrayList<>();
-            ArrayList<Integer> b = new ArrayList<>();
-            ArrayList<Integer> c = new ArrayList<>();
-            ArrayList<Integer> d = new ArrayList<>();
-            ArrayList<Integer> e = new ArrayList<>();
+            JSONObject a = new JSONObject();
+            JSONObject b = new JSONObject();
+            JSONObject c = new JSONObject();
+            JSONObject d = new JSONObject();
+            JSONObject e = new JSONObject();
 
-            a.add(0);
-            b.add(1);
-            c.add(2);
-
-            e.add(3);
-            e.add(4);
-            e.add(5);
+            a.put("modules", new JSONArray(new Integer[]{0}));
+            b.put("modules", new JSONArray(new Integer[]{1}));
+            c.put("modules", new JSONArray(new Integer[]{2}));
+            e.put("modules", new JSONArray(new Integer[]{3, 4, 5}));
 
             dashboardOptions = Database.getDashboard();
             dashboardOptions.add(new DashboardOption(0, "row_temp", a));
@@ -213,16 +219,20 @@ public class Dashboard extends NavigationFragment {
             dashboardOptions.add(new DashboardOption(2, "row_humidity", c));
             dashboardOptions.add(new DashboardOption(3, "row_space", d));
             dashboardOptions.add(new DashboardOption(4, "table_icons", e));
+
             return true;
 
         } catch (SQLiteException e) {
+            e.printStackTrace();
+
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return false;
     }
 
-    public synchronized static void setSync(boolean checked) {
-
+    public synchronized static void setSync(boolean enable) {
+        Modules.setSync(enable);
     }
 }

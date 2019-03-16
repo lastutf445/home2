@@ -26,7 +26,7 @@ public class ModuleOption {
         return nodeSerial;
     }
 
-    public InetAddress getIp() {
+    public String getIp() {
         NodeOption node = Modules.getNode(nodeSerial);
         return node != null ? node.getIp() : null;
     }

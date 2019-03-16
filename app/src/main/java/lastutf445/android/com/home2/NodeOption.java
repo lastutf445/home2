@@ -6,20 +6,26 @@ import java.net.UnknownHostException;
 public class NodeOption {
 
     private int serial;
-    private InetAddress ip;
+    //private InetAddress ip;
+    private String ip;
     private String title;
 
     NodeOption(int serial, String ip, String title) throws UnknownHostException {
         this.serial = serial;
         this.title = title;
-        this.ip = InetAddress.getByName(ip);
+        //this.ip = InetAddress.getByName(ip);
+        this.ip = ip;
     }
 
     public int getSerial() {
         return serial;
     }
 
-    public InetAddress getIp() {
+    //public InetAddress getIp() {
+    //    return ip;
+    //}
+
+    public String getIp() {
         return ip;
     }
 

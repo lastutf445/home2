@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.util.SparseArray;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Node;
 
 import java.net.UnknownHostException;
@@ -18,7 +20,7 @@ import java.util.Map;
 
 public final class Database {
 
-    private static int DATABASE_VERSION = 3;
+    private static int DATABASE_VERSION = 4;
     private static String DATABASE_NAME = "app.db";
     private static String DATABASE_PATH;
 
@@ -42,7 +44,7 @@ public final class Database {
         db.execSQL("CREATE TABLE IF NOT EXISTS core (option TEXT PRIMARY KEY, value TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS nodes (serial INTEGER PRIMARY KEY, ip TEXT, title TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, nodeSerial INTEGER, title TEXT, state TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS dashboard (id INTEGER PRIMARY KEY, type TEXT, modules string)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS dashboard (id INTEGER PRIMARY KEY, type TEXT, ops string)");
     }
 
     public static void upgrade(int oldVersion, int newVersion) {
@@ -116,7 +118,7 @@ public final class Database {
         }
 
         try {
-            ops.put(0, new NodeOption(0, "192.168.0.102", "title"));
+            ops.put(0, new NodeOption(0, "192.168.0.102", "testing host"));
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -164,19 +166,32 @@ public final class Database {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            ArrayList<Integer> modules = new ArrayList<>();
-            // TODO: serialization
+            try {
+                JSONObject params = new JSONObject(
+                        cursor.getString(cursor.getColumnIndex("ops"))
+                );
 
-            ops.add(new DashboardOption(
-                            cursor.getInt(cursor.getColumnIndex("id")),
-                            cursor.getString(cursor.getColumnIndex("type")),
-                            modules
-                    ));
+                ops.add(new DashboardOption(
+                        cursor.getInt(cursor.getColumnIndex("id")),
+                        cursor.getString(cursor.getColumnIndex("type")),
+                        params
+                ));
 
-            cursor.moveToNext();
+                cursor.moveToNext();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         cursor.close();
         return ops;
+    }
+
+    public static void setModuleState(int serial, String state) {
+        ContentValues cv = new ContentValues();
+        cv.put("state", state);
+
+        db.update("modules", cv, "serial=?", new String[]{String.valueOf(serial)});
     }
 }

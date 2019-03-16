@@ -320,6 +320,16 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
 
     private void setupSyncScreen(UniversalViewer uv, View view) {
         class ExtendedListener extends UniversalViewerListener {
+
+            private Switch sync = view.findViewById(R.id.syncSyncSwitcher);
+            private CheckBox dashboard = view.findViewById(R.id.syncDashboardCheckbox);
+            private CheckBox messages = view.findViewById(R.id.syncMessagesCheckbox);
+            private CheckBox notifications = view.findViewById(R.id.syncNotificationsCheckbox);
+            private Switch masterServer = view.findViewById(R.id.syncMasterServerSwitcher);
+            private CheckBox markAsHomeNetwork = view.findViewById(R.id.syncMarkNetworkAsHomeCheckbox);
+            private TextView currentNetwork = view.findViewById(R.id.syncCurrentNetwork);
+            private TextView homeNetwork = view.findViewById(R.id.syncHomeNetwork);
+
             ExtendedListener(UniversalViewer uv, View view) {
                 super(uv, view);
             }
@@ -328,13 +338,11 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.syncSync:
-                        Switch s = v.findViewById(R.id.syncSyncSwitcher);
-                        s.toggle();
-                        Data.set("Sync", s.isChecked());
-                        updateSyncState(view);
+                        sync.toggle();
+                        Data.set("Sync", sync.isChecked());
+                        updateSyncState();
                         break;
                     case R.id.syncDashboard:
-                        CheckBox dashboard = v.findViewById(R.id.syncDashboardCheckbox);
                         if (dashboard.isEnabled()) {
                             dashboard.toggle();
                             Data.set("SyncDashboard", dashboard.isChecked());
@@ -342,89 +350,117 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
                         }
                         break;
                     case R.id.syncMessages:
-                        CheckBox messages = v.findViewById(R.id.syncMessagesCheckbox);
                         if (messages.isEnabled() && Data.getBoolean("MasterServer", false)) {
                             messages.toggle();
                             Data.set("SyncMessages", messages.isChecked());
-                            //Messages.setSync(dashboard.isChecked());
+                            //Messages.setSync(messages.isChecked());
                         }
                         break;
                     case R.id.syncNotifications:
-                        CheckBox notifications = v.findViewById(R.id.syncNotificationsCheckbox);
                         if (notifications.isEnabled() && Data.getBoolean("MasterServer", false)) {
                             notifications.toggle();
                             Data.set("SyncNotifications", notifications.isChecked());
-                            //Notifications.setSync(dashboard.isChecked());
+                            //Notifications.setSync(notifications.isChecked());
                         }
                         break;
                     case R.id.syncMasterServer:
-                        Switch masterServer = v.findViewById(R.id.syncMasterServerSwitcher);
                         masterServer.toggle();
                         Data.set("MasterServer", masterServer.isChecked());
-                        updateMasterServerState(view);
+                        updateMasterServerState();
                         break;
                     case R.id.syncMasterServerSettings:
                         Intent i = new Intent(getContext(), UniversalViewer.class);
                         i.putExtra("layout", R.layout.menu_sync_masterserver);
                         uv.startActivity(i);
                         break;
+                    case R.id.syncMarkNetworkAsHome:
+                        if (!markAsHomeNetwork.isChecked()) {
+                            if (Sync.getNetworkState() == 2) {
+                                Data.set("SyncHomeNetwork", Sync.getNetworkBSSID());
+                                updateSyncAddressesState();
+                            }
+                        }
+                        else {
+                            Data.set("SyncHomeNetwork", null);
+                            updateSyncAddressesState();
+                        }
+                        break;
                 }
 
                 Data.recordOptions();
             }
 
-            private void updateSyncState(View v) {
-                Switch enabler = v.findViewById(R.id.syncSyncSwitcher);
-                CheckBox dashboard = v.findViewById(R.id.syncDashboardCheckbox);
-                CheckBox messages = v.findViewById(R.id.syncMessagesCheckbox);
-                CheckBox notifications = v.findViewById(R.id.syncNotificationsCheckbox);
-
-                if (enabler.isChecked()) {
+            private void updateSyncState() {
+                if (sync.isChecked()) {
                     dashboard.setEnabled(true);
                     messages.setEnabled(Data.getBoolean("MasterServer", false));
                     notifications.setEnabled(Data.getBoolean("MasterServer", false));
+                    Dashboard.setSync(Data.getBoolean("SyncDashboard", false));
+                    //Messages.setSync(Data.getBoolean("SyncMessages", false));
+                    //Notifications.setSync(Data.getBoolean("SyncNotifications", false));
                 }
-
                 else {
+                    Dashboard.setSync(false);
+                    //Messages.setSync(false);
+                    //Notifications.setSync(false);
                     dashboard.setEnabled(false);
                     messages.setEnabled(false);
                     notifications.setEnabled(false);
                 }
             }
 
-            private void updateMasterServerState(View v) {
-                v.findViewById(R.id.syncMasterServerSettings).setEnabled(
-                        ((Switch) v.findViewById(R.id.syncMasterServerSwitcher)).isChecked()
+            private void updateMasterServerState() {
+                view.findViewById(R.id.syncMasterServerSettings).setEnabled(
+                        masterServer.isChecked()
                 );
 
-                updateSyncState(v);
+                updateSyncState();
+            }
+
+            private void updateSyncAddressesState() {
+                markAsHomeNetwork.setChecked(
+                        Data.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID())
+                );
+
+                currentNetwork.setText(String.format("%s %s",
+                        MainActivity.getAppResources().getString(R.string.masterServerCurrentNetwork),
+                        Sync.getNetworkState() == 2 ? Sync.getNetworkBSSID() :
+                                MainActivity.getAppResources().getString(R.string.sync_wifi_disabled)
+                ));
+
+                homeNetwork.setText(String.format("%s %s",
+                        MainActivity.getAppResources().getString(R.string.masterServerHomeNetwork),
+                        Data.getString("SyncHomeNetwork",
+                                MainActivity.getAppResources().getString(R.string.sync_undefined))
+                ));
             }
         }
 
-        ((Switch) view.findViewById(R.id.syncSyncSwitcher)).setChecked(
+        ExtendedListener c = new ExtendedListener(uv, view);
+
+        c.sync.setChecked(
                 Data.getBoolean("Sync", false)
         );
 
-        ((CheckBox) view.findViewById(R.id.syncDashboardCheckbox)).setChecked(
+        c.dashboard.setChecked(
                 Data.getBoolean("SyncDashboard", false)
         );
 
-        ((CheckBox) view.findViewById(R.id.syncMessagesCheckbox)).setChecked(
+        c.messages.setChecked(
                 Data.getBoolean("SyncMessages", false)
         );
 
-        ((CheckBox) view.findViewById(R.id.syncNotificationsCheckbox)).setChecked(
+        c.notifications.setChecked(
                 Data.getBoolean("SyncNotifications", false)
         );
 
-        ((Switch) view.findViewById(R.id.syncMasterServerSwitcher)).setChecked(
+        c.masterServer.setChecked(
                 Data.getBoolean("MasterServer", false)
         );
 
-        ExtendedListener c = new ExtendedListener(uv, view);
-
-        c.updateMasterServerState(view);
-        c.updateSyncState(view);
+        c.updateMasterServerState();
+        c.updateSyncState();
+        c.updateSyncAddressesState();
 
         int[] buttons = {
                 R.id.syncSync,
@@ -432,15 +468,13 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
                 R.id.syncMessages,
                 R.id.syncNotifications,
                 R.id.syncMasterServer,
-                R.id.syncMasterServerSettings
-
+                R.id.syncMasterServerSettings,
+                R.id.syncMarkNetworkAsHome
         };
 
         for (int i: buttons) {
             view.findViewById(i).setOnClickListener(c);
         }
-
-
     }
 
     private void setupSyncMasterServerScreen(UniversalViewer uv, View view) {
@@ -471,7 +505,7 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
 
         };
 
-        ((EditText)view.findViewById(R.id.masterserverIP)).setFilters(filters);
+        ((EditText) view.findViewById(R.id.masterserverIP)).setFilters(filters);
     }
 
     private void setupAboutScreen(UniversalViewer uv, View view) {
