@@ -1,9 +1,11 @@
 package lastutf445.android.com.home2;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -26,7 +28,6 @@ public class UniversalViewer extends AppCompatActivity {
         layout = i.getIntExtra("layout", R.layout.menu_about);
         returnCode = i.getIntExtra("returnCode", 0);
         needReload = i.getBooleanExtra("needReload", false);
-
 
         getLayoutInflater().inflate(layout, (ViewGroup) content);
         setupUniversalViewer();

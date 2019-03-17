@@ -2,6 +2,8 @@ package lastutf445.android.com.home2;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
+import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -22,7 +24,6 @@ public final class Modules {
     private static HashMap<Integer, NodeOption> nodes;
 
     private static HashMap<Integer, HashSet<Integer>> syncing = new HashMap<>();
-    private static int counter = 0;
 
     public static boolean refreshNodes() {
 
@@ -127,13 +128,12 @@ public final class Modules {
                 }
 
                 query.put("address", nodes.get(i.getKey()).getIp());
-                query.put("modules", modules);
-                --counter;
+                query.put("getState", modules);
 
-                Sync.publish(counter, new SyncProvider(counter, query) {
+                Sync.publish(i.getKey(), new SyncProvider(i.getKey(), query) {
                     @Override
                     public JSONObject getQuery() {
-                        Log.d("LOGTAG", "try sync publisher with id " + counter);
+                        Log.d("LOGTAG", "try publish with id " + id);
                         return super.getQuery();
                     }
 
@@ -141,16 +141,35 @@ public final class Modules {
                     public void onPublishCustomTrigger(int statusCode) {
                         super.onPublishCustomTrigger(statusCode);
                         Log.d("LOGTAG", "statusCode - " + statusCode);
+
+
+                        try {
+                            Message msg = MainActivity.getMainHandler().obtainMessage();
+                            Bundle msgData = new Bundle();
+
+                            JSONObject json = new JSONObject();
+                            json.put("msg", "statusCode - " + statusCode);
+
+                            msgData.putString("data", json.toString());
+                            msg.setData(msgData);
+                            msg.what = 1;
+
+                            MainActivity.getMainHandler().sendMessage(msg);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 });
-                Sync.subscribe(counter, new SyncProvider(counter, query) {
+                Sync.subscribe(i.getKey(), new SyncProvider(i.getKey(), query) {
                     @Override
                     public void onReceive(JSONObject data, int nodeSerial) {
                         super.onReceive(data, id);
 
                         try {
-                            JSONObject results = data.getJSONObject("results");
-                            JSONArray modules = query.getJSONArray("modules");
+                            JSONObject results = data.getJSONObject("states");
+                            JSONArray modules = query.getJSONArray("getState");
 
                             for (int i = 0; i < modules.length(); ++i) {
                                 int id = modules.getInt(i);
@@ -159,13 +178,22 @@ public final class Modules {
                                 if (state != null) Database.setModuleState(id, state);
                             }
 
+                            Message msg = MainActivity.getMainHandler().obtainMessage();
+                            Bundle msgData = new Bundle();
+
+                            msgData.putString("data", results.toString());
+                            msg.setData(msgData);
+                            msg.what = 0;
+
+                            MainActivity.getMainHandler().sendMessage(msg);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 });
 
-                Log.d("LOGTAG", "success installed " + counter);
+                Log.d("LOGTAG", "success installed " + i.getKey());
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -179,9 +207,9 @@ public final class Modules {
     }
 
     private synchronized static void disableSync() {
-        for (; counter != 0; ++counter) {
-            Sync.unsubscribe(counter);
-            Sync.unpublish(counter);
+        for (Integer i: syncing.keySet()) {
+            Sync.unsubscribe(i);
+            Sync.unpublish(i);
         }
     }
 }

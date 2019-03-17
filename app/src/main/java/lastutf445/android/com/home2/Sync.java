@@ -308,6 +308,11 @@ public class Sync {
     public synchronized static void restart() {
         Log.d("LOGTAG", "SYNC RESTART");
 
+        stop();
+        start();
+    }
+
+    public synchronized static void stop() {
         if (receiver != null && receiver.isAlive()) {
             receiver.interrupt();
         }
@@ -315,8 +320,6 @@ public class Sync {
         if (sender != null && sender.isAlive()) {
             sender.interrupt();
         }
-
-        start();
     }
 
     public synchronized static void subscribe(int id, SyncProvider provider) {

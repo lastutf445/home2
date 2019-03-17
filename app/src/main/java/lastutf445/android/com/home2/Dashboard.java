@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.sqlite.SQLiteException;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class Dashboard extends NavigationFragment {
@@ -36,6 +39,7 @@ public class Dashboard extends NavigationFragment {
     private View view;
 
     private ArrayList<DashboardOption> dashboardOptions;
+    private static WeakReference<View> weakView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,9 +52,10 @@ public class Dashboard extends NavigationFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         content = view.findViewById(R.id.dashboard);
-        refreshDashboard();
-
+        weakView = new WeakReference<>(view);
         this.inflater = inflater;
+
+        refreshDashboard();
 
         for (DashboardOption i: dashboardOptions) {
             createDashboardBlock(i);
@@ -232,7 +237,11 @@ public class Dashboard extends NavigationFragment {
         return false;
     }
 
-    public synchronized static void setSync(boolean enable) {
+    public static void setSync(boolean enable) {
         Modules.setSync(enable);
+    }
+
+    public static void onUpdate(JSONObject data) {
+
     }
 }

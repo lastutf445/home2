@@ -1,41 +1,65 @@
 package lastutf445.android.com.home2;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.net.wifi.WifiManager;
-import android.os.PersistableBundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    private Dashboard dashboard = new Dashboard(); // listenerId: from -3 to -inf
-    private Messages messages = new Messages(); // listenerId: -2
-    private Notifications notifications = new Notifications(); // listenerId: -1
+    private Dashboard dashboard = new Dashboard(); // listenerId: 0+ (nodeSerial)
+    private Messages messages = new Messages(); // listenerId: -1
+    private Notifications notifications = new Notifications(); // listenerId: -2
     private Menu menu = new Menu();
 
-    private FragmentManager manager;
+    private static FragmentManager manager;
     private static NavigationFragment active;
     private static Context appContext;
     private static Resources appResources;
+
+    private static Handler UVHandler;
+    private static MainHandler handler;
+
+    private static class MainHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            try {
+                JSONObject data = new JSONObject(
+                        msg.getData().getString("data")
+                );
+
+                 switch(msg.what) {
+                     case 0:
+                         Dashboard.onUpdate(data);
+                         break;
+                     case 1:
+                         Notifications.makeToast(data.getString("msg"));
+                 }
+
+            } catch(JSONException e) {
+                e.printStackTrace();
+
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 
     private BottomNavigationView nav;
 
@@ -43,9 +67,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         appContext = getApplicationContext();
         appResources = getResources();
+        handler = new MainHandler();
 
         manager = getSupportFragmentManager();
         nav = findViewById(R.id.nav);
@@ -62,25 +92,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //Notifications.setSync(Data.getBoolean("SyncNotifications", false) && sync);
 
         initFragmentSystem();
-
         nav.setOnNavigationItemSelectedListener(this);
+        nav.setSelectedItemId(R.id.nav_dashboard);
+
+        Notifications.makeToast( manager.getFragments().size() + " fragments are injected");
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onSaveInstanceState(Bundle outState) {
+        clearFragments();
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Database.kill();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Notifications.makeToast( manager.getFragments().size() + " fragments are injected");
     }
 
     private void initFragmentSystem() {
@@ -92,17 +119,30 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         switch (Data.getString("ActiveFragment", "dashboard")) {
             case "dashboard":
                 changeFragment(dashboard);
+                nav.setSelectedItemId(R.id.nav_dashboard);
                 break;
             case "messages":
                 changeFragment(messages);
+                nav.setSelectedItemId(R.id.nav_messages);
                 break;
             case "notifications":
                 changeFragment(notifications);
+                nav.setSelectedItemId(R.id.nav_notifications);
                 break;
             case "menu":
                 changeFragment(menu);
+                nav.setSelectedItemId(R.id.nav_menu);
                 break;
         }
+    }
+
+    private void clearFragments() {
+        manager.beginTransaction()
+                .remove(dashboard)
+                .remove(messages)
+                .remove(notifications)
+                .remove(menu)
+                .commitNow();
     }
 
     private void addFragment(NavigationFragment fragment) {
@@ -154,6 +194,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public static Resources getAppResources() {
         return appResources;
+    }
+
+    public synchronized static Handler getMainHandler() {
+        return handler;
+    }
+
+    public synchronized static void setUVHandler(Handler handler) {
+        UVHandler = handler;
+    }
+
+    public synchronized static Handler getUVHandler() {
+        return UVHandler;
     }
 
     @Override
