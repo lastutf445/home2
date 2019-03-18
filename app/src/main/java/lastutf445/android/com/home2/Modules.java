@@ -147,16 +147,13 @@ public final class Modules {
                             Message msg = MainActivity.getMainHandler().obtainMessage();
                             Bundle msgData = new Bundle();
 
-                            JSONObject json = new JSONObject();
-                            json.put("msg", "statusCode - " + statusCode);
-
-                            msgData.putString("data", json.toString());
+                            msgData.putString("msg", "statusCode - " + statusCode);
                             msg.setData(msgData);
-                            msg.what = 1;
+                            msg.what = 999;
 
                             MainActivity.getMainHandler().sendMessage(msg);
 
-                        } catch (JSONException e) {
+                        } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
 
@@ -173,19 +170,21 @@ public final class Modules {
 
                             for (int i = 0; i < modules.length(); ++i) {
                                 int id = modules.getInt(i);
-
                                 String state = results.getString(String.valueOf(id));
-                                if (state != null) Database.setModuleState(id, state);
+
+                                if (state != null) {
+                                    Database.setModuleState(id, state);
+                                    Message msg = MainActivity.getMainHandler().obtainMessage();
+                                    Bundle msgData = new Bundle();
+
+                                    msgData.putInt("serial", id);
+                                    msgData.putString("state", state);
+                                    msg.setData(msgData);
+                                    msg.what = 0;
+
+                                    MainActivity.getMainHandler().sendMessage(msg);
+                                }
                             }
-
-                            Message msg = MainActivity.getMainHandler().obtainMessage();
-                            Bundle msgData = new Bundle();
-
-                            msgData.putString("data", results.toString());
-                            msg.setData(msgData);
-                            msg.what = 0;
-
-                            MainActivity.getMainHandler().sendMessage(msg);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -193,7 +192,7 @@ public final class Modules {
                     }
                 });
 
-                Log.d("LOGTAG", "success installed " + i.getKey());
+                Log.d("LOGTAG", "successfully installed " + i.getKey());
 
             } catch (JSONException e) {
                 e.printStackTrace();

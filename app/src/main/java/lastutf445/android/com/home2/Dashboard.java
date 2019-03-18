@@ -31,6 +31,8 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class Dashboard extends NavigationFragment {
 
@@ -39,7 +41,7 @@ public class Dashboard extends NavigationFragment {
     private View view;
 
     private ArrayList<DashboardOption> dashboardOptions;
-    private static WeakReference<View> weakView;
+    private static HashMap<Integer, WeakReference<View>> blocks;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,9 +54,9 @@ public class Dashboard extends NavigationFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         content = view.findViewById(R.id.dashboard);
-        weakView = new WeakReference<>(view);
         this.inflater = inflater;
 
+        blocks = new HashMap<>();
         refreshDashboard();
 
         for (DashboardOption i: dashboardOptions) {
@@ -133,6 +135,7 @@ public class Dashboard extends NavigationFragment {
         ((TextView) v.findViewById(R.id.dashboardRowTempTitle)).setText(m.getTitle());
         ((TextView) v.findViewById(R.id.dashboardRowTempSubtitle)).setText(getSubtitleByType(m.getType()));
 
+        blocks.put(m.getSerial(), new WeakReference<>(v));
         return v;
     }
 
@@ -146,13 +149,13 @@ public class Dashboard extends NavigationFragment {
         ModuleOption m = Modules.getModule(modules.getInt(0));
 
         ((TextView) v.findViewById(R.id.dashboardRowHumidityValue)).setText(
-                String.format("%s %s", m.getState(), "%")
-                // TODO: Percentages
+                String.format("%s %%", m.getState())
         );
 
         ((TextView) v.findViewById(R.id.dashboardRowHumidityTitle)).setText(m.getTitle());
         ((TextView) v.findViewById(R.id.dashboardRowHumiditySubtitle)).setText(getSubtitleByType(m.getType()));
 
+        blocks.put(m.getSerial(), new WeakReference<>(v));
         return v;
     }
 
@@ -241,7 +244,49 @@ public class Dashboard extends NavigationFragment {
         Modules.setSync(enable);
     }
 
-    public static void onUpdate(JSONObject data) {
+    public static void onUpdate(Bundle data) {
+        try {
+            int serial = data.getInt("serial");
+            String state = data.getString("state");
+            onUpdate(serial, state);
 
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void onUpdate(int serial, String state) {
+        WeakReference<View> weakBlock = blocks.get(serial);
+        if (weakBlock == null) return;
+
+        View block = weakBlock.get();
+        if (block != null) updateBlock(serial, state, block);
+    }
+
+    private static void updateBlock(int serial, String state, View block) {
+        ModuleOption module = Modules.getModule(serial);
+        if (module == null) return;
+
+        String type = module.getType();
+
+        switch(type) {
+            case "temp":
+                updateBlockTemp(state, block);
+                break;
+            case "humidity":
+                updateBlockHumidity(state, block);
+                break;
+        }
+    }
+
+    private static void updateBlockTemp(String state, View block) {
+        TextView value = block.findViewById(R.id.dashboardRowTempValue);
+        value.setText(String.format("%s %s", state, "C"));
+        // TODO: Celsius degrees
+    }
+
+    private static void updateBlockHumidity(String state, View block) {
+        TextView value = block.findViewById(R.id.dashboardRowHumidityValue);
+        value.setText(String.format("%s %%", state));
     }
 }

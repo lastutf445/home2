@@ -39,20 +39,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             super.handleMessage(msg);
 
             try {
-                JSONObject data = new JSONObject(
-                        msg.getData().getString("data")
-                );
+                Bundle data = msg.getData();
 
                  switch(msg.what) {
                      case 0:
                          Dashboard.onUpdate(data);
                          break;
-                     case 1:
+                     case 999:
                          Notifications.makeToast(data.getString("msg"));
+                         break;
                  }
-
-            } catch(JSONException e) {
-                e.printStackTrace();
 
             } catch (NullPointerException e) {
                 e.printStackTrace();
@@ -96,6 +92,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         nav.setSelectedItemId(R.id.nav_dashboard);
 
         Notifications.makeToast( manager.getFragments().size() + " fragments are injected");
+    }
+
+    @Override
+    protected void onStop() {
+        //clearFragments();
+        super.onStop();
     }
 
     @Override

@@ -187,7 +187,7 @@ public class Sync {
                             DatagramPacket packet = new DatagramPacket(buf, buf.length);
                             socket.receive(packet);
 
-                            JSONObject obj = new JSONObject(new String(buf));
+                            JSONObject obj = new JSONObject((new String(buf)).trim());
                             int nodeSerial = obj.getInt("nodeSerial");
                             JSONObject data = obj.getJSONObject("data");
 
