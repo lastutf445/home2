@@ -39,20 +39,22 @@ public class UniversalViewer extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        //super.onActivityResult(requestCode, resultCode, data);
 
-        if (data != null) {
-            if (data.getBooleanExtra("needReload", false)) {
-                setupUniversalViewer();
-            }
+        if (data.getBooleanExtra("needReload", false)) {
+            setupUniversalViewer();
         }
     }
 
     public void kill() {
         Intent i = new Intent();
         i.putExtra("needReload", needReload);
-
         setResult(returnCode, i);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        kill();
     }
 }

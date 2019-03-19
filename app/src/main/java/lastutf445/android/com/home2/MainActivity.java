@@ -8,7 +8,9 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,11 +65,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         appContext = getApplicationContext();
         appResources = getResources();
@@ -87,22 +84,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //Messages.setSync(Data.getBoolean("SyncMessages", false) && sync);
         //Notifications.setSync(Data.getBoolean("SyncNotifications", false) && sync);
 
-        initFragmentSystem();
-        nav.setOnNavigationItemSelectedListener(this);
-        nav.setSelectedItemId(R.id.nav_dashboard);
+        initFragmentSystem(
+                savedInstanceState == null ? null :
+                savedInstanceState.getString("activeFragment", null)
+        );
 
+        nav.setOnNavigationItemSelectedListener(this);
         Notifications.makeToast( manager.getFragments().size() + " fragments are injected");
     }
 
     @Override
-    protected void onStop() {
-        //clearFragments();
-        super.onStop();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
-        clearFragments();
+        outState.putString("activeFragment", active.getFragmentId());
         super.onSaveInstanceState(outState);
     }
 
@@ -112,39 +105,46 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Database.kill();
     }
 
-    private void initFragmentSystem() {
+    private void initFragmentSystem(String activeFragment) {
+        clearFragments();
+
         addFragment(dashboard);
         addFragment(messages);
         addFragment(notifications);
         addFragment(menu);
 
-        switch (Data.getString("ActiveFragment", "dashboard")) {
+        if (activeFragment == null) {
+            activeFragment = Data.getString("ActiveFragment", "dashboard");
+        }
+
+        switch (activeFragment) {
             case "dashboard":
                 changeFragment(dashboard);
-                nav.setSelectedItemId(R.id.nav_dashboard);
+                nav.setSelectedItemId(nav.getMenu().getItem(0).getItemId());
                 break;
             case "messages":
                 changeFragment(messages);
-                nav.setSelectedItemId(R.id.nav_messages);
+                nav.setSelectedItemId(nav.getMenu().getItem(1).getItemId());
                 break;
             case "notifications":
                 changeFragment(notifications);
-                nav.setSelectedItemId(R.id.nav_notifications);
+                nav.setSelectedItemId(nav.getMenu().getItem(2).getItemId());
                 break;
             case "menu":
                 changeFragment(menu);
-                nav.setSelectedItemId(R.id.nav_menu);
+                nav.setSelectedItemId(nav.getMenu().getItem(3).getItemId());
                 break;
         }
     }
 
     private void clearFragments() {
-        manager.beginTransaction()
-                .remove(dashboard)
-                .remove(messages)
-                .remove(notifications)
-                .remove(menu)
-                .commitNow();
+        FragmentTransaction t = manager.beginTransaction();
+
+        for (Fragment i: manager.getFragments()) {
+            t.remove(i);
+        }
+
+        t.commitNow();
     }
 
     private void addFragment(NavigationFragment fragment) {
@@ -179,8 +179,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void changeFragment(NavigationFragment fragment) {
-        if (active != null) manager.beginTransaction().hide(active).commit();
-        manager.beginTransaction().show(fragment).commit();
+        if (active != null) manager.beginTransaction().hide(active).commitNow();
+        manager.beginTransaction().show(fragment).commitNow();
         active = fragment;
 
         Log.d("LOGTAG", fragment.getClass().getName() + " is now shown");
@@ -188,6 +188,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public static void universalViewerSetupBridge(UniversalViewer uv, View view, int layout) {
         active.universalViewerSetup(uv, view, layout);
+    }
+
+    public static Fragment getActiveFragment() {
+        return active;
     }
 
     public static Context getAppContext() {
@@ -214,6 +218,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Data.refreshOptions();
+
+        //Log.d("LOGTAG", "captured activity result - " + requestCode + ", " + resultCode);
 
         switch(requestCode) {
             case 0:

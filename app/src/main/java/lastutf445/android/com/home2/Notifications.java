@@ -26,6 +26,7 @@ public class Notifications extends NavigationFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
+        id = "notifications";
         return view;
     }
 

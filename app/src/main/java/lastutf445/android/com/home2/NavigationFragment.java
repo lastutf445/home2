@@ -10,6 +10,12 @@ import org.json.JSONObject;
 
 public abstract class NavigationFragment extends Fragment {
 
+    protected String id;
+
+    public String getFragmentId() {
+        return id;
+    }
+
     public void navigationFragmentSetup() {
 
     }

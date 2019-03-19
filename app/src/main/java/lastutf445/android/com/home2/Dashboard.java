@@ -55,6 +55,7 @@ public class Dashboard extends NavigationFragment {
         view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         content = view.findViewById(R.id.dashboard);
         this.inflater = inflater;
+        id = "dashboard";
 
         blocks = new HashMap<>();
         refreshDashboard();
@@ -68,9 +69,13 @@ public class Dashboard extends NavigationFragment {
 
     public void createDashboardBlock(DashboardOption op) {
         try {
-            JSONArray modules = op.getOps().getJSONArray("modules");
+            JSONArray modules = new JSONArray();
             String type = op.getType();
             View view = null;
+
+            if (!type.equals("row_space")) {
+                modules = op.getOps().getJSONArray("modules");
+            }
 
             switch (type) {
                 case "row_temp":
@@ -80,7 +85,7 @@ public class Dashboard extends NavigationFragment {
                     view = createRowHumidity(modules);
                     break;
                 case "row_space":
-                    view = createRowSpace(modules);
+                    view = createRowSpace();
                     break;
                 case "table_icons":
                     view = createTableIcons(modules);
@@ -159,9 +164,8 @@ public class Dashboard extends NavigationFragment {
         return v;
     }
 
-    private View createRowSpace(JSONArray modules) {
-        View v = inflater.inflate(R.layout.dashboard_row_space, content, false);
-        return v;
+    private View createRowSpace() {
+        return inflater.inflate(R.layout.dashboard_row_space, content, false);
     }
 
     private View createTableIcons(JSONArray modules) throws JSONException {
@@ -171,7 +175,7 @@ public class Dashboard extends NavigationFragment {
 
         TypedValue out = new TypedValue();
 
-        getContext().getTheme().resolveAttribute(
+        MainActivity.getAppContext().getTheme().resolveAttribute(
                 android.R.attr.selectableItemBackground, out, true
         );
 

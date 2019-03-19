@@ -21,6 +21,7 @@ public class Messages extends NavigationFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_messages, container, false);
+        id = "messages";
         return view;
     }
 }

@@ -133,7 +133,7 @@ public final class Modules {
                 Sync.publish(i.getKey(), new SyncProvider(i.getKey(), query) {
                     @Override
                     public JSONObject getQuery() {
-                        Log.d("LOGTAG", "try publish with id " + id);
+                        //Log.d("LOGTAG", "try publish with id " + id);
                         return super.getQuery();
                     }
 
@@ -142,7 +142,7 @@ public final class Modules {
                         super.onPublishCustomTrigger(statusCode);
                         Log.d("LOGTAG", "statusCode - " + statusCode);
 
-
+                        /*
                         try {
                             Message msg = MainActivity.getMainHandler().obtainMessage();
                             Bundle msgData = new Bundle();
@@ -155,7 +155,7 @@ public final class Modules {
 
                         } catch (NullPointerException e) {
                             e.printStackTrace();
-                        }
+                        }*/
 
                     }
                 });
@@ -192,7 +192,7 @@ public final class Modules {
                     }
                 });
 
-                Log.d("LOGTAG", "successfully installed " + i.getKey());
+                //Log.d("LOGTAG", "successfully installed " + i.getKey());
 
             } catch (JSONException e) {
                 e.printStackTrace();
