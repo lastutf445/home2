@@ -99,7 +99,7 @@ public class Sync {
         byte[] quads = new byte[4];
 
         for (int k = 0; k < 4; k++) {
-            quads[k] = (byte) (broadcast >> (k * 8));
+            quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
         }
 
         return InetAddress.getByAddress(quads);
@@ -255,8 +255,10 @@ public class Sync {
                     DatagramSocket socket = new DatagramSocket();
                     DatagramPacket packet;
 
-                    byte[] msg = query.toString().getBytes();
                     int port = query.has("port") ? query.getInt("port") : Sync.port;
+                    query.put("port", Sync.port);
+
+                    byte[] msg = query.toString().getBytes();
 
                     if (query.has("broadcast")) {
                         if (!networkBSSID.equals(Data.getString("SyncHomeNetwork", "false"))) {

@@ -32,6 +32,7 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
             R.id.menuStorageButton,
             R.id.menuModulesButton,
             R.id.menuSyncButton,
+            R.id.menuNodesButton,
             R.id.menuAboutButton
     };
 
@@ -106,6 +107,9 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
             case R.id.menuModulesButton:
                 i.putExtra("layout", R.layout.menu_modules);
                 break;
+            case R.id.menuNodesButton:
+                i.putExtra("layout", R.layout.menu_nodes);
+                break;
             case R.id.menuSyncButton:
                 i.putExtra("layout", R.layout.menu_sync);
                 break;
@@ -119,7 +123,11 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
 
         try {
             if (i.hasExtra("layout")) {
-                i.putExtra("returnCode", 0);
+
+                if (!i.hasExtra("returnCode")) {
+                    i.putExtra("returnCode", 0);
+                }
+
                 getActivity().startActivityForResult(i, 0);
             }
 
@@ -136,7 +144,18 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
         if (data.getBooleanExtra("needReload", false)) {
             navigationFragmentSetup();
         }
+    }
 
+    @Override
+    public void onUniversalViewerResult(int requestCode, int resultCode, @Nullable Intent data, UniversalViewer uv) {
+        Log.d("LOGTAG", "captured by uv hook - " + resultCode);
+
+        switch (resultCode) {
+            case 1:
+                Modules.disableNodesSearching();
+                break;
+
+        }
     }
 
     @Override
@@ -148,7 +167,7 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
                 UniversalViewerScreens.setupAccountScreen(uv, view);
                 break;
             case R.layout.menu_account_edit_name:
-                UniversalViewerScreens.setupAccountEditName(uv, view);
+                UniversalViewerScreens.setupAccountEditNameScreen(uv, view);
                 break;
             case R.layout.menu_auth:
                 UniversalViewerScreens.setupAuthScreen(uv, view);
@@ -170,6 +189,15 @@ public class Menu extends NavigationFragment implements View.OnClickListener {
                 break;
             case R.layout.menu_sync:
                 UniversalViewerScreens.setupSyncScreen(uv, view);
+                break;
+            case R.layout.menu_nodes:
+                UniversalViewerScreens.setupNodesScreen(uv, view);
+                break;
+            case R.layout.menu_nodes_search:
+                UniversalViewerScreens.setupNodesSearchScreen(uv, view);
+                break;
+            case R.layout.menu_node:
+                UniversalViewerScreens.setupNodeScreen(uv, view);
                 break;
             case R.layout.menu_sync_masterserver:
                 UniversalViewerScreens.setupSyncMasterServerScreen(uv, view);

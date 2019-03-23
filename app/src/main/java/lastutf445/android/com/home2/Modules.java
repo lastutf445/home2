@@ -4,18 +4,22 @@ import android.content.Context;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Node;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.MissingFormatArgumentException;
 import java.util.Set;
 
 public final class Modules {
@@ -44,7 +48,11 @@ public final class Modules {
             modules = Database.getModules();
 
             for (ModuleOption i: modules.values()) {
-                enableSyncModule(i);
+                if (i.getSyncing()) enableSyncModule(i);
+
+                if (nodes.containsKey(i.getNodeSerial())) {
+                    nodes.get(i.getNodeSerial()).addModule(i.getSerial());
+                }
             }
 
             return true;
@@ -133,7 +141,6 @@ public final class Modules {
                 Sync.publish(i.getKey(), new SyncProvider(i.getKey(), query) {
                     @Override
                     public JSONObject getQuery() {
-                        //Log.d("LOGTAG", "try publish with id " + id);
                         return super.getQuery();
                     }
 
@@ -141,22 +148,6 @@ public final class Modules {
                     public void onPublishCustomTrigger(int statusCode) {
                         super.onPublishCustomTrigger(statusCode);
                         Log.d("LOGTAG", "statusCode - " + statusCode);
-
-                        /*
-                        try {
-                            Message msg = MainActivity.getMainHandler().obtainMessage();
-                            Bundle msgData = new Bundle();
-
-                            msgData.putString("msg", "statusCode - " + statusCode);
-                            msg.setData(msgData);
-                            msg.what = 999;
-
-                            MainActivity.getMainHandler().sendMessage(msg);
-
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }*/
-
                     }
                 });
                 Sync.subscribe(i.getKey(), new SyncProvider(i.getKey(), query) {
@@ -210,5 +201,74 @@ public final class Modules {
             Sync.unsubscribe(i);
             Sync.unpublish(i);
         }
+    }
+
+    public synchronized static void enableNodesSearching(final UniversalViewer uv, final View view) {
+        try {
+
+            JSONObject query = new JSONObject();
+            query.put("nodesSearch", 1);
+            query.put("broadcast", 1);
+
+
+            Sync.publish(-3, new SyncProvider(-3, query) {
+                @Override
+                public void onPublishCustomTrigger(int statusCode) {
+                    Log.d("LOGTAG", "try to search nodes, status code - " + statusCode);
+                }
+            });
+
+            Sync.subscribe(-3, new SyncProvider(-3, query) {
+                @Override
+                public void onReceive(JSONObject data, int nodeSerial) {
+                    Log.d("LOGTAG", "received nodeSerial - " + nodeSerial);
+                    Log.d("LOGTAG", data.toString());
+
+                    Message msg = MainActivity.getMainHandler().obtainMessage();
+                    Bundle msgData = new Bundle();
+
+                    msgData.putString("data", data.toString());
+                    msg.setData(msgData);
+                    msg.what = -3;
+
+                    MainActivity.getMainHandler().sendMessage(msg);
+                }
+            });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized static void disableNodesSearching() {
+        Sync.unsubscribe(-3);
+        Sync.unpublish(-3);
+    }
+
+    public static void onNodesSearchUpdate(Bundle data) {
+        View view = MainActivity.getUVView();
+
+        try {
+            //JSONObject modules = data.getJSONObject("modules");
+            JSONObject node = (new JSONObject(data.getString("data"))).getJSONObject("node");
+            NodeOption nodeOption = new NodeOption(node);
+
+            ArrayList<NodeOption> arrayList = new ArrayList<>();
+            arrayList.add(nodeOption);
+
+            RecyclerView recyclerView = view.findViewById(R.id.nodesSearchContent);
+            NodesAdapter adapter = (NodesAdapter) recyclerView.getAdapter();
+            adapter.addItems(arrayList);
+
+            Log.d("LOGTAG", "recycler updated");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        view.invalidate();
     }
 }

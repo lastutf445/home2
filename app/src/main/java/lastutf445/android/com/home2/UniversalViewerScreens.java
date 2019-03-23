@@ -11,11 +11,15 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UniversalViewerScreens {
+public final class UniversalViewerScreens {
 
     public static void setupAccountScreen(UniversalViewer uv, View view) {
         UniversalViewerListener c = new UniversalViewerListener(uv, view) {
@@ -46,7 +50,7 @@ public class UniversalViewerScreens {
         view.findViewById(R.id.accountLogout).setOnClickListener(c);
     }
 
-    public static void setupAccountEditName(UniversalViewer uv, View view) {
+    public static void setupAccountEditNameScreen(UniversalViewer uv, View view) {
         UniversalViewerListener c = new UniversalViewerListener(uv, view) {
             @Override
             public void onClick(View v) {
@@ -146,9 +150,10 @@ public class UniversalViewerScreens {
             }
         };
 
-        content.setAdapter(new ModulesAdapter(listener));
-        ((ModulesAdapter) content.getAdapter()).setItems(list);
+        ModulesAdapter adapter = new ModulesAdapter(listener);
+        adapter.setItems(list);
 
+        content.setAdapter(adapter);
     }
 
     public static void setupSyncScreen(UniversalViewer uv, View view) {
@@ -307,6 +312,124 @@ public class UniversalViewerScreens {
 
         for (int i: buttons) {
             view.findViewById(i).setOnClickListener(c);
+        }
+    }
+
+    public static void setupNodesScreen(final UniversalViewer uv, View view) {
+        UniversalViewerListener c = new UniversalViewerListener(uv, view) {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.nodesAdd:
+                        Intent i = new Intent(uv, UniversalViewer.class);
+                        i.putExtra("layout", R.layout.menu_nodes_search);
+                        i.putExtra("needReload", true);
+                        i.putExtra("returnCode", 1);
+                        uv.startActivityForResult(i, 1);
+                        break;
+                }
+            }
+        };
+
+        view.findViewById(R.id.nodesAdd).setOnClickListener(c);
+
+        RecyclerView content = view.findViewById(R.id.nodesContent);
+        content.setLayoutManager(new LinearLayoutManager(MainActivity.getAppContext()));
+
+        HashMap<Integer, NodeOption> nodes = Modules.getNodes();
+        ArrayList<NodeOption> list = new ArrayList<>();
+
+        for (Map.Entry<Integer, NodeOption> i: nodes.entrySet()) {
+            list.add(i.getValue());
+        }
+
+        NodesAdapter.Listener listener = new NodesAdapter.Listener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(uv, UniversalViewer.class);
+                i.putExtra("layout", R.layout.menu_node);
+                i.putExtra("needReload", true);
+
+                try {
+                    TextView serial = v.findViewById(R.id.nodesItemSerial);
+                    int nodeSerial = Integer.valueOf(serial.getText().toString());
+                    i.putExtra("node", Modules.getNode(nodeSerial).toJSON());
+
+                    uv.startActivityForResult(i, 0);
+
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        NodesAdapter adapter = new NodesAdapter(listener);
+        adapter.addItems(list);
+
+        content.setAdapter(adapter);
+    }
+
+    public static void setupNodesSearchScreen(final UniversalViewer uv, View view) {
+        Modules.enableNodesSearching(uv, view);
+
+        RecyclerView content = view.findViewById(R.id.nodesSearchContent);
+
+        NodesAdapter.Listener listener = new NodesAdapter.Listener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(uv, UniversalViewer.class);
+                i.putExtra("layout", R.layout.menu_node);
+                i.putExtra("needReload", true);
+
+                try {
+                    TextView serial = v.findViewById(R.id.nodesItemSerial);
+                    int nodeSerial = Integer.valueOf(serial.getText().toString());
+                    i.putExtra("node", Modules.getNode(nodeSerial).toJSON());
+
+                    uv.startActivityForResult(i, 0);
+
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        NodesAdapter adapter = new NodesAdapter(listener);
+        content.setAdapter(adapter);
+    }
+
+    public static void setupNodeScreen(final UniversalViewer uv, View view) {
+        Intent intent = uv.getIntent();
+
+        TextView title = view.findViewById(R.id.menuNodeTitle);
+        TextView serial = view.findViewById(R.id.menuNodeSerial);
+
+        try {
+            JSONObject json = new JSONObject(intent.getStringExtra("node"));
+            NodeOption node = new NodeOption(json);
+
+            title.setText(node.getTitle());
+            serial.setText(String.valueOf(node.getSerial()));
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            uv.kill();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            uv.kill();
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            uv.kill();
         }
     }
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/menuNodeLayoutTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/nodeTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/menuNodeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/nodes_unknown"
+        android:textAllCaps="false"
+        android:textColor="#444"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/menuNodeLayoutTitle"
+        app:layout_constraintTop_toBottomOf="@+id/menuNodeLayoutTitle" />
+
+    <TextView
+        android:id="@+id/menuNodeSerialTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:text="@string/node_serial"
+        app:layout_constraintStart_toStartOf="@+id/menuNodeTitle"
+        app:layout_constraintTop_toBottomOf="@+id/menuNodeTitle" />
+
+    <TextView
+        android:id="@+id/menuNodeSerial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/sync_undefined"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/menuNodeSerialTitle"
+        app:layout_constraintTop_toBottomOf="@+id/menuNodeSerialTitle" />
+</android.support.constraint.ConstraintLayout>

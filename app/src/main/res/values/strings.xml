@@ -21,6 +21,7 @@
     <string name="notifications">Notifications</string>
     <string name="storage">Storage</string>
     <string name="modules">Modules</string>
+    <string name="nodes">Nodes</string>
     <string name="sync">Sync</string>
     <string name="about">About</string>
 
@@ -45,8 +46,15 @@
     <string name="notificationsNotifications">Enable notifications</string>
 
     <string name="modules_unknown">Unknown module</string>
-
     <string name="modulesAddTitle">Scanner</string>
+
+    <string name="nodes_unknown">Unknown node</string>
+    <string name="nodesAddTitle">Scanner</string>
+
+    <string name="nodeTitle">Node configuration</string>
+    <string name="node_serial">Serial number:</string>
+
+    <string name="nodesSearchTitle">Nodes search</string>
 
     <string name="syncSync">Automatic synchronization</string>
     <string name="syncDashboard">Sync Dashboard</string>

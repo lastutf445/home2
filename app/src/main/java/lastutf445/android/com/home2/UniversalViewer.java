@@ -41,9 +41,17 @@ public class UniversalViewer extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
 
+        Log.d("LOGTAG", "captured UV activity result " + requestCode + ", " + resultCode);
+
+        MainActivity.onUniversalViewerResult(requestCode, resultCode, data, this);
+
         if (data.getBooleanExtra("needReload", false)) {
             setupUniversalViewer();
         }
+    }
+
+    public int getLayoutId() {
+        return layout;
     }
 
     public void kill() {

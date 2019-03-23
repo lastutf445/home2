@@ -21,7 +21,7 @@ import java.util.Map;
 
 public final class Database {
 
-    private static int DATABASE_VERSION = 4;
+    private static int DATABASE_VERSION = 5;
     private static String DATABASE_NAME = "app.db";
     private static String DATABASE_PATH;
 
@@ -44,7 +44,7 @@ public final class Database {
     public static void onCreate() {
         db.execSQL("CREATE TABLE IF NOT EXISTS core (option TEXT PRIMARY KEY, value TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS nodes (serial INTEGER PRIMARY KEY, ip TEXT, title TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, nodeSerial INTEGER, title TEXT, state TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, nodeSerial INTEGER, title TEXT, state TEXT, syncing INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS dashboard (id INTEGER PRIMARY KEY, type TEXT, ops string)");
     }
 
@@ -143,18 +143,19 @@ public final class Database {
                     cursor.getString(cursor.getColumnIndex("type")),
                     cursor.getInt(cursor.getColumnIndex("nodeSerial")),
                     cursor.getString(cursor.getColumnIndex("title")),
-                    cursor.getString(cursor.getColumnIndex("state"))
+                    cursor.getString(cursor.getColumnIndex("state")),
+                    cursor.getInt(cursor.getColumnIndex("syncing"))
             ));
 
             cursor.moveToNext();
         }
 
-        ops.put(0, new ModuleOption(0, "temp", 0, "Temperature inside", "24"));
-        ops.put(1, new ModuleOption(1, "temp", 0, "Temperature outside", "-3"));
-        ops.put(2, new ModuleOption(2, "humidity", 0, "Humidity inside", "57"));
-        ops.put(3, new ModuleOption(3, "temp", 0, "Temperature inside near gate", "-3"));
-        ops.put(4, new ModuleOption(4, "temp", 0, "Temperature outside near gate", "-4"));
-        ops.put(5, new ModuleOption(5, "temp", 0, "Temperature outside the garden", "-5"));
+        ops.put(0, new ModuleOption(0, "temp", 0, "Temperature inside", "24", 1));
+        //ops.put(1, new ModuleOption(1, "temp", 0, "Temperature outside", "-3", 1));
+        //ops.put(2, new ModuleOption(2, "humidity", 0, "Humidity inside", "57", 1));
+        //ops.put(3, new ModuleOption(3, "temp", 0, "Temperature inside near gate", "-3", 1));
+        //ops.put(4, new ModuleOption(4, "temp", 0, "Temperature outside near gate", "-4", 1));
+        //ops.put(5, new ModuleOption(5, "temp", 0, "Temperature outside the garden", "-5", 1));
 
         cursor.close();
         return ops;
@@ -187,6 +188,14 @@ public final class Database {
 
         cursor.close();
         return ops;
+    }
+
+    public static void setModuleSyncing(int serial, boolean syncing) {
+        ContentValues cv = new ContentValues();
+        cv.put("syncing", syncing ? 1 : 0);
+
+        db.update("modules", cv, "serial=?", new String[]{String.valueOf(serial)});
+
     }
 
     public static void setModuleState(int serial, String state) {

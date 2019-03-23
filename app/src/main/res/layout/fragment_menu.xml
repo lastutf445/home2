@@ -55,6 +55,13 @@
         android:text="@string/modules" />
 
     <Button
+        android:id="@+id/menuNodesButton"
+        style="@style/StyledBorderlessButtonIcon"
+        android:layout_width="match_parent"
+        android:drawableStart="@drawable/search"
+        android:text="@string/nodes" />
+
+    <Button
         android:id="@+id/menuSyncButton"
         style="@style/StyledBorderlessButtonIcon"
         android:layout_width="match_parent"

@@ -3,6 +3,7 @@ package lastutf445.android.com.home2;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
@@ -25,6 +26,10 @@ public abstract class NavigationFragment extends Fragment {
     }
 
     public void onActivityResult(int resultCode, Intent data) {
+
+    }
+
+    public void onUniversalViewerResult(int requestCode, int resultCode, @Nullable Intent data, UniversalViewer uv) {
 
     }
 }

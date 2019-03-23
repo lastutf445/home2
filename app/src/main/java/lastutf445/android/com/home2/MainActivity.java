@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private Dashboard dashboard = new Dashboard(); // listenerId: 0+ (nodeSerial)
     private Messages messages = new Messages(); // listenerId: -1
     private Notifications notifications = new Notifications(); // listenerId: -2
-    private Menu menu = new Menu();
+    private Menu menu = new Menu(); // listenerId: -3
 
     private static FragmentManager manager;
     private static NavigationFragment active;
@@ -34,6 +34,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private static Handler UVHandler;
     private static MainHandler handler;
+
+    private static UniversalViewer UVInstance;
+    private static View UVView;
 
     private static class MainHandler extends Handler {
         @Override
@@ -46,6 +49,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                  switch(msg.what) {
                      case 0:
                          Dashboard.onUpdate(data);
+                         break;
+                     case -1:
+                         break;
+                     case -2:
+                         break;
+                     case -3:
+                         Modules.onNodesSearchUpdate(data);
                          break;
                      case 999:
                          Notifications.makeToast(data.getString("msg"));
@@ -188,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public static void universalViewerSetupBridge(UniversalViewer uv, View view, int layout) {
         active.universalViewerSetup(uv, view, layout);
+        UVInstance = uv;
+        UVView = view;
     }
 
     public static Fragment getActiveFragment() {
@@ -214,6 +226,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return UVHandler;
     }
 
+    public synchronized static UniversalViewer getUVInstance() {
+        return UVInstance;
+    }
+
+    public synchronized static View getUVView() {
+        return UVView;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -226,5 +246,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 active.onActivityResult(resultCode, data);
                 break;
         }
+    }
+
+    public static void onUniversalViewerResult(int requestCode, int resultCode, @Nullable Intent data, UniversalViewer uv) {
+        active.onUniversalViewerResult(requestCode, resultCode, data, uv);
     }
 }
