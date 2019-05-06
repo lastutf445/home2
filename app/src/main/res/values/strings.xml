@@ -117,6 +117,18 @@
     <string name="syncCurrentNetwork">Current network:</string>
     <string name="syncHomeNetwork">Home network:</string>
 
+    <string name="syncBehaviorClient">Client settings</string>
+    <string name="syncClientPort">Local port</string>
+
+    <string name="syncBehaviorDiscovery">Nodes discovery</string>
+    <string name="syncDiscoveryPort">Discovery port</string>
+    <string name="syncDiscoveryAttempts">Search attempts</string>
+
+    <string name="syncBehaviorIntervals">Intervals settings</string>
+    <string name="syncDashboardInterval">Sync dashboard interval</string>
+    <string name="syncMessagesInterval">Sync messages interval</string>
+    <string name="syncNotificationsInterval">Sync notifications interval</string>
+
     <string name="aboutSubtitle">Make your home intelligent</string>
     <string name="aboutDeveloped">Developing by:</string>
     <string name="aboutDeveloper">lastutf445</string>
@@ -133,6 +145,11 @@
     <string name="override">Override</string>
     <string name="saveChanges">Save changes</string>
     <string name="cancel">Cancel</string>
+    
+    <string name="specialModule">Module settings</string>
+    <string name="specialClient">Client settings</string>
+    
+    <string name="specialTemperatureUseFahrenheit">Use The Fahrenheit scale</string>
 
     <string name="notTested">not tested</string>
     <string name="notAvailable">Not available</string>

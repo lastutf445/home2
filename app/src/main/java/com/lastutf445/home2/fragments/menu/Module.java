@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -145,6 +146,17 @@ public class Module extends NavigationFragment {
                     Color.parseColor("#999999")
             );
         }
+
+        if (!ModulesLoader.hasSpecial(module)) {
+            view.findViewById(R.id.moduleConfigure).setClickable(false);
+
+            ((Button) view.findViewById(R.id.moduleConfigureButton)).setTextColor(
+                    Color.parseColor("#999999")
+            );
+            ((ImageView) view.findViewById(R.id.moduleConfigureIcon)).setColorFilter(
+                    Color.parseColor("#999999")
+            );
+        }
     }
 
     public void setModule(@NonNull com.lastutf445.home2.containers.Module module, int pos) {
@@ -153,7 +165,7 @@ public class Module extends NavigationFragment {
     }
 
     private void configureSpecial() {
-
+        ModulesLoader.callSpecial(module, this);
     }
 
     private void switchSync() {

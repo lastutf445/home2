@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView40"
+        style="@style/StyledTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unknownModule" />
+
+    <TextView
+        android:id="@+id/specialModule"
+        style="@style/StyledSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/specialModule" />
+
+    <TextView
+        android:id="@+id/specialClient"
+        style="@style/StyledSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/specialClient" />
+
+    <LinearLayout
+        android:id="@+id/specialTemperatureUseFahrenheit"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/specialTemperatureUseFahrenheitCheckBox"
+            style="@style/StyledCheckbox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/specialTemperatureUseFahrenheit" />
+    </LinearLayout>
+</LinearLayout>

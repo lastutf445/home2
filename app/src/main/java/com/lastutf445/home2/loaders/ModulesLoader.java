@@ -9,10 +9,12 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Module;
-import com.lastutf445.home2.containers.Node;
-import com.lastutf445.home2.fragments.menu.Sync;
+import com.lastutf445.home2.special.HumiditySpecial;
+import com.lastutf445.home2.special.LightRGBSpecial;
+import com.lastutf445.home2.special.TemperatureSpecial;
+import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.Special;
 
 import org.json.JSONException;
 
@@ -106,5 +108,39 @@ public class ModulesLoader {
         db.delete("modules", "serial=?", args);
         NodesLoader.onModuleLinkChanged(module, false);
         modules.remove(module.getSerial());
+    }
+
+    public static boolean hasSpecial(@NonNull Module module) {
+        switch (module.getType()) {
+            case "temperature":
+                return true;
+            case "humidity":
+                return true;
+            case "lightrgb":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static void callSpecial(@NonNull Module module, @NonNull NavigationFragment base) {
+        Special child = null;
+
+        switch (module.getType()) {
+            case "temperature":
+                child = new TemperatureSpecial();
+                break;
+            case "humidity":
+                child = new HumiditySpecial();
+                break;
+            case "lightrgb":
+                child = new LightRGBSpecial();
+                break;
+        }
+
+        if (child == null) return;
+
+        child.setModule(module);
+        FragmentsLoader.addChild(child, base);
     }
 }

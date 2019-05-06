@@ -38,8 +38,8 @@ public class DataLoader {
         ops.put("ExternalPort", null);
         // synchronization
         ops.put("SyncDashboard", true);
-        ops.put("SyncMessages", false); // requires master
-        ops.put("SyncNotifications", false); // semi-requires master
+        ops.put("SyncMessages", false);
+        ops.put("SyncNotifications", false);
         ops.put("SyncHomeNetwork", null);
         // sync behavior
         ops.put("SyncClientPort", 44501);
@@ -48,7 +48,6 @@ public class DataLoader {
         ops.put("SyncDashboardInterval", 5000);
         ops.put("SyncMessagesInterval", 800);
         ops.put("SyncNotificationsInterval", 1000);
-        //ops.put("CheckNodeReachability", true);
     }
 
     public static void init(Context context, Resources resources) {
