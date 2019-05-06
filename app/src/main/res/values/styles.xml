@@ -1,8 +1,6 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -12,54 +10,85 @@
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
 
-    <style name="StyledTransparentImageButton" parent="Widget.AppCompat.ImageButton">
-        <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:paddingBottom">16dp</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-    </style>
-
-    <style name="StyledBorderlessButton" parent="StyledTransparentButton">
-    </style>
-
-    <style name="StyledBorderlessButtonIcon" parent="StyledBorderlessButton">
-        <item name="android:textAlignment">textStart</item>
-        <item name="android:drawablePadding">32dp</item>
+    <style name="StyledBasicButton" parent="StyledTransparentButton">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:drawablePadding">24dp</item>
         <item name="android:paddingStart">24dp</item>
-        <item name="android:paddingEnd">28dp</item>
-        <item name="android:layout_height">58dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:minHeight">60dp</item>
+        <item name="android:textColor">#333</item>
+    </style>
+
+    <style name="StyledButtonIcon" parent="@style/StyledBasicButton">
+        <item name="android:textAlignment">textStart</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:drawableTint">#333</item>
+    </style>
+
+    <style name="StyledButtonIcon.Chevron">
+        <item name="android:drawableEnd">@drawable/chevron_right</item>
+        <item name="android:drawableTint">#666</item>
+    </style>
+
+    <style name="StyledTitle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingTop">24dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingBottom">24dp</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="StyledSubtitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingTop">24dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textColor">#999</item>
     </style>
 
     <style name="StyledSwitch" parent="Base.Widget.AppCompat.CompoundButton.Switch">
         <item name="android:background">@android:color/transparent</item>
-        <item name="android:height">58dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:minHeight">60dp</item>
         <item name="android:paddingStart">24dp</item>
         <item name="android:paddingEnd">16dp</item>
         <item name="android:clickable">false</item>
-        <item name="android:layout_width">0dp</item>
+        <item name="android:textColor">#333</item>
+    </style>
+
+    <style name="StyledSpinner">
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:visibility">invisible</item>
     </style>
 
     <style name="StyledCheckbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:button">@null</item>
-        <item name="android:drawableRight">?android:attr/listChoiceIndicatorMultiple</item>
+        <item name="android:drawableEnd">?android:attr/listChoiceIndicatorMultiple</item>
         <item name="android:background">@android:color/transparent</item>
+        <item name="android:button">@null</item>
         <item name="android:paddingStart">24dp</item>
         <item name="android:paddingEnd">24dp</item>
-        <item name="android:height">58dp</item>
         <item name="android:clickable">false</item>
-        <item name="android:layout_width">0dp</item>
+        <item name="android:textColor">#333</item>
+        <item name="android:height">60dp</item>
     </style>
 
-    <style name="StyledPointerButton" parent="StyledTransparentButton">
-        <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:textAlignment">textStart</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:paddingStart">24dp</item>
-        <item name="android:paddingEnd">24dp</item>
-        <item name="android:height">58dp</item>
+    <style name="StyledFAB" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="fabCustomSize">48dp</item>
+        <item name="elevation">0dp</item>
+    </style>
 
+    <style name="StyledNoContent">
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="StyledRadio" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:layout_height">54dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
     </style>
 
 </resources>

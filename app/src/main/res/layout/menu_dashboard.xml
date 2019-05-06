@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView24"
+        style="@style/StyledTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dashboard" />
+
+    <Button
+        android:id="@+id/dashboardCreateWidget"
+        style="@style/StyledButtonIcon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/add"
+        android:text="@string/createWidget" />
+
+    <Button
+        android:id="@+id/dashboardMoveWidgets"
+        style="@style/StyledButtonIcon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/list"
+        android:text="@string/moveWidgets" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <Button
+        android:id="@+id/dashboardRemoveWidgets"
+        style="@style/StyledButtonIcon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/delete"
+        android:text="@string/removeWidgets" />
+</LinearLayout>

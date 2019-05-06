@@ -1,111 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
-    android:focusable="true">
+    android:fillViewport="true"
+    android:id="@+id/nestedScrollView">
 
-    <TextView
-        android:id="@+id/authTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="sans-serif-medium"
-        android:text="@string/authTitle"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/authSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/authSubtitle"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authTitle" />
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/authTitle"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/authLogin"
-        android:layout_width="256dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="@string/authLogin"
-        android:inputType="textNoSuggestions"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authSubtitle" />
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/authSubtitle"
+            app:layout_constraintEnd_toEndOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
-    <EditText
-        android:id="@+id/authPassword"
-        android:layout_width="256dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="@string/authPassword"
-        android:inputType="textPassword"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authLogin" />
+        <EditText
+            android:id="@+id/authLogin"
+            android:layout_width="256dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="24dp"
+            android:ems="10"
+            android:hint="@string/authLogin"
+            android:inputType="textPersonName"
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-    <Button
-        android:id="@+id/authEnter"
-        style="@style/StyledBorderlessButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="@string/authEnter"
-        android:textColor="@color/colorAccent"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/authEnterAsGuest"
-        app:layout_constraintEnd_toEndOf="@+id/authPassword"
-        app:layout_constraintTop_toTopOf="@+id/authEnterAsGuest" />
+        <EditText
+            android:id="@+id/authPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="@string/authPassword"
+            android:inputType="textPersonName"
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="@+id/authLogin"
+            app:layout_constraintStart_toStartOf="@+id/authLogin"
+            app:layout_constraintTop_toBottomOf="@+id/authLogin" />
 
-    <Button
-        android:id="@+id/authEnterAsGuest"
-        style="@style/StyledTransparentButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:text="@string/authEnterAsGuest"
-        app:layout_constraintStart_toStartOf="@+id/authPassword"
-        app:layout_constraintTop_toBottomOf="@+id/authPassword" />
+        <Button
+            android:id="@+id/authEnter"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="64dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:fontFamily="sans-serif"
+            android:text="@string/authEnter"
+            android:textColor="#fff"
+            app:layout_constraintEnd_toEndOf="@+id/authPassword"
+            app:layout_constraintStart_toStartOf="@+id/authPassword"
+            app:layout_constraintTop_toBottomOf="@+id/authPassword" />
 
-    <Button
-        android:id="@+id/authRestore"
-        style="@style/StyledTransparentButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="@string/authRestore"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/authEnter"
-        app:layout_constraintStart_toStartOf="@+id/authEnterAsGuest"
-        app:layout_constraintTop_toBottomOf="@+id/authEnterAsGuest" />
+        <Button
+            android:id="@+id/authEnterBasic"
+            style="@style/StyledBasicButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/authEnterBasic"
+            android:textAllCaps="true"
+            android:textColor="#999"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/authEnter"
+            app:layout_constraintStart_toStartOf="@+id/authEnter"
+            app:layout_constraintTop_toBottomOf="@+id/authEnter" />
 
-</android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

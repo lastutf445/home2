@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+
+    <ImageView
+        android:id="@+id/widgetIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:tint="#333"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/warning" />
+
+    <TextView
+        android:id="@+id/widgetTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="@string/unknownTitle"
+        android:textColor="#666"
+        app:layout_constraintBottom_toBottomOf="@+id/widgetIcon"
+        app:layout_constraintStart_toEndOf="@+id/widgetIcon"
+        app:layout_constraintTop_toTopOf="@+id/widgetIcon" />
+
+    <ImageView
+        android:id="@+id/widgetDragHandle"
+        android:layout_width="56dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:scaleType="centerInside"
+        android:tint="#aaa"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/drag_handle" />
+</android.support.constraint.ConstraintLayout>

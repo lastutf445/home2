@@ -1,78 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:fillViewport="true">
 
-    <Button
-        android:id="@+id/menuAccountButton"
-        style="@style/StyledBorderlessButtonIcon"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:drawableStart="@drawable/account"
-        android:text="@string/menu_user_is_not_authorized"
-        android:textAllCaps="true"
-        android:typeface="monospace" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="16dp" />
+        <Button
+            android:id="@+id/menuAccount"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:drawableStart="@drawable/account"
+            android:fontFamily="monospace"
+            android:text="@string/usernameError"
+            android:textAllCaps="true"
+            android:textColor="#444" />
 
-    <Button
-        android:id="@+id/menuDashboardButton"
-        style="@style/StyledBorderlessButtonIcon"
-        android:layout_width="match_parent"
-        android:drawableStart="@drawable/dashboard"
-        android:text="@string/dashboard" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
 
-    <Button
-        android:id="@+id/menuMessagesButton"
-        style="@style/StyledBorderlessButtonIcon"
-        android:layout_width="match_parent"
-        android:drawableStart="@drawable/people"
-        android:text="@string/messages" />
+        <Button
+            android:id="@+id/menuDashboard"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/dashboard"
+            android:text="@string/dashboard" />
 
-    <Button
-        android:id="@+id/menuNotificationsButton"
-        style="@style/StyledBorderlessButtonIcon"
-        android:layout_width="match_parent"
-        android:drawableStart="@drawable/notifications"
-        android:text="@string/notifications" />
+        <Button
+            android:id="@+id/menuMessages"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/people"
+            android:text="@string/messages" />
 
-    <Button
-        android:id="@+id/menuStorageButton"
-        style="@style/StyledBorderlessButtonIcon"
-        android:layout_width="match_parent"
-        android:drawableStart="@drawable/storage"
-        android:text="@string/storage" />
+        <Button
+            android:id="@+id/menuNotifications"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/notifications"
+            android:text="@string/notifications" />
 
-    <Button
-        android:id="@+id/menuModulesButton"
-        style="@style/StyledBorderlessButtonIcon"
-        android:layout_width="match_parent"
-        android:drawableStart="@drawable/modules"
-        android:text="@string/modules" />
+        <Button
+            android:id="@+id/menuModules"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/module"
+            android:text="@string/modules" />
 
-    <Button
-        android:id="@+id/menuNodesButton"
-        style="@style/StyledBorderlessButtonIcon"
-        android:layout_width="match_parent"
-        android:drawableStart="@drawable/search"
-        android:text="@string/nodes" />
+        <Button
+            android:id="@+id/menuNodes"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/search"
+            android:text="@string/nodes" />
 
-    <Button
-        android:id="@+id/menuSyncButton"
-        style="@style/StyledBorderlessButtonIcon"
-        android:layout_width="match_parent"
-        android:drawableStart="@drawable/sync"
-        android:text="@string/sync" />
+        <Button
+            android:id="@+id/menuSync"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/sync"
+            android:text="@string/sync" />
 
-    <Button
-        android:id="@+id/menuAboutButton"
-        style="@style/StyledBorderlessButtonIcon"
-        android:layout_width="match_parent"
-        android:drawableStart="@drawable/about"
-        android:text="@string/about" />
+        <Button
+            android:id="@+id/menuAbout"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/about"
+            android:text="@string/about" />
 
-</LinearLayout>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

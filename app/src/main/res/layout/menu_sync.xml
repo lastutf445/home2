@@ -1,164 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/syncTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        android:text="@string/sync"
-        android:textAllCaps="false"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/syncContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/syncTitle">
+        android:orientation="vertical" >
 
-        <LinearLayout
-            android:id="@+id/syncSync"
-            style="@style/StyledTransparentButton"
+        <TextView
+            android:id="@+id/textView19"
+            style="@style/StyledTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="@string/sync" />
 
-            <Switch
-                android:id="@+id/syncSyncSwitcher"
-                style="@style/StyledSwitch"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/syncSync" />
+        <TextView
+            android:id="@+id/textView13"
+            style="@style/StyledSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncThreads" />
 
-        </LinearLayout>
-
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/syncDashboard"
             style="@style/StyledTransparentButton"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <CheckBox
-                android:id="@+id/syncDashboardCheckbox"
-                style="@style/StyledCheckbox"
+            <Switch
+                android:id="@+id/syncDashboardSwitch"
+                style="@style/StyledSwitch"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/syncDashboard" />
+                android:text="@string/syncDashboard"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+            <ProgressBar
+                android:id="@+id/syncDashboardSpinner"
+                style="@style/StyledSpinner"
+                android:layout_marginEnd="80dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/syncMessages"
             style="@style/StyledTransparentButton"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" >
+            android:layout_height="wrap_content">
 
-            <CheckBox
-                android:id="@+id/syncMessagesCheckbox"
-                style="@style/StyledCheckbox"
+            <Switch
+                android:id="@+id/syncMessagesSwitch"
+                style="@style/StyledSwitch"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/syncMessages" />
-        </LinearLayout>
+                android:text="@string/syncMessages"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
+            <ProgressBar
+                android:id="@+id/syncMessagesSpinner"
+                style="@style/StyledSpinner"
+                android:layout_marginEnd="80dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/syncNotifications"
             style="@style/StyledTransparentButton"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/syncNotificationsCheckbox"
-                style="@style/StyledCheckbox"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/syncNotifications" />
-        </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="32dp" />
-
-        <LinearLayout
-            android:id="@+id/syncMasterServer"
-            style="@style/StyledTransparentButton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <Switch
-                android:id="@+id/syncMasterServerSwitcher"
+                android:id="@+id/syncNotificationsSwitch"
                 style="@style/StyledSwitch"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/syncMasterServer" />
+                android:text="@string/syncNotifications"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+            <ProgressBar
+                android:id="@+id/syncNotificationsSpinner"
+                style="@style/StyledSpinner"
+                android:layout_marginEnd="80dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/textView14"
+            style="@style/StyledSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncOther" />
 
         <Button
-            android:id="@+id/syncMasterServerSettings"
-            style="@style/StyledBorderlessButtonIcon"
+            android:id="@+id/syncBehavior"
+            style="@style/StyledButtonIcon.Chevron"
             android:layout_width="match_parent"
-            android:drawableEnd="@drawable/chevron_right"
-            android:text="@string/syncMasterServerSettings"
-            android:textAppearance="@android:style/TextAppearance.Material" />
+            android:layout_height="wrap_content"
+            android:text="@string/syncBehavior" />
+
+        <TextView
+            android:id="@+id/textView15"
+            style="@style/StyledSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncAdvanced" />
+
+        <Button
+            android:id="@+id/syncMasterServer"
+            style="@style/StyledButtonIcon.Chevron"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncMasterServer" />
+
+        <Button
+            android:id="@+id/syncExternalConnection"
+            style="@style/StyledButtonIcon.Chevron"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncExternalConnection" />
+
+        <TextView
+            android:id="@+id/textView16"
+            style="@style/StyledSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncLocalNetwork" />
 
         <LinearLayout
-            android:id="@+id/syncMarkNetworkAsHome"
+            android:id="@+id/syncMarkAsHomeNetwork"
             style="@style/StyledTransparentButton"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="32dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/masterServerExternalIP">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <CheckBox
-                android:id="@+id/syncMarkNetworkAsHomeCheckbox"
+                android:id="@+id/syncMarkAsHomeNetworkCheckBox"
                 style="@style/StyledCheckbox"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/masterServerMarkNetworkAsHome" />
+                android:text="@string/syncMarkAsHomeNetwork" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/syncCurrentNetwork"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_weight="1"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:paddingBottom="24dp"
-            android:text="@string/masterServerCurrentNetwork"
-            app:layout_constraintStart_toStartOf="@+id/masterServerExternalIP"
-            tools:layout_editor_absoluteY="442dp" />
+            android:padding="24dp"
+            android:text="@string/syncCurrentNetwork" />
 
         <TextView
             android:id="@+id/syncHomeNetwork"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
-            android:paddingBottom="32dp"
-            android:text="@string/masterServerHomeNetwork"
-            app:layout_constraintStart_toStartOf="@+id/syncCurrentNetwork"
-            app:layout_constraintTop_toBottomOf="@+id/syncCurrentNetwork" />
-
+            android:paddingBottom="24dp"
+            android:text="@string/syncHomeNetwork" />
     </LinearLayout>
-
-</android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

@@ -1,35 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </android.support.constraint.ConstraintLayout>
-    </ScrollView>
+        android:layout_weight="1"
+        android:orientation="vertical" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/nav"
-        android:layout_width="0dp"
-        android:layout_height="58dp"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:background="@android:color/background_light"
         app:labelVisibilityMode="unlabeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:menu="@layout/nav" />
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

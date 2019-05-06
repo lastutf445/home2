@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/StyledTransparentButton"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+
+    <ImageView
+        android:id="@+id/modulesItemIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:tint="#333"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/warning" />
+
+    <TextView
+        android:id="@+id/modulesItemTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="@string/unknownModule"
+        android:textColor="#666"
+        app:layout_constraintBottom_toBottomOf="@+id/modulesItemIcon"
+        app:layout_constraintStart_toEndOf="@+id/modulesItemIcon"
+        app:layout_constraintTop_toTopOf="@+id/modulesItemIcon" />
+
+    <TextView
+        android:id="@+id/modulesItemSerial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="@string/serial"
+        android:textAlignment="textStart"
+        android:textColor="#999"
+        app:layout_constraintBottom_toBottomOf="@+id/modulesItemTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/modulesItemTitle" />
+
+</android.support.constraint.ConstraintLayout>
