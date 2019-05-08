@@ -489,7 +489,7 @@ public class WidgetsLoader {
         if (id != Integer.MAX_VALUE) {
             createUpdateEvent(id);
         } else {
-            Log.d("LOGTAG", "widget not found");
+            //Log.d("LOGTAG", "widget not found");
         }
     }
 }

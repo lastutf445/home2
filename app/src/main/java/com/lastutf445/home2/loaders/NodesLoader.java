@@ -16,7 +16,7 @@ import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.containers.Node;
 import com.lastutf445.home2.fragments.menu.ExternalAddress;
-import com.lastutf445.home2.fragments.menu.Sync;
+import com.lastutf445.home2.network.Sync;
 
 import java.util.concurrent.ExecutionException;
 
@@ -58,7 +58,19 @@ public class NodesLoader {
 
             cursor.moveToNext();
         }
+/*
+        for (int i = 1; i <= 10000; ++i) {
+            try {
+                nodes.put(
+                        i,
+                        new Node(i, "192.168.0.1", Sync.DEFAULT_PORT, "node title #" + i)
+                );
 
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+        }
+*/
         cursor.close();
     }
 

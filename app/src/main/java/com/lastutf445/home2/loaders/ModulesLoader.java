@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -96,6 +97,27 @@ public class ModulesLoader {
         NodesLoader.onModuleLinkChanged(module, true);
         modules.put(module.getSerial(), module);
         return true;
+    }
+
+    public static boolean applyModule(@NonNull Module module) {
+        SQLiteDatabase db = DataLoader.getDb();
+        ContentValues cv = new ContentValues();
+
+        cv.put("serial", module.getSerial());
+        cv.put("type", module.getType());
+        cv.put("node", module.getNode());
+        cv.put("title", module.getTitle());
+        cv.put("options", module.getOps().toString());
+        cv.put("syncing", module.getSerial());
+
+        try {
+            db.replaceOrThrow("modules", null, cv);
+            return true;
+
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void removeModule(@NonNull Module module) {

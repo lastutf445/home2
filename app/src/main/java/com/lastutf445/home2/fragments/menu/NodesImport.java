@@ -144,19 +144,6 @@ public class NodesImport extends NavigationFragment {
             return;
         }
 
-        try {
-            Node original = new Node(node, true);
-            NodesLoader.addNode(original, false);
-
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-
-        if (NodesLoader.getNode(node.getSerial()) == null) {
-            NotificationsLoader.makeToast("Unexpected error", true);
-            return;
-        }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 getActivity()
         );
@@ -184,6 +171,20 @@ public class NodesImport extends NavigationFragment {
         builder.setPositiveButton(match ? R.string.override : R.string.add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                try {
+                    if (NodesLoader.getNode(node.getSerial()) == null) {
+                        Node original = new Node(node, true);
+                        NodesLoader.addNode(original, false);
+                    }
+
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                }
+
+                if (NodesLoader.getNode(node.getSerial()) == null) {
+                    NotificationsLoader.makeToast("Unexpected error", true);
+                    return;
+                }
                 if (!ModulesLoader.addModule(module, true)) {
                     NotificationsLoader.makeToast("Unexpected error", true);
 
@@ -202,8 +203,10 @@ public class NodesImport extends NavigationFragment {
         // TODO: PROCESSING MODAL WINDOW, CODE WRAPPED INTO A NEW THREAD
 
         try {
-            Node original = new Node(node, true);
-            NodesLoader.addNode(original, false);
+            if (NodesLoader.getNode(node.getSerial()) == null) {
+                Node original = new Node(node, true);
+                NodesLoader.addNode(original, false);
+            }
 
         } catch (Exception e) {
             //e.printStackTrace();

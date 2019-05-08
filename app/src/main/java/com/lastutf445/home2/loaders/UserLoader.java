@@ -1,6 +1,7 @@
 package com.lastutf445.home2.loaders;
 
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 
 import com.lastutf445.home2.R;
 import java.util.UUID;
@@ -50,5 +51,15 @@ public final class UserLoader {
 
     private static void createSession() {
         DataLoader.set("Session", UUID.randomUUID().toString().replace("-", "").substring(0, 19));
+    }
+
+    @Nullable
+    public static String getSession() {
+        return DataLoader.getString("Session", null);
+    }
+
+    @Nullable
+    public static String getKey() {
+        return DataLoader.getString("AESKey", null);
     }
 }

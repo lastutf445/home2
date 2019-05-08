@@ -106,25 +106,26 @@
     <string name="syncMasterServer">Master Server</string>
     <string name="syncMasterServerDesc">This technique let you define an address to \"core\" of your home network to transfer each packet through it. Application of the method is only limited by your fantasy.</string>
 
-    <string name="syncMasterServerCheckConnection">Check connection</string>
-    <string name="syncMasterServerDisable">Disable feature</string>
-    <string name="syncMasterServerEnable">Apply</string>
-
-    <string name="syncExternalConnection">External address</string>
-    <string name="syncExternalConnectionDesc">In case of being outside your home network, the application will use this address to access Master Server.</string>
+    <string name="syncExternalAddress">External address</string>
+    <string name="syncExternalAddressDesc">In case of being outside your home network, the application will use this address to access Master Server.</string>
 
     <string name="syncMarkAsHomeNetwork">Mark as home network</string>
     <string name="syncCurrentNetwork">Current network:</string>
     <string name="syncHomeNetwork">Home network:</string>
 
     <string name="syncBehaviorClient">Client settings</string>
+    <string name="syncBehaviorClientDesc">Define a client port on this device.</string>
     <string name="syncClientPort">Local port</string>
 
     <string name="syncBehaviorDiscovery">Nodes discovery</string>
+    <string name="syncBehaviorDiscoveryDesc">Define a port for searching nodes and count of discovery packets.</string>
+
     <string name="syncDiscoveryPort">Discovery port</string>
     <string name="syncDiscoveryAttempts">Search attempts</string>
 
     <string name="syncBehaviorIntervals">Intervals settings</string>
+    <string name="syncBehaviorIntervalsDesc">Define threads synchronization frequencies.\n(a multiple of 500 or doesn\'t affect, ms)</string>
+
     <string name="syncDashboardInterval">Sync dashboard interval</string>
     <string name="syncMessagesInterval">Sync messages interval</string>
     <string name="syncNotificationsInterval">Sync notifications interval</string>
@@ -140,9 +141,12 @@
     <string name="add">Add</string>
     <string name="apply">Apply</string>
     <string name="delete">Delete</string>
+    <string name="enable">Enable</string>
     <string name="disable">Disable</string>
+    <string name="disableFeature">Disable feature</string>
     <string name="restore">Restore</string>
     <string name="override">Override</string>
+    <string name="checkConnection">Check connection</string>
     <string name="saveChanges">Save changes</string>
     <string name="cancel">Cancel</string>
     

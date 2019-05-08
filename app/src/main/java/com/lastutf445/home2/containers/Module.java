@@ -1,6 +1,7 @@
 package com.lastutf445.home2.containers;
 
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.util.SparseArray;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
+import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
 import com.lastutf445.home2.util.JSONPayload;
@@ -108,15 +110,37 @@ public class Module extends JSONPayload {
     public void setSyncing(boolean syncing) {
         this.syncing = syncing;
         NodesLoader.onModuleSyncingChanged(this);
+        save();
     }
 
     public void setTitle(@Nullable String title) {
         this.title = title;
         WidgetsLoader.onModuleTitleUpdated(this);
+        save();
     }
 
     public void updateState(JSONObject ops) {
         this.ops = ops;
         WidgetsLoader.onModuleStateUpdated(this);
+        save();
+    }
+
+    public void save() {
+        AsyncSaveTask task = new AsyncSaveTask(this);
+        task.execute();
+    }
+
+    private static class AsyncSaveTask extends AsyncTask<Void, Void, Void> {
+        private Module module;
+
+        public AsyncSaveTask(@NonNull Module module) {
+            this.module = module;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ModulesLoader.applyModule(module);
+            return null;
+        }
     }
 }

@@ -24,6 +24,12 @@
             android:layout_height="wrap_content"
             android:text="@string/syncBehaviorClient" />
 
+        <TextView
+            android:id="@+id/textView41"
+            style="@style/StyledDesc"
+            android:layout_height="wrap_content"
+            android:text="@string/syncBehaviorClientDesc" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -42,11 +48,12 @@
 
             <EditText
                 android:id="@+id/syncClientPort"
-                android:layout_width="128dp"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
+                android:digits="1234567890."
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:textSize="14sp" />
+                android:inputType="number"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <TextView
@@ -55,6 +62,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/syncBehaviorDiscovery" />
+
+        <TextView
+            android:id="@+id/textView42"
+            style="@style/StyledDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncBehaviorDiscoveryDesc" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,10 +88,11 @@
 
             <EditText
                 android:id="@+id/syncDiscoveryPort"
-                android:layout_width="128dp"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
+                android:digits="1234567890."
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="number" />
         </LinearLayout>
 
         <LinearLayout
@@ -97,11 +112,12 @@
                 android:textColor="#333" />
 
             <EditText
-                android:id="@+id/SyncDiscoveryAttempts"
-                android:layout_width="128dp"
+                android:id="@+id/syncDiscoveryAttempts"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
+                android:digits="1234567890."
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="number"/>
         </LinearLayout>
 
         <TextView
@@ -110,6 +126,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/syncBehaviorIntervals" />
+
+        <TextView
+            android:id="@+id/textView43"
+            style="@style/StyledDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncBehaviorIntervalsDesc" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -128,11 +151,12 @@
                 android:textColor="#333" />
 
             <EditText
-                android:id="@+id/SyncDashboardInterval"
-                android:layout_width="128dp"
+                android:id="@+id/syncDashboardInterval"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
+                android:digits="1234567890."
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="number" />
         </LinearLayout>
 
         <LinearLayout
@@ -152,11 +176,12 @@
                 android:textColor="#333" />
 
             <EditText
-                android:id="@+id/SyncMessagesInterval"
-                android:layout_width="128dp"
+                android:id="@+id/syncMessagesInterval"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
+                android:digits="1234567890."
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="number" />
         </LinearLayout>
 
         <LinearLayout
@@ -176,15 +201,31 @@
                 android:textColor="#333" />
 
             <EditText
-                android:id="@+id/SyncNotificationsInterval"
-                android:layout_width="128dp"
+                android:id="@+id/syncNotificationsInterval"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
+                android:digits="1234567890."
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="number" />
         </LinearLayout>
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="24dp" />
+            android:layout_height="32dp" />
+
+        <Button
+            android:id="@+id/syncBehaviorSave"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/done"
+            android:drawableTint="@color/colorPrimary"
+            android:text="@string/saveChanges"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

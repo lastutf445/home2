@@ -114,6 +114,10 @@ public class Node {
     }
 
     public void addModule(@NonNull Module module) {
+        if (syncing.get(module.getSerial()) != null || idle.get(module.getSerial()) != null) {
+            return;
+        }
+
         if (module.getSyncing()) {
             syncing.put(module.getSerial(), module);
             Sync.addSyncProvider(updater);

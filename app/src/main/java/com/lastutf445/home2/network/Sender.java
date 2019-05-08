@@ -5,6 +5,7 @@ import android.util.SparseArray;
 
 import com.lastutf445.home2.fragments.menu.MasterServer;
 import com.lastutf445.home2.loaders.DataLoader;
+import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.util.SyncProvider;
 
 import org.json.JSONException;
@@ -36,6 +37,7 @@ public class Sender {
     private static BufferedReader tIn;
     private static PrintWriter tOut;
     private static Socket tSocket;
+    private static long tAlive;
 
     private static Thread thread;
 
@@ -92,7 +94,7 @@ public class Sender {
 
                     if (Sync.getNetworkState() == 2 && DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID())) {
                         if (DataLoader.getBoolean("MasterServer", false)) {
-                            current.onPostPublish(mSend(current));
+                            current.onPostPublish(mSend(current, time));
 
                         } else {
                             current.onPostPublish(uSend(local.valueAt(i)));
@@ -100,7 +102,7 @@ public class Sender {
 
                     } else if (Sync.getNetworkState() != 0) {
                         if (DataLoader.getBoolean("ExternalConnection", false)) {
-                            current.onPostPublish(eSend(local.valueAt(i)));
+                            current.onPostPublish(eSend(local.valueAt(i), time));
 
                         } else {
                             current.onPostPublish(2);
@@ -128,20 +130,22 @@ public class Sender {
         }
     };
 
-    private static int mSend(SyncProvider provider) {
+    private static int mSend(SyncProvider provider, long time) {
         if (!makeConnection(
                 DataLoader.getString("MasterServerAddress", "false"),
-                DataLoader.getInt("MasterServerPort", Sync.DEFAULT_PORT))
-        ) return 0;
+                DataLoader.getInt("MasterServerPort", Sync.DEFAULT_PORT),
+                time
+        )) return 0;
 
         return tSend(provider);
     }
 
-    private static int eSend(SyncProvider provider) {
+    private static int eSend(SyncProvider provider, long time) {
         if (!makeConnection(
                 DataLoader.getString("ExternalAddress", "false"),
-                DataLoader.getInt("ExternalPort", Sync.DEFAULT_PORT))
-        ) return 0;
+                DataLoader.getInt("ExternalPort", Sync.DEFAULT_PORT),
+                time
+        )) return 0;
 
         return tSend(provider);
     }
@@ -151,13 +155,17 @@ public class Sender {
             JSONObject query = provider.getQuery();
 
             try {
-                query.put("port", DataLoader.getInt("SyncClientPort", Sync.DEFAULT_PORT));
+                if (provider.getBrodcast()) query.put("broadcast", true);
+                else query.put("ip", provider.getIP().getHostAddress());
+                query.put("port", provider.getPort());
+                query.put("session", UserLoader.getSession());
 
             } catch (JSONException e) {
                 //e.printStackTrace();
             }
 
-            tOut.write(query.toString());
+            tOut.write(query.toString() + "\n");
+            tOut.flush();
             return 1;
         }
 
@@ -190,10 +198,7 @@ public class Sender {
         DatagramPacket p = new DatagramPacket(msg, msg.length, address, port);
 
         try {
-            //uSocket.setBroadcast(provider.getBrodcast());
             uSocket.send(p);
-
-            //uSocket.setBroadcast(false);
             return 1;
 
         } catch (IOException e) {
@@ -202,17 +207,17 @@ public class Sender {
         }
     }
 
-    public static boolean makeConnection(String ip, int port) {
+    public static boolean makeConnection(String ip, int port, long time) {
+        if (tSocket != null && tSocket.isConnected() && tSocket.getInetAddress().getHostAddress().equals(ip) && tSocket.getPort() == port && time < tAlive) return true;
         Log.d("LOGTAG", "makeConnection triggered");
-        if (tSocket != null && tSocket.isConnected() && tSocket.getInetAddress().getHostAddress().equals(ip) && tSocket.getPort() == port) return true;
         killConnection();
 
         try {
             tSocket = new Socket(ip, port);
-
+/*
             tSocket.setSoTimeout(
                     DataLoader.getInt("MasterServerSoTimeout", 1000)
-            );
+            );*/
 
             tOut = new PrintWriter(
                     new BufferedWriter(
@@ -222,7 +227,9 @@ public class Sender {
             );
 
             tIn = new BufferedReader(new InputStreamReader(tSocket.getInputStream()));
+            tAlive = time + 8000;
             Receiver.settIn(tIn);
+            return true;
 
         } catch (UnknownHostException e) {
             //e.printStackTrace();
@@ -246,6 +253,10 @@ public class Sender {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void setTAlive(long tAlive) {
+        Sender.tAlive = tAlive;
     }
 
     public static void start() {

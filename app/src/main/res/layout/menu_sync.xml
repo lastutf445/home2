@@ -131,7 +131,7 @@
             style="@style/StyledButtonIcon.Chevron"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/syncExternalConnection" />
+            android:text="@string/syncExternalAddress" />
 
         <TextView
             android:id="@+id/textView16"

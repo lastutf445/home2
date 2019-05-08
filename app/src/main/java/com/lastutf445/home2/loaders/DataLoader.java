@@ -43,11 +43,11 @@ public class DataLoader {
         ops.put("SyncHomeNetwork", null);
         // sync behavior
         ops.put("SyncClientPort", 44501);
-        ops.put("SyncDiscoveryPort", 44501);
+        ops.put("SyncDiscoveryPort", 44500);
         ops.put("SyncDiscoveryAttempts", 3);
         ops.put("SyncDashboardInterval", 5000);
-        ops.put("SyncMessagesInterval", 800);
-        ops.put("SyncNotificationsInterval", 1000);
+        ops.put("SyncMessagesInterval", 500);
+        ops.put("SyncNotificationsInterval", 2000);
     }
 
     public static void init(Context context, Resources resources) {

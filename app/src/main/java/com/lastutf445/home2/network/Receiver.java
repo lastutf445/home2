@@ -1,5 +1,6 @@
 package com.lastutf445.home2.network;
 
+import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.util.Calendar;
 
 public class Receiver {
 
@@ -25,7 +27,7 @@ public class Receiver {
         @Override
         public void run() {
             while (!thread.isInterrupted()) {
-                if (Sync.getNetworkState() == 2 && DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID())) {
+                if (Sync.getNetworkState() == 2 && DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID()) && !DataLoader.getBoolean("MasterServer", false)) {
                     uReceive();
 
                 } else {
@@ -36,13 +38,18 @@ public class Receiver {
     };
 
     private static void tReceive() {
+        if (tIn == null) {
+            sleep();
+            return;
+        }
+
         try {
             String buf = tIn.readLine();
             if (buf == null) return;
             onReceived(buf.trim());
 
         } catch (Exception e) {
-            //e.printStackTrace();
+            Log.d("LOGTAG-ERROR", e.getMessage());
             sleep();
         }
     }
@@ -76,6 +83,13 @@ public class Receiver {
     }
 
     private static void onReceived(String result) {
+        Log.d("LOGTAG", "result: " + result);
+
+        if (result.equals("alive")) {
+            Sender.setTAlive(Calendar.getInstance().getTimeInMillis() + 8000);
+            return;
+        }
+
         try {
             JSONObject json = new JSONObject(result);
             JSONObject data = json.getJSONObject("data");
@@ -83,7 +97,7 @@ public class Receiver {
             Sync.callProvider(source, data);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -118,5 +132,7 @@ public class Receiver {
         if (thread != null && !thread.isInterrupted()) {
             thread.interrupt();
         }
+
+        uSocket = null;
     }
 }
