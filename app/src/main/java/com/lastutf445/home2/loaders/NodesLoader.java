@@ -124,8 +124,8 @@ public class NodesLoader {
 
         if (node != null) {
             if (linked) {
-                WidgetsLoader.onModuleLinkChanged(module, true);
                 node.addModule(module);
+                WidgetsLoader.onModuleLinkChanged(module, true);
             }
             else {
                 module.getOps().remove("value");

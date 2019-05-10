@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.net.InetAddress;
 
 public class WidgetsLoader {
 
@@ -37,6 +39,7 @@ public class WidgetsLoader {
     private static final int WIDGETS_TYPE = 2;
     private static final int WIDGETS_OPS = 3;
 
+    private static WeakReference<BottomSheetBehavior> weakBehavior;
     private static WeakReference<LayoutInflater> weakInflater;
     private static WeakReference<LinearLayout> weakContent;
     private static Handler handler;
@@ -45,8 +48,10 @@ public class WidgetsLoader {
     private static final SparseArray<Module> free = new SparseArray<>();
     private static final SparseIntArray serials = new SparseIntArray();
     private static int headId = 0, headSerial = 0;
+    private static boolean unsaved = false;
 
-    public static void init(Handler handler, LayoutInflater inflater, LinearLayout content) {
+    public static void init(Handler handler, LayoutInflater inflater, LinearLayout content, BottomSheetBehavior behavior) {
+        weakBehavior = new WeakReference<>(behavior);
         weakInflater = new WeakReference<>(inflater);
         weakContent = new WeakReference<>(content);
         WidgetsLoader.handler = handler;
@@ -57,6 +62,7 @@ public class WidgetsLoader {
         load();
         render();
         updateAll();
+        unsaved = false;
     }
 
     public static void load() {
@@ -114,12 +120,14 @@ public class WidgetsLoader {
 
         synchronized (widgets) {
             for (int i = 0; i < widgets.size(); ++i) {
-                renderWidget(widgets.valueAt(i), inflater, content, false);
+                renderWidget(widgets.valueAt(i), inflater, content, content.getChildCount());
             }
         }
     }
 
-    private static void renderWidget(@NonNull Widget widget, @NonNull LayoutInflater inflater, @NonNull LinearLayout content, boolean addToTop) {
+    private static void renderWidget(@NonNull Widget widget, @NonNull LayoutInflater inflater, @NonNull LinearLayout content, int pos) {
+        Log.d("LOGTAG", "render: " + widget.getType());
+
         switch (widget.getType()) {
             case "temperature":
                 renderTemperature(widget, inflater, content);
@@ -130,13 +138,30 @@ public class WidgetsLoader {
             case "lightrgb":
                 renderLightRGB(widget, inflater, content);
                 break;
+            case "socket":
+                renderSocket(widget, inflater, content);
+                break;
             case "title":
                 renderTitle(widget, inflater, content);
-
+                break;
         }
 
         if (widget.getView() != null) {
-            content.addView(widget.getView(), addToTop ? 0 : content.getChildCount());
+            View view = widget.getView();
+            content.addView(view, pos);
+
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    BottomSheetBehavior behavior = weakBehavior.get();
+
+                    if (behavior != null) {
+                        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    }
+
+                    return false;
+                }
+            });
         }
     }
 
@@ -165,6 +190,10 @@ public class WidgetsLoader {
         renderSimpleWidget(widget, R.layout.widget_lightrgb, inflater, content);
     }
 
+    private static void renderSocket(@NonNull Widget widget, @NonNull LayoutInflater inflater, @NonNull LinearLayout content) {
+        renderSimpleWidget(widget, R.layout.widget_socket, inflater, content);
+    }
+
     private static void renderTitle(@NonNull Widget widget, @NonNull LayoutInflater inflater, @NonNull LinearLayout content) {
         renderSimpleWidget(widget, R.layout.widget_title, inflater, content);
 
@@ -182,6 +211,10 @@ public class WidgetsLoader {
 
     public static SparseArray<Module> getFree() {
         return free;
+    }
+
+    public static boolean isUnsaved() {
+        return unsaved;
     }
 
     public static void updateAll() {
@@ -216,6 +249,9 @@ public class WidgetsLoader {
                 break;
             case "lightrgb":
                 updateLightRGB(widget, module);
+                break;
+            case "socket":
+                updateSocket(widget, module);
                 break;
             case "title":
                 updateTitle(widget, module);
@@ -268,7 +304,36 @@ public class WidgetsLoader {
         );
 
         try {
-            int color = Color.parseColor(module.getString("value", "#aaaaaa"));
+            int color = Color.parseColor("#333333");
+
+            if (module.getBoolean("lit", false)) {
+                color = Color.parseColor(module.getString("value", "#aaaaaa"));
+            }
+
+            ((ImageView) widget.getView().findViewById(R.id.widgetValue)).setColorFilter(color, PorterDuff.Mode.SRC_IN);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void updateSocket(@NonNull Widget widget, @Nullable Module module) {
+        if (widget.getView() == null || module == null) return;
+
+        updateSimpleWidget(
+                widget.getView(),
+                module.getTitle(),
+                null,
+                null
+        );
+
+        try {
+            int color = Color.parseColor("#aaaaaa");
+
+            if (module.getBoolean("value", false)) {
+                color = DataLoader.getAppResources().getColor(R.color.colorPrimary);
+            }
+
             ((ImageView) widget.getView().findViewById(R.id.widgetValue)).setColorFilter(color, PorterDuff.Mode.SRC_IN);
 
         } catch (Exception e) {
@@ -323,14 +388,40 @@ public class WidgetsLoader {
         synchronized (widgets) {
             synchronized (serials) {
                 if (content != null && inflater != null) {
-                    renderWidget(widget, inflater, content, true);
+                    renderWidget(widget, inflater, content, 0);
                     serials.put(widget.getSerial(), widget.getId());
                     widgets.put(widget.getId(), widget);
                     createUpdateEvent(widget.getId());
+                    free.delete(widget.getSerial());
                     return true;
                 }
 
                 return false;
+            }
+        }
+    }
+
+    public static boolean replaceWidget(@NonNull Widget widget) {
+        if (widgets.get(widget.getId()) == null) return false;
+
+        LayoutInflater inflater = weakInflater.get();
+        LinearLayout content = weakContent.get();
+
+        if (content == null || inflater == null) return false;
+
+        synchronized (widgets) {
+            synchronized (serials) {
+                int pos = content.indexOfChild(widgets.get(widget.getId()).getView());
+                if (pos == -1) return false;
+
+                widgets.put(widget.getId(), widget);
+                content.removeViewAt(pos);
+
+                renderWidget(widget, inflater, content, pos);
+                createUpdateEvent(widget.getId());
+                saveWidget(widget);
+
+                return true;
             }
         }
     }
@@ -345,6 +436,8 @@ public class WidgetsLoader {
                 swapAdjacentWidgets(i, i - 1);
             }
         }
+
+        unsaved = true;
     }
 
     public static void swapAdjacentWidgets(int i, int j) {
@@ -394,6 +487,12 @@ public class WidgetsLoader {
 
                 widgets.remove(widget.getId());
                 serials.delete(widget.getSerial());
+
+                Module module = ModulesLoader.getModule(widget.getSerial());
+
+                if (module != null) {
+                    free.put(module.getSerial(), module);
+                }
             }
         }
     }
@@ -414,6 +513,27 @@ public class WidgetsLoader {
                 headSerial = 0;
                 headId = 0;
             }
+        }
+    }
+
+    public static boolean saveWidget(@NonNull Widget widget) {
+        SQLiteDatabase db = DataLoader.getDb();
+
+        String[] args = {
+                String.valueOf(widget.getSerial())
+        };
+
+        ContentValues cv = new ContentValues();
+        cv.put("type", widget.getType());
+        cv.put("options", widget.getOps().toString());
+
+        try {
+            db.update("dashboard", cv, "serial = ?", args);
+            return true;
+
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -451,6 +571,7 @@ public class WidgetsLoader {
             db.setTransactionSuccessful();
             db.endTransaction();
 
+            unsaved = false;
             headSerial = serial;
             headId = 0;
 
@@ -463,15 +584,34 @@ public class WidgetsLoader {
     }
 
     public static void onModuleLinkChanged(@NonNull Module module, boolean linked) {
-        if (linked) {
-            free.put(module.getSerial(), module);
-            Log.d("LOGTAG", "addded to free");
+        int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
 
-        } else {
-            int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
+        if (!linked) {
             free.remove(module.getSerial());
             update(id);
+            return;
         }
+
+        if (id != Integer.MAX_VALUE) {
+            Widget widget = widgets.get(id);
+
+            if (widget.getType().equals(module.getType())) {
+                createUpdateEvent(id);
+
+            } else {
+                replaceWidget(new Widget(
+                        id,
+                        module.getSerial(),
+                        module.getType(),
+                        new JSONObject()
+                ));
+            }
+
+            return;
+        }
+
+        free.put(module.getSerial(), module);
+        Log.d("LOGTAG", "addded to free");
     }
 
     public static void onModuleTitleUpdated(@NonNull Module module) {

@@ -155,6 +155,9 @@
     
     <string name="specialTemperatureUseFahrenheit">Use The Fahrenheit scale</string>
 
+    <string name="specialLightRGBIsLit">Light is on</string>
+    <string name="specialLightRGBPickColor">Pick a color</string>
+
     <string name="notTested">not tested</string>
     <string name="notAvailable">Not available</string>
     <string name="notAvailableShort">N/A</string>
@@ -166,6 +169,7 @@
     <string name="reachable">reachable</string>
     <string name="unreachable">unreachable</string>
     <string name="pending">pending&#8230;</string>
+    <string name="processing">Processing&#8230;</string>
 
     <string name="disconnected">Disconnected</string>
     <string name="connectionMobile">Mobile connection</string>
@@ -194,11 +198,13 @@
     <string name="defaultTitleTemperature">Temperature</string>
     <string name="defaultTitleHumidity">Humidity</string>
     <string name="defaultTitleLightRGB">LightRGB</string>
+    <string name="defaultTitleSocket">Socket</string>
     <string name="defaultTitleTitle">Title</string>
     <string name="defaultTitleUnknownModule">@string/unknownModule</string>
 
     <string name="modulesTypeTemperature">Temperature sensor</string>
     <string name="modulesTypeHumidity">Humidity sensor</string>
     <string name="modulesTypeLightRGB">LightRGB module</string>
+    <string name="modulesTypeSocket">Socket module</string>
     <string name="modulesTypeUnknownModule">@string/unknownModule</string>
 </resources>

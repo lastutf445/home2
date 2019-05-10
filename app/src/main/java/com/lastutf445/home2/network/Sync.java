@@ -36,6 +36,7 @@ public class Sync {
     public static final int PROVIDER_NOTIFICATIONS = -2;
     public static final int PROVIDER_DISCOVERER = -3;
     public static final int PROVIDER_NODE_IMPORT = -4;
+    public static final int PROVIDER_MODULE_EDIT_REQUEST = -5;
 
     public static final int MENU_SYNC_TRIGGER = 0;
     public static final int FRAGMENT_DASHBOARD_TRIGGER = 1;

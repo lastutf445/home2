@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,12 @@ public class Dashboard extends NavigationFragment {
     protected void init() {
         updater = new Updater(view);
         LinearLayout content = view.findViewById(R.id.dashboardContent);
-        WidgetsLoader.init(updater, getLayoutInflater(), content);
+        LinearLayout sheet = view.findViewById(R.id.bottomSheet);
+
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(sheet);
+        behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        WidgetsLoader.init(updater, getLayoutInflater(), content, behavior);
 
         Sync.addTrigger(
                 Sync.FRAGMENT_DASHBOARD_TRIGGER,
@@ -53,8 +59,8 @@ public class Dashboard extends NavigationFragment {
 
     @Override
     public void onDestroy() {
-        Sync.removeTrigger(Sync.FRAGMENT_DASHBOARD_TRIGGER);
-
+        // Sync.removeTrigger(Sync.FRAGMENT_DASHBOARD_TRIGGER);
+        // it causes crashes
         super.onDestroy();
     }
 

@@ -30,9 +30,13 @@ public class Receiver {
                 if (Sync.getNetworkState() == 2 && DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID()) && !DataLoader.getBoolean("MasterServer", false)) {
                     uReceive();
 
+                } else if (Sync.getNetworkState() == 0) {
+                    sleep();
+
                 } else {
                     tReceive();
                 }
+
             }
         }
     };
@@ -49,7 +53,7 @@ public class Receiver {
             onReceived(buf.trim());
 
         } catch (Exception e) {
-            Log.d("LOGTAG-ERROR", e.getMessage());
+            //Log.d("LOGTAG-ERROR", e.getMessage());
             sleep();
         }
     }
@@ -83,10 +87,10 @@ public class Receiver {
     }
 
     private static void onReceived(String result) {
+        Sender.setTAlive(Calendar.getInstance().getTimeInMillis() + 8000);
         Log.d("LOGTAG", "result: " + result);
 
         if (result.equals("alive")) {
-            Sender.setTAlive(Calendar.getInstance().getTimeInMillis() + 8000);
             return;
         }
 

@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class DataLoader {
 
-    private static int DATABASE_VERSION = 16;
+    private static int DATABASE_VERSION = 17;
     private static SQLiteDatabase db;
 
     private static Context appContext;
@@ -83,6 +83,7 @@ public class DataLoader {
         db.execSQL("CREATE TABLE IF NOT EXISTS nodes (serial INTEGER PRIMARY KEY, ip TEXT, port INTEGER, title TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, node INTEGER, title TEXT, options TEXT, syncing INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS dashboard (id INTEGER PRIMARY KEY, serial INTEGER, type TEXT, options TEXT)");
+        db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS dashboard_serial ON dashboard (serial)");
     }
 
     private static void upgrade(int oldVersion, int newVersion) {

@@ -114,7 +114,12 @@ public class Node {
     }
 
     public void addModule(@NonNull Module module) {
-        if (syncing.get(module.getSerial()) != null || idle.get(module.getSerial()) != null) {
+        if (syncing.get(module.getSerial()) != null) {
+            syncing.put(module.getSerial(), module);
+            return;
+
+        } else if (idle.get(module.getSerial()) != null) {
+            idle.put(module.getSerial(), module);
             return;
         }
 
@@ -197,7 +202,8 @@ public class Node {
                     Module module = ModulesLoader.getModule(serial);
                     if (module == null) continue;
 
-                    module.updateState(data.getJSONObject(s));
+                    JSONObject state = data.getJSONObject(s);
+                    module.mergeStates(state.getString("type"), state.getJSONObject("ops"));
 
                 } catch (NumberFormatException e) {
                     //e.printStackTrace();

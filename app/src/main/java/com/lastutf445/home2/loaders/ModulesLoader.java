@@ -11,9 +11,8 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.lastutf445.home2.containers.Module;
-import com.lastutf445.home2.special.HumiditySpecial;
 import com.lastutf445.home2.special.LightRGBSpecial;
-import com.lastutf445.home2.special.TemperatureSpecial;
+import com.lastutf445.home2.special.SocketSpecial;
 import com.lastutf445.home2.util.NavigationFragment;
 import com.lastutf445.home2.util.Special;
 
@@ -94,8 +93,8 @@ public class ModulesLoader {
             return false;
         }
 
-        NodesLoader.onModuleLinkChanged(module, true);
         modules.put(module.getSerial(), module);
+        NodesLoader.onModuleLinkChanged(module, true);
         return true;
     }
 
@@ -108,7 +107,7 @@ public class ModulesLoader {
         cv.put("node", module.getNode());
         cv.put("title", module.getTitle());
         cv.put("options", module.getOps().toString());
-        cv.put("syncing", module.getSerial());
+        cv.put("syncing", module.getSyncing() ? 1 : 0);
 
         try {
             db.replaceOrThrow("modules", null, cv);
@@ -134,11 +133,8 @@ public class ModulesLoader {
 
     public static boolean hasSpecial(@NonNull Module module) {
         switch (module.getType()) {
-            case "temperature":
-                return true;
-            case "humidity":
-                return true;
             case "lightrgb":
+            case "socket":
                 return true;
             default:
                 return false;
@@ -149,14 +145,11 @@ public class ModulesLoader {
         Special child = null;
 
         switch (module.getType()) {
-            case "temperature":
-                child = new TemperatureSpecial();
-                break;
-            case "humidity":
-                child = new HumiditySpecial();
-                break;
             case "lightrgb":
                 child = new LightRGBSpecial();
+                break;
+            case "socket":
+                child = new SocketSpecial();
                 break;
         }
 

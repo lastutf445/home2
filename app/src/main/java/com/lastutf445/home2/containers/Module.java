@@ -11,6 +11,7 @@ import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NodesLoader;
+import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
 import com.lastutf445.home2.util.JSONPayload;
 
@@ -18,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class Module extends JSONPayload {
 
@@ -57,6 +59,8 @@ public class Module extends JSONPayload {
                 return res.getString(R.string.modulesTypeHumidity);
             case "lightrgb":
                 return res.getString(R.string.modulesTypeLightRGB);
+            case "socket":
+                return res.getString(R.string.modulesTypeSocket);
             default:
                 return unknownType;
         }
@@ -80,6 +84,8 @@ public class Module extends JSONPayload {
                 return res.getString(R.string.defaultTitleHumidity);
             case "lightrgb":
                 return res.getString(R.string.defaultTitleLightRGB);
+            case "socket":
+                return res.getString(R.string.defaultTitleSocket);
             default:
                 return res.getString(R.string.defaultTitleUnknownModule);
         }
@@ -97,6 +103,8 @@ public class Module extends JSONPayload {
                 return R.drawable.water_outline;
             case "lightrgb":
                 return R.drawable.light_bulb;
+            case "socket":
+                return R.drawable.power_plug;
             default:
                 return R.drawable.warning;
         }
@@ -118,11 +126,61 @@ public class Module extends JSONPayload {
         WidgetsLoader.onModuleTitleUpdated(this);
         save();
     }
-
-    public void updateState(JSONObject ops) {
+/*
+    public void setState(JSONObject ops) {
         this.ops = ops;
         WidgetsLoader.onModuleStateUpdated(this);
         save();
+    }
+*/
+    public void mergeStates(String type, JSONObject ops) {
+        if (!this.type.equals(type)) {
+            Log.d("LOGTAG", "validation error on serial: " + serial);
+            return;
+        }
+
+        Iterator<String> it = ops.keys();
+        boolean pass = true;
+
+        try {
+            while (it.hasNext()) {
+               String key = it.next();
+                if (!this.ops.has(key) || !validateField(this.ops.get(key), ops.get(key))) {
+                    pass = false;
+                    break;
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            pass = false;
+        }
+
+        if (!pass) {
+            Log.d("LOGTAG", "validation error on serial: " + serial);
+            return;
+        }
+
+        it = ops.keys();
+
+        while (it.hasNext()) {
+            try {
+                String key = it.next();
+                this.ops.put(key, ops.get(key));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        WidgetsLoader.onModuleStateUpdated(this);
+        save();
+    }
+
+    private boolean validateField(Object a, Object b) {
+        if (a == null) return true;
+        if (b == null) return false;
+        return a.getClass().getName().equals(b.getClass().getName());
     }
 
     public void save() {
