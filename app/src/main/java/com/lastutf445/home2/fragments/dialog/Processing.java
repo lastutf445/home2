@@ -11,12 +11,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.loaders.DataLoader;
 
 public class Processing extends DialogFragment {
 
+    private String title = DataLoader.getAppResources().getString(R.string.processing);
     private DialogInterface.OnDismissListener d;
+    private View view;
 
     @NonNull
     @Override
@@ -24,14 +28,26 @@ public class Processing extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.dialog_processing, null, false);
+        view = inflater.inflate(R.layout.dialog_processing, null, false);
         builder.setView(view);
+        setTitle();
 
         return builder.create();
     }
 
     public void setOnDismissListener(@NonNull DialogInterface.OnDismissListener d) {
         this.d = d;
+    }
+
+    public void setTitle(@NonNull String title) {
+        this.title = title;
+        setTitle();
+    }
+
+    private void setTitle() {
+        if (view != null) {
+            ((TextView) view.findViewById(R.id.processingTitle)).setText(title);
+        }
     }
 
     @Override

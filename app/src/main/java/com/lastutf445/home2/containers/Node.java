@@ -203,6 +203,7 @@ public class Node {
                     if (module == null) continue;
 
                     JSONObject state = data.getJSONObject(s);
+                    if (state.isNull("type") && state.isNull("ops")) module.wipe();
                     module.mergeStates(state.getString("type"), state.getJSONObject("ops"));
 
                 } catch (NumberFormatException e) {

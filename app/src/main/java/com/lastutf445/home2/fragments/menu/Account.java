@@ -89,7 +89,7 @@ public class Account extends NavigationFragment {
         UserLoader.logout();
 
         NotificationsLoader.makeToast(
-                DataLoader.getAppResources().getString(R.string.authSuccess),
+                DataLoader.getAppResources().getString(R.string.success),
                 true
         );
 

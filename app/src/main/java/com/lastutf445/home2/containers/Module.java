@@ -134,6 +134,13 @@ public class Module extends JSONPayload {
     }
 */
     public void mergeStates(String type, JSONObject ops) {
+        if(type == null || ops == null) return;
+        boolean wiped = false;
+
+        if (this.ops.has("wiped")) {
+            wiped = true;
+        }
+
         if (!this.type.equals(type)) {
             Log.d("LOGTAG", "validation error on serial: " + serial);
             return;
@@ -156,7 +163,7 @@ public class Module extends JSONPayload {
             pass = false;
         }
 
-        if (!pass) {
+        if (!pass && !wiped) {
             Log.d("LOGTAG", "validation error on serial: " + serial);
             return;
         }
@@ -171,6 +178,21 @@ public class Module extends JSONPayload {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+
+        this.ops.remove("wiped");
+        WidgetsLoader.onModuleStateUpdated(this);
+        save();
+    }
+
+    public void wipe() {
+        this.ops = new JSONObject();
+
+        try {
+            ops.put("wiped", true);
+
+        } catch (JSONException e) {
+            Log.d("LOGTAG", "wtf?");
         }
 
         WidgetsLoader.onModuleStateUpdated(this);

@@ -1,5 +1,7 @@
 package com.lastutf445.home2.util;
 
+import com.lastutf445.home2.loaders.CryptoLoader;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,6 +13,7 @@ public class SyncProvider {
     protected long lastAccess = 0;
     protected boolean broadcast = false;
     protected int group = -1, source, port;
+    protected boolean encrypted = true;
     protected JSONObject query;
     protected InetAddress ip;
     protected String act;
@@ -25,6 +28,10 @@ public class SyncProvider {
         query.put("id", source);
         query.put("act", act);
         setData(data);
+    }
+
+    public boolean getUseMasterConnectionOnly() {
+        return false;
     }
 
     public int getGroup() {
@@ -65,6 +72,10 @@ public class SyncProvider {
 
     public void setData(JSONObject data) throws JSONException {
         query.put("data", data);
+    }
+
+    public boolean getEncrypted() {
+        return encrypted;
     }
 
     public void onReceive(JSONObject data) {}

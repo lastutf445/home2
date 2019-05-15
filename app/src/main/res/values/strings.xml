@@ -3,7 +3,7 @@
 
     <string name="notAuthenticated">You are not authenticated</string>
     <string name="usernameError">Username error</string>
-    <string name="usernameBasic">Basic account</string>
+    <string name="usernameDefault">Default username</string>
 
     <string name="dashboard">Dashboard</string>
     <string name="messages">Messages</string>
@@ -20,9 +20,10 @@
     <string name="authEnter">Enter</string>
     <string name="authEnterBasic">Enter basic account</string>
 
-    <string name="authSuccess">Success</string>
-    <string name="authIncorrect">Incorrect credentials</string>
-    <string name="authUnableToConnect">Unable to connect to Master Server</string>
+    <string name="authRequestingPubKey">Requesting public key&#8230;</string>
+    <string name="authInvalidPubKey">Invalid public key, aborted</string>
+    <string name="authSendingCredentials">Sending credentials&#8230;</string>
+    <string name="authInvalidCredentials">Invalid login or password</string>
 
     <string name="accountTitle">Account</string>
     <string name="accountUsername">Edit account name</string>
@@ -162,6 +163,7 @@
     <string name="notAvailable">Not available</string>
     <string name="notAvailableShort">N/A</string>
     <string name="noContent">There\'s nothing to show</string>
+    <string name="missedField">Please, check for a missed field</string>
 
     <string name="IPAddress">IP address</string>
     <string name="port">Port</string>
@@ -169,7 +171,12 @@
     <string name="reachable">reachable</string>
     <string name="unreachable">unreachable</string>
     <string name="pending">pending&#8230;</string>
+
+    <string name="success">Success</string>
+    <string name="unexpectedError">Unexpected error</string>
+
     <string name="processing">Processing&#8230;</string>
+    <string name="waitingForAConnection">Waiting for a connection&#8230;</string>
 
     <string name="disconnected">Disconnected</string>
     <string name="connectionMobile">Mobile connection</string>

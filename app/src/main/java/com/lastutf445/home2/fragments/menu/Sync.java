@@ -21,6 +21,8 @@ import com.lastutf445.home2.loaders.MessagesLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.network.Receiver;
+import com.lastutf445.home2.network.Sender;
 import com.lastutf445.home2.util.NavigationFragment;
 import com.lastutf445.home2.util.SimpleAnimator;
 
@@ -56,6 +58,9 @@ public class Sync extends NavigationFragment {
                             else {
                                 DataLoader.set("SyncHomeNetwork", null);
                             }
+
+                            Receiver.stop();
+                            Receiver.start();
 
                             DataLoader.save();
                             reload();

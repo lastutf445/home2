@@ -27,6 +27,7 @@ public class DataLoader {
         // authorization
         ops.put("Session", null);
         ops.put("Username", null);
+        ops.put("BasicAccount", false);
         // master server
         ops.put("MasterServer", false);
         ops.put("MasterServerAddress", null);

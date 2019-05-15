@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 getResources()
         );
 
+        CryptoLoader.init();
         NodesLoader.init();
         ModulesLoader.init();
         Sync.init();

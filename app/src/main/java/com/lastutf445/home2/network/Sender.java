@@ -4,7 +4,9 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.lastutf445.home2.fragments.menu.MasterServer;
+import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
+import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.util.SyncProvider;
 
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -33,25 +36,25 @@ public class Sender {
     private static final HashSet<Integer> removed = Sync.getRemoved();
     private static SparseArray<SyncProvider> local;
 
+    private volatile static BufferedReader tIn;
     private static DatagramSocket uSocket;
-    private static BufferedReader tIn;
     private static PrintWriter tOut;
     private static Socket tSocket;
-    private static long tAlive;
-
     private static Thread thread;
+    private static long tAlive;
 
     /** RETURN CODES
      *  0 - Unknown exception
      *  1 - Sent successfully
      *  2 - External address is undefined
      *  3 - No Internet connection
+     *  4 - Encryption error
      */
 
     private static Runnable task = new Runnable() {
         @Override
         public void run() {
-            while (!thread.isInterrupted()) {
+            while (!Thread.interrupted()) {
                 boolean accessed = false;
 
                 synchronized (syncing) {
@@ -89,6 +92,11 @@ public class Sender {
                             break;
                     }
 
+                    if (current.getUseMasterConnectionOnly() && !isMasterConnectionUsed()) {
+                        Log.d("LOGTAG", "requires master-connection for " + current.getQuery().toString());
+                        continue;
+                    }
+
                     current.updateLastAccess(time);
                     accessed = true;
 
@@ -123,7 +131,8 @@ public class Sender {
                         );
 
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
@@ -150,15 +159,39 @@ public class Sender {
         return tSend(provider);
     }
 
-    private static int tSend(SyncProvider provider) {
+    private synchronized static int tSend(SyncProvider provider) {
         if (tOut != null) {
             JSONObject query = provider.getQuery();
 
             try {
-                if (provider.getBrodcast()) query.put("broadcast", true);
-                else query.put("ip", provider.getIP().getHostAddress());
+                if (provider.getBrodcast()) query.put("ip", "broadcast");
+                else if (provider.getIP() != null) {
+                    query.put("ip", provider.getIP().getHostAddress());
+                }
+
                 query.put("port", provider.getPort());
-                query.put("session", UserLoader.getSession());
+
+                if (provider.getEncrypted()) {
+                    String data = query.getJSONObject("data").toString();
+                    String encrypted;
+
+                    if (CryptoLoader.hasAESKey()) {
+                        encrypted = CryptoLoader.AESEncrypt(data);
+                        query.put("aes", true);
+
+                    } else {
+                        encrypted = CryptoLoader.RSAEncrypt(data);
+                        query.put("rsa", true);
+                    }
+
+                    if (encrypted == null) {
+                        Log.d("LOGTAG", "can't encrypt packet: " + provider.getSource());
+                        return 4;
+                    }
+
+                    query.put("session", UserLoader.getSession());
+                    query.put("data", encrypted);
+                }
 
             } catch (JSONException e) {
                 //e.printStackTrace();
@@ -172,7 +205,7 @@ public class Sender {
         return 0;
     }
 
-    private static int uSend(SyncProvider provider) {
+    private synchronized static int uSend(SyncProvider provider) {
         if (uSocket == null) {
             try {
                 uSocket = new DatagramSocket();
@@ -207,17 +240,14 @@ public class Sender {
         }
     }
 
-    public static boolean makeConnection(String ip, int port, long time) {
+    public synchronized static boolean makeConnection(String ip, int port, long time) {
         if (tSocket != null && tSocket.isConnected() && tSocket.getInetAddress().getHostAddress().equals(ip) && tSocket.getPort() == port && time < tAlive) return true;
         Log.d("LOGTAG", "makeConnection triggered");
         killConnection();
 
         try {
             tSocket = new Socket(ip, port);
-/*
-            tSocket.setSoTimeout(
-                    DataLoader.getInt("MasterServerSoTimeout", 1000)
-            );*/
+            tSocket.setSoTimeout(500);
 
             tOut = new PrintWriter(
                     new BufferedWriter(
@@ -228,7 +258,7 @@ public class Sender {
 
             tIn = new BufferedReader(new InputStreamReader(tSocket.getInputStream()));
             tAlive = time + 8000;
-            Receiver.settIn(tIn);
+            setupReceiver();
             return true;
 
         } catch (UnknownHostException e) {
@@ -243,7 +273,7 @@ public class Sender {
         return false;
     }
 
-    public static void killConnection() {
+    public synchronized static void killConnection() {
         if (tSocket == null) return;
 
         try {
@@ -255,21 +285,53 @@ public class Sender {
         }
     }
 
-    public static void setTAlive(long tAlive) {
+    public synchronized static void setTAlive(long tAlive) {
         Sender.tAlive = tAlive;
     }
 
-    public static void start() {
+    public static void setupReceiver() {
+        Receiver.settIn(tIn);
+    }
+
+    public static boolean isMasterConnectionUsed() {
+        if (Sync.getNetworkState() == 0) {
+            return false;
+        }
+
+        else if (Sync.getNetworkBSSID().equals(DataLoader.getString("SyncHomeNetwork", "false"))
+                && DataLoader.getBoolean("MasterServer", false)) {
+            return true;
+        }
+
+        else if (DataLoader.getBoolean("ExternalConnection", false)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public synchronized static void start() {
+        if (thread != null && thread.isAlive()) return;
+
         thread = new Thread(task);
+        thread.setName("Sender");
         thread.setPriority(1);
         thread.start();
     }
 
-    public static void stop() {
-        if (thread != null && !thread.isInterrupted()) {
+    public synchronized static void stop() {
+        if (thread != null) {
             thread.interrupt();
+
+            try {
+                thread.join();
+
+            } catch (InterruptedException e) {
+                //e.printStackTrace();
+            }
         }
 
         killConnection();
+        thread = null;
     }
 }
