@@ -136,47 +136,59 @@ public class DataLoader {
     }
 
     public synchronized static void save() {
-        SQLiteDatabase db = getDb();
-        JSONObject dump = new JSONObject();
+        synchronized (ops) {
+            SQLiteDatabase db = getDb();
+            JSONObject dump = new JSONObject();
 
-        try {
-            for (Map.Entry<String, Object> i: ops.entrySet()) {
-                dump.put(i.getKey(), i.getValue());
+            try {
+                for (Map.Entry<String, Object> i : ops.entrySet()) {
+                    dump.put(i.getKey(), i.getValue());
+                }
+
+                Log.d("LOGTAG", dump.toString());
+
+                ContentValues cv = new ContentValues();
+                cv.put("options", dump.toString());
+                cv.put("id", 0);
+
+                db.replace("core", null, cv);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            Log.d("LOGTAG", dump.toString());
-
-            ContentValues cv = new ContentValues();
-            cv.put("options", dump.toString());
-            cv.put("id", 0);
-
-            db.replace("core", null, cv);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
     public synchronized static void set(String key, Object value) {
-        ops.put(key, value);
+        synchronized (ops) {
+            ops.put(key, value);
+        }
     }
 
     public synchronized static Object get(String option) {
-        return ops.get(option);
+        synchronized (ops) {
+            return ops.get(option);
+        }
     }
 
     public synchronized static String getString(String option, String std) {
-        Object res = get(option);
-        return res != null ? String.valueOf(res) : std;
+        synchronized (ops) {
+            Object res = get(option);
+            return res != null ? String.valueOf(res) : std;
+        }
     }
 
     public synchronized static int getInt(String option, int std) {
-        String res = getString(option, null);
-        return res != null ? Integer.valueOf(res) : std;
+        synchronized (ops) {
+            String res = getString(option, null);
+            return res != null ? Integer.valueOf(res) : std;
+        }
     }
 
     public synchronized static boolean getBoolean(String option, boolean std) {
-        String res = getString(option, null);
-        return res != null ? Boolean.valueOf(res) : std;
+        synchronized (ops) {
+            String res = getString(option, null);
+            return res != null ? Boolean.valueOf(res) : std;
+        }
     }
 }

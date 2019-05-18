@@ -23,18 +23,18 @@ import java.util.UUID;
 
 public final class UserLoader {
 
-    public static boolean isAuthenticated() {
+    public synchronized static boolean isAuthenticated() {
         return DataLoader.getString("Session", null) != null || DataLoader.getBoolean("BasicAccount", false);
     }
 
     @NonNull
-    public static String getUsername() {
+    public synchronized static String getUsername() {
         Resources res = DataLoader.getAppResources();
         String name = DataLoader.getString("Username", res.getString(R.string.usernameError));
         return isAuthenticated() ? name : res.getString(R.string.notAuthenticated);
     }
 
-    public static void getPublicKey(@NonNull GetPublicKey.Callback callback) {
+    public synchronized static void getPublicKey(@NonNull GetPublicKey.Callback callback) {
         Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
 
         try {
@@ -45,7 +45,7 @@ public final class UserLoader {
         }
     }
 
-    public static void startAuth(@NonNull String login, @NonNull String password, @NonNull Handler handler) {
+    public synchronized static void startAuth(@NonNull String login, @NonNull String password, @NonNull Handler handler) {
         Authenticator auth = new Authenticator(
                 login,
                 password,
@@ -61,7 +61,7 @@ public final class UserLoader {
         }
     }
 
-    public static void authBasic() {
+    public synchronized static void authBasic() {
         DataLoader.set("BasicAccount", true);
 
         DataLoader.set(
@@ -72,7 +72,7 @@ public final class UserLoader {
         DataLoader.save();
     }
 
-    public static void logout() {
+    public synchronized static void logout() {
         DataLoader.set("Session", null);
         DataLoader.set("Username", null);
         DataLoader.set("BasicAccount", null);
@@ -82,12 +82,12 @@ public final class UserLoader {
     }
 
     @Nullable
-    public static String getSession() {
+    public synchronized static String getSession() {
         return DataLoader.getString("Session", null);
     }
 
     @Nullable
-    public static String getAESKey() {
+    public synchronized static String getAESKey() {
         return DataLoader.getString("AESKey", null);
     }
 
@@ -266,7 +266,8 @@ public final class UserLoader {
 
                     DataLoader.set("Session", data.getString("session"));
                     DataLoader.set("AESKey", key);
-                    CryptoLoader.init();
+                    //CryptoLoader.init();
+                    CryptoLoader.setAESKey(key);
                     DataLoader.save();
 
                     if (handler != null) {

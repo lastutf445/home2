@@ -141,7 +141,8 @@ public class ModulesLoader {
         }
     }
 
-    public static void callSpecial(@NonNull Module module, @NonNull NavigationFragment base) {
+    public static boolean callSpecial(int id, @NonNull Module module, @Nullable NavigationFragment base) {
+        if (id != 1 && id != 2 || base == null) return false;
         Special child = null;
 
         switch (module.getType()) {
@@ -153,9 +154,11 @@ public class ModulesLoader {
                 break;
         }
 
-        if (child == null) return;
+        if (child == null) return false;
 
         child.setModule(module);
+        child.setConnectorId(id);
         FragmentsLoader.addChild(child, base);
+        return true;
     }
 }

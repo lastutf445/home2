@@ -18,6 +18,15 @@ public class JSONPayload {
         this.ops = ops;
     }
 
+    public <T> void set(@NonNull String key, T value) {
+        try {
+            ops.put(key, value);
+
+        } catch (JSONException e) {
+            //e.printStackTrace();
+        }
+    }
+
     public boolean has(String key) {
         return ops.has(key);
     }

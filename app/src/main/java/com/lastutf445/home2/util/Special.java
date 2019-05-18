@@ -17,6 +17,7 @@ import com.lastutf445.home2.containers.Node;
 import com.lastutf445.home2.fragments.dialog.Processing;
 import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.loaders.WidgetsLoader;
 import com.lastutf445.home2.network.Sync;
 
 import org.json.JSONException;
@@ -33,8 +34,17 @@ public abstract class Special extends NavigationFragment {
     protected Module module;
     protected Updater updater;
 
+    private int connectorId = 0;
+    private Connector connector;
+
     public final void setModule(@NonNull Module module) {
         this.module = module;
+    }
+
+    public final void setConnectorId(int id) {
+        if (id == 1 || id == 2) {
+            connectorId = id;
+        }
     }
 
     public final void setRender(@NonNull Render render) {
@@ -42,6 +52,10 @@ public abstract class Special extends NavigationFragment {
 
         if (updater != null) {
             updater.setRender(render);
+
+            if (module != null) {
+                WidgetsLoader.setBottomSheetConnector(new Connector(), connectorId);
+            }
         }
     }
 
@@ -50,6 +64,12 @@ public abstract class Special extends NavigationFragment {
         if (render != null) {
             render.reload(view, module);
         }
+    }
+
+    @Override
+    public final void onDestroy() {
+        WidgetsLoader.delBottomSheetConnector(connectorId);
+        super.onDestroy();
     }
 
     protected void makeEditRequest(JSONObject ops) {
@@ -111,6 +131,9 @@ public abstract class Special extends NavigationFragment {
                 case 1:
                     success(msg.getData());
                     break;
+                case 2:
+                    reload();
+                    break;
             }
         }
 
@@ -130,7 +153,6 @@ public abstract class Special extends NavigationFragment {
 
             View view = weakView.get();
             Module module = weakModule.get();
-            Render render = weakRender.get();
             Processing dialog = weakDialog.get();
 
             if (view != null && module != null) {
@@ -143,18 +165,38 @@ public abstract class Special extends NavigationFragment {
                     return;
                 }
 
-                if (render != null) {
-                    render.reload(view, module);
-                }
+                reload();
             }
 
             if (dialog != null) {
                 dialog.dismiss();
             }
         }
+
+        private void reload() {
+            View view = weakView.get();
+            Module module = weakModule.get();
+            Render render = weakRender.get();
+
+            if (view != null && module != null && render != null) {
+                render.reload(view, module);
+            }
+        }
     }
 
     public interface Render {
         void reload(@NonNull View view, @NonNull Module module);
+    }
+
+    public class Connector {
+        public void onModuleStateUpdated() {
+            if (updater != null) {
+                updater.sendEmptyMessage(2);
+            }
+        }
+
+        public int getSerial() {
+            return (module == null ? -1 : module.getSerial());
+        }
     }
 }

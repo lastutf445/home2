@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/specialTitle"
+        style="@style/StyledTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/unknownModule" />
+
+    <TextView
+        android:id="@+id/textView50"
+        style="@style/StyledSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/specialModule" />
+
+    <LinearLayout
+        android:id="@+id/specialSocketIsOn"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Switch
+            android:id="@+id/specialSocketIsOnCheckBox"
+            style="@style/StyledSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/specialSocketIsOn" />
+    </LinearLayout>
+</LinearLayout>

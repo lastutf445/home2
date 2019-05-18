@@ -58,7 +58,7 @@
 
     <string name="moduleSummary">Summary</string>
     <string name="moduleEditTitle">Edit title</string>
-    <string name="moduleConfigure">Configure special</string>
+    <string name="moduleConfigure">Configure</string>
     <string name="moduleGoToNode">Open node screen</string>
     <string name="moduleSync">Sync state</string>
 
@@ -75,6 +75,8 @@
 
     <string name="nodesImportAddModuleTitle">Add module</string>
     <string name="nodesImportAddModuleMessage">Are you sure to add module to app?</string>
+
+    <string name="nodesImportAddModuleOverrideTitle">Override module</string>
     <string name="nodesImportAddModuleOverrideMessage">Are you sure to override linked module?</string>
 
     <string name="nodeSyncing">Syncing now:</string>
@@ -125,11 +127,14 @@
     <string name="syncDiscoveryAttempts">Search attempts</string>
 
     <string name="syncBehaviorIntervals">Intervals settings</string>
-    <string name="syncBehaviorIntervalsDesc">Define threads synchronization frequencies.\n(a multiple of 500 or doesn\'t affect, ms)</string>
+    <string name="syncBehaviorIntervalsDesc">Define threads synchronization frequencies.\n(a multiple of 500 or rounded, ms)</string>
 
     <string name="syncDashboardInterval">Sync dashboard interval</string>
     <string name="syncMessagesInterval">Sync messages interval</string>
     <string name="syncNotificationsInterval">Sync notifications interval</string>
+
+    <string name="loadDefaults">Load defaults</string>
+    <string name="loadDefaultsMessage">Are you sure to load defaults? Values won\'t be saved automatically.</string>
 
     <string name="aboutSubtitle">Make your home intelligent</string>
     <string name="aboutDeveloped">Developing by:</string>
@@ -140,6 +145,7 @@
     <string name="aboutThanksList">Anton Denikin\nNikita Sviridov</string>
 
     <string name="add">Add</string>
+    <string name="load">Load</string>
     <string name="apply">Apply</string>
     <string name="delete">Delete</string>
     <string name="enable">Enable</string>
@@ -153,11 +159,11 @@
     
     <string name="specialModule">Module settings</string>
     <string name="specialClient">Client settings</string>
-    
-    <string name="specialTemperatureUseFahrenheit">Use The Fahrenheit scale</string>
 
     <string name="specialLightRGBIsLit">Light is on</string>
     <string name="specialLightRGBPickColor">Pick a color</string>
+
+    <string name="specialSocketIsOn">Socket is on</string>
 
     <string name="notTested">not tested</string>
     <string name="notAvailable">Not available</string>
@@ -188,6 +194,7 @@
     <string name="summary">Summary:</string>
     <string name="connection">Connection:</string>
     <string name="IPAddress2">IP address:</string>
+    <string name="lastUpdated">Last updated:</string>
 
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>

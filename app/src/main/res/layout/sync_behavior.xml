@@ -53,6 +53,8 @@
                 android:digits="1234567890."
                 android:ems="10"
                 android:inputType="number"
+                android:maxLength="5"
+                android:singleLine="true"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -92,7 +94,9 @@
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
-                android:inputType="number" />
+                android:inputType="number"
+                android:maxLength="5"
+                android:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -117,7 +121,9 @@
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
-                android:inputType="number"/>
+                android:inputType="number"
+                android:maxLength="3"
+                android:singleLine="true" />
         </LinearLayout>
 
         <TextView
@@ -156,7 +162,9 @@
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
-                android:inputType="number" />
+                android:inputType="number"
+                android:maxLength="6"
+                android:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -181,7 +189,9 @@
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
-                android:inputType="number" />
+                android:inputType="number"
+                android:maxLength="6"
+                android:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -206,12 +216,25 @@
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
-                android:inputType="number" />
+                android:inputType="number"
+                android:maxLength="6"
+                android:singleLine="true" />
         </LinearLayout>
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="32dp" />
+            android:layout_height="24dp" />
+
+        <Button
+            android:id="@+id/syncBehaviorDefaults"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/refresh"
+            android:drawableTint="#444"
+            android:text="@string/loadDefaults"
+            android:textAllCaps="true"
+            android:textColor="#444" />
 
         <Button
             android:id="@+id/syncBehaviorSave"

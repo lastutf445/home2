@@ -18,6 +18,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Calendar;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -28,8 +29,9 @@ import javax.crypto.spec.SecretKeySpec;
 public class CryptoLoader {
 
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    private static BigInteger modulus = null, pubExp = null;
-    private static SecretKeySpec AESKey = null;
+    private volatile static BigInteger modulus = null, pubExp = null;
+    private volatile static SecretKeySpec AESKey = null;
+    private volatile static SecureRandom secureRandom;
     private final static int IV_LENGTH = 16;
 
     public static void init() {
@@ -37,39 +39,56 @@ public class CryptoLoader {
         AESKey = null;
 
         if (encoded_key != null) {
-            byte[] raw_key = Base64.decode(encoded_key, Base64.NO_WRAP);
+            setAESKey(encoded_key);
+        }
 
-            if (raw_key != null) {
-                AESKey = new SecretKeySpec(raw_key, "AES");
+        if (secureRandom == null) {
+            try {
+                secureRandom = SecureRandom.getInstance("SHA1PRNG");
+
+            } catch (NoSuchAlgorithmException e) {
+                secureRandom = new SecureRandom();
             }
+
+            secureRandom.setSeed(
+                    Calendar.getInstance().getTimeInMillis()
+            );
         }
     }
 
-    public static String createAESKey() {
+    public static void setAESKey(@NonNull String key) {
+        byte[] raw_key = Base64.decode(key, Base64.NO_WRAP);
+
+        if (raw_key != null) {
+            AESKey = new SecretKeySpec(raw_key, "AES");
+        }
+    }
+
+    public synchronized static String createAESKey() {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[16];
         random.nextBytes(bytes);
         return Base64.encodeToString(bytes, Base64.NO_WRAP);
     }
 
-    public static boolean hasAESKey() {
+    public synchronized static boolean hasAESKey() {
         return AESKey != null;
     }
 
-    public static void setPublicKey(@NonNull String modulus, @NonNull String pubExp) throws NumberFormatException {
+    public synchronized static void setPublicKey(@NonNull String modulus, @NonNull String pubExp) throws NumberFormatException {
         setPublicKey(new BigInteger(modulus, 16), new BigInteger(pubExp, 16));
     }
 
-    public static void setPublicKey(@NonNull BigInteger modulus, @NonNull BigInteger pubExp) {
+    public synchronized static void setPublicKey(@NonNull BigInteger modulus, @NonNull BigInteger pubExp) {
         CryptoLoader.modulus = modulus;
         CryptoLoader.pubExp = pubExp;
     }
 
-    public static boolean isPublicKeyValid() {
+    public synchronized static boolean isPublicKeyValid() {
         return isPublicKeyValid(modulus, pubExp);
     }
 
-    public static boolean isPublicKeyValid(BigInteger modulus, BigInteger pubExp) {
+    public synchronized static boolean isPublicKeyValid(BigInteger modulus, BigInteger pubExp) {
         if (modulus == null || pubExp == null) return false;
 
         try {
@@ -84,7 +103,7 @@ public class CryptoLoader {
         }
     }
 
-    public static boolean isPublicKeyValid(String raw_modulus, String raw_pubExp) {
+    public synchronized static boolean isPublicKeyValid(String raw_modulus, String raw_pubExp) {
         if (raw_modulus == null || raw_pubExp == null) return false;
 
         try {
@@ -98,7 +117,7 @@ public class CryptoLoader {
         }
     }
 
-    public static String RSAEncrypt(@NonNull String msg) {
+    public synchronized static String RSAEncrypt(@NonNull String msg) {
         if (modulus == null || pubExp == null) return null;
 
         try {
@@ -132,9 +151,8 @@ public class CryptoLoader {
     }
 
     @Nullable
-    public static String AESEncrypt(String msg) {
+    public synchronized static String AESEncrypt(String msg) {
         try {
-            SecureRandom secureRandom = new SecureRandom();
             byte[] ivBytes = new byte[IV_LENGTH / 2];
             secureRandom.nextBytes(ivBytes);
             String iv = bytesToHex(ivBytes);
@@ -161,10 +179,9 @@ public class CryptoLoader {
     }
 
     @Nullable
-    public static String AESDecrypt(String msg) {
+    public synchronized static String AESDecrypt(String msg) {
         try {
-            byte[] encrypted = Base64.decode(msg, Base64.DEFAULT);
-
+            byte[] encrypted = Base64.decode(msg, Base64.NO_WRAP);
             IvParameterSpec ivParameterSpec = new IvParameterSpec(encrypted, 0, IV_LENGTH);
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -179,7 +196,7 @@ public class CryptoLoader {
         }
     }
 
-    public static String bytesToHex(byte[] bytes) {
+    public synchronized static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
 
         for (int i = 0; i < bytes.length; ++i) {

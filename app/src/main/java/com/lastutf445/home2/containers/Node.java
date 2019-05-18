@@ -46,7 +46,7 @@ public class Node {
                 Module module = modules.valueAt(i);
 
                 if (module != null && module.getNode() == serial) {
-                    NodesLoader.onModuleLinkChanged(module, true);
+                    NodesLoader.onModuleLinkChanged(this, module, true);
                 }
             }
         }
@@ -115,12 +115,10 @@ public class Node {
 
     public void addModule(@NonNull Module module) {
         if (syncing.get(module.getSerial()) != null) {
-            syncing.put(module.getSerial(), module);
-            return;
+            syncing.remove(module.getSerial());
 
         } else if (idle.get(module.getSerial()) != null) {
-            idle.put(module.getSerial(), module);
-            return;
+            idle.remove(module.getSerial());
         }
 
         if (module.getSyncing()) {

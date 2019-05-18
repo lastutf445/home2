@@ -1,5 +1,6 @@
 package com.lastutf445.home2.loaders;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -55,6 +56,11 @@ public final class FragmentsLoader {
 
         ft.show(fragment).commitNow();
         ft.setPrimaryNavigationFragment(fragment).commitNow();
+    }
+
+    @Nullable
+    public static NavigationFragment getPrimaryNavigationFragment() {
+        return (NavigationFragment) manager.getPrimaryNavigationFragment();
     }
 
     private static void removeFragment(NavigationFragment fragment) {

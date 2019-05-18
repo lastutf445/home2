@@ -149,16 +149,16 @@ public class NodesImport extends NavigationFragment {
         );
 
         Resources res = DataLoader.getAppResources();
-        builder.setTitle(res.getString(R.string.nodesImportAddModuleTitle));
-
         boolean match = false;
 
         if (ModulesLoader.getModule(module.getSerial()) != null) {
             builder.setMessage(res.getString(R.string.nodesImportAddModuleOverrideMessage));
+            builder.setTitle(res.getString(R.string.nodesImportAddModuleOverrideTitle));
             match = true;
 
         } else {
             builder.setMessage(res.getString(R.string.nodesImportAddModuleMessage));
+            builder.setTitle(res.getString(R.string.nodesImportAddModuleTitle));
         }
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

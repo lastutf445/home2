@@ -6,21 +6,65 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="50dp"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
     <TextView
-        android:id="@+id/textView47"
+        android:id="@+id/bottomSheetTitle"
         style="@style/StyledSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="@string/serial" />
 
-    <Button
-        android:id="@+id/button"
-        style="@style/StyledButtonIcon.Chevron"
+    <TextView
+        android:id="@+id/bottomSheetLastUpdate"
+        style="@style/StyledSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:text="Button" />
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp"
+        android:text="@string/lastUpdated"
+        android:textColor="#888" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/bottomSheetConfigure"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/moduleEditTitle">
+
+        <ImageView
+            android:id="@+id/bottomSheetConfigureIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/settings" />
+
+        <Button
+            android:id="@+id/bottomSheetConfigureButton"
+            style="@style/StyledButtonIcon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:text="@string/moduleConfigure"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bottomSheetConfigureIcon"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/bottomSheetDelete"
+        style="@style/StyledButtonIcon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/delete"
+        android:drawableTint="#333"
+        android:text="@string/widgetRemoveTitle" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
 </LinearLayout>

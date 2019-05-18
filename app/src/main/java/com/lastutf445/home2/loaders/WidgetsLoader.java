@@ -13,24 +13,32 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.containers.Widget;
+import com.lastutf445.home2.fragments.Dashboard;
+import com.lastutf445.home2.util.Special;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class WidgetsLoader {
 
@@ -39,21 +47,34 @@ public class WidgetsLoader {
     private static final int WIDGETS_TYPE = 2;
     private static final int WIDGETS_OPS = 3;
 
-    private static WeakReference<BottomSheetBehavior> weakBehavior;
     private static WeakReference<LayoutInflater> weakInflater;
     private static WeakReference<LinearLayout> weakContent;
     private static Handler handler;
 
+    private static BottomSheetLongClickListener bottomSheetLongClickListener;
+    private static WeakReference<BottomSheetDialog> weakBottomSheetDialog;
+    private static WeakReference<View> weakBottomSheetView;
+    private static int bottomSheetWidgetSerial;
+
     private static final SparseArray<Widget> widgets = new SparseArray<>();
     private static final SparseArray<Module> free = new SparseArray<>();
     private static final SparseIntArray serials = new SparseIntArray();
+    private static Special.Connector bottomSheetConnect1, bottomSheetConnect2;
     private static int headId = 0, headSerial = 0;
     private static boolean unsaved = false;
 
-    public static void init(Handler handler, LayoutInflater inflater, LinearLayout content, BottomSheetBehavior behavior) {
-        weakBehavior = new WeakReference<>(behavior);
+    public static void init(Handler handler, LayoutInflater inflater, LinearLayout content, BottomSheetDialog dialog, View bottomSheetView) {
+        weakBottomSheetView = new WeakReference<>(bottomSheetView);
+        weakBottomSheetDialog = new WeakReference<>(dialog);
         weakInflater = new WeakReference<>(inflater);
         weakContent = new WeakReference<>(content);
+
+        bottomSheetLongClickListener = new BottomSheetLongClickListener();
+        BottomSheetClickListener c = new BottomSheetClickListener();
+
+        bottomSheetView.findViewById(R.id.bottomSheetConfigure).setOnClickListener(c);
+        bottomSheetView.findViewById(R.id.bottomSheetDelete).setOnClickListener(c);
+
         WidgetsLoader.handler = handler;
         reload();
     }
@@ -150,18 +171,8 @@ public class WidgetsLoader {
             View view = widget.getView();
             content.addView(view, pos);
 
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    BottomSheetBehavior behavior = weakBehavior.get();
-
-                    if (behavior != null) {
-                        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    }
-
-                    return false;
-                }
-            });
+            view.setTag(widget.getSerial());
+            view.setOnLongClickListener(bottomSheetLongClickListener);
         }
     }
 
@@ -220,19 +231,22 @@ public class WidgetsLoader {
     public static void updateAll() {
         for (int i = 0; i < widgets.size(); ++i)  {
             Widget widget = widgets.valueAt(i);
-            createUpdateEvent(widget.getId());
+            createUpdateEvent(widget.getId(), false);
         }
     }
 
-    public static void createUpdateEvent(int id) {
+    public static void createUpdateEvent(int id, boolean updateTimestamp) {
         Message msg = handler.obtainMessage(1);
         Bundle data = new Bundle();
+
+        data.putBoolean("updateTimestamp", updateTimestamp);
         data.putInt("id", id);
+
         msg.setData(data);
         handler.sendMessage(msg);
     }
 
-    public static void update(int id) {
+    public static void update(int id, boolean updateTimestamp) {
         Log.d("LOGTAG", "update request to " + id);
 
         Widget widget = widgets.get(id);
@@ -242,19 +256,19 @@ public class WidgetsLoader {
 
         switch (widget.getType()) {
             case "temperature":
-                updateTemperature(widget, module);
+                updateTemperature(widget, module, updateTimestamp);
                 break;
             case "humidity":
-                updateHumidity(widget, module);
+                updateHumidity(widget, module, updateTimestamp);
                 break;
             case "lightrgb":
-                updateLightRGB(widget, module);
+                updateLightRGB(widget, module, updateTimestamp);
                 break;
             case "socket":
-                updateSocket(widget, module);
+                updateSocket(widget, module, updateTimestamp);
                 break;
             case "title":
-                updateTitle(widget, module);
+                updateTitle(widget);
                 break;
         }
     }
@@ -271,8 +285,12 @@ public class WidgetsLoader {
         }
     }
 
-    private static void updateTemperature(@NonNull Widget widget, @Nullable Module module) {
+    private static void updateTemperature(@NonNull Widget widget, @Nullable Module module, boolean updateTimestamp) {
         if (widget.getView() == null || module == null) return;
+
+        if (updateTimestamp) {
+            widget.set("lastAccess", System.currentTimeMillis());
+        }
 
         updateSimpleWidget(
                 widget.getView(),
@@ -282,8 +300,12 @@ public class WidgetsLoader {
         );
     }
 
-    private static void updateHumidity(@NonNull Widget widget, @Nullable Module module) {
+    private static void updateHumidity(@NonNull Widget widget, @Nullable Module module, boolean updateTimestamp) {
         if (widget.getView() == null || module == null) return;
+
+        if (updateTimestamp) {
+            widget.set("lastAccess", System.currentTimeMillis());
+        }
 
         updateSimpleWidget(
                 widget.getView(),
@@ -293,8 +315,12 @@ public class WidgetsLoader {
         );
     }
 
-    private static void updateLightRGB(@NonNull Widget widget, @Nullable Module module) {
+    private static void updateLightRGB(@NonNull Widget widget, @Nullable Module module, boolean updateTimestamp) {
         if (widget.getView() == null || module == null) return;
+
+        if (updateTimestamp) {
+            widget.set("lastAccess", System.currentTimeMillis());
+        }
 
         updateSimpleWidget(
                 widget.getView(),
@@ -317,8 +343,12 @@ public class WidgetsLoader {
         }
     }
 
-    private static void updateSocket(@NonNull Widget widget, @Nullable Module module) {
+    private static void updateSocket(@NonNull Widget widget, @Nullable Module module, boolean updateTimestamp) {
         if (widget.getView() == null || module == null) return;
+
+        if (updateTimestamp) {
+            widget.set("lastAccess", System.currentTimeMillis());
+        }
 
         updateSimpleWidget(
                 widget.getView(),
@@ -341,7 +371,7 @@ public class WidgetsLoader {
         }
     }
 
-    private static void updateTitle(@NonNull Widget widget, @Nullable Module module) {
+    private static void updateTitle(@NonNull Widget widget) {
         if (widget.getView() == null) return;
 
         updateSimpleWidget(
@@ -365,6 +395,7 @@ public class WidgetsLoader {
 
     public static boolean addWidget(@NonNull Widget widget) {
         if (serials.get(widget.getSerial(), Integer.MAX_VALUE) != Integer.MAX_VALUE) return false;
+        widget.set("lastAccess", System.currentTimeMillis());
 
         SQLiteDatabase db = DataLoader.getDb();
         ContentValues cv = new ContentValues();
@@ -391,7 +422,7 @@ public class WidgetsLoader {
                     renderWidget(widget, inflater, content, 0);
                     serials.put(widget.getSerial(), widget.getId());
                     widgets.put(widget.getId(), widget);
-                    createUpdateEvent(widget.getId());
+                    createUpdateEvent(widget.getId(), false);
                     free.delete(widget.getSerial());
                     return true;
                 }
@@ -403,6 +434,7 @@ public class WidgetsLoader {
 
     public static boolean replaceWidget(@NonNull Widget widget) {
         if (widgets.get(widget.getId()) == null) return false;
+        widget.set("lastAccess", System.currentTimeMillis());
 
         LayoutInflater inflater = weakInflater.get();
         LinearLayout content = weakContent.get();
@@ -418,7 +450,7 @@ public class WidgetsLoader {
                 content.removeViewAt(pos);
 
                 renderWidget(widget, inflater, content, pos);
-                createUpdateEvent(widget.getId());
+                createUpdateEvent(widget.getId(), false);
                 saveWidget(widget);
 
                 return true;
@@ -460,8 +492,6 @@ public class WidgetsLoader {
     }
 
     public static void swapViews(int i, int j) {
-        //Log.d("LOGTAG", "requesting to swap " + i + " and " + j);
-
         synchronized (widgets) {
             synchronized (serials) {
                 LayoutInflater inflater = weakInflater.get();
@@ -588,7 +618,7 @@ public class WidgetsLoader {
 
         if (!linked) {
             free.remove(module.getSerial());
-            update(id);
+            update(id, false);
             return;
         }
 
@@ -596,7 +626,7 @@ public class WidgetsLoader {
             Widget widget = widgets.get(id);
 
             if (widget.getType().equals(module.getType())) {
-                createUpdateEvent(id);
+                createUpdateEvent(id, false);
 
             } else {
                 replaceWidget(new Widget(
@@ -618,18 +648,117 @@ public class WidgetsLoader {
         int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
 
         if (id != Integer.MAX_VALUE) {
-            createUpdateEvent(id);
+            createUpdateEvent(id, false);
         }
     }
 
     public static void onModuleStateUpdated(@NonNull Module module) {
         int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
 
-
         if (id != Integer.MAX_VALUE) {
-            createUpdateEvent(id);
-        } else {
-            //Log.d("LOGTAG", "widget not found");
+            createUpdateEvent(id, true);
+        }
+
+        if (bottomSheetConnect1 != null && module.getSerial() == bottomSheetConnect1.getSerial()) {
+            bottomSheetConnect1.onModuleStateUpdated();
+        }
+
+        if (bottomSheetConnect2 != null && module.getSerial() == bottomSheetConnect2.getSerial()) {
+            bottomSheetConnect2.onModuleStateUpdated();
+        }
+    }
+
+    public static void setBottomSheetConnector(Special.Connector connector, int id) {
+        if (id == 1) bottomSheetConnect1 = connector;
+        else if (id == 2) bottomSheetConnect2 = connector;
+    }
+
+    public static void delBottomSheetConnector(int id) {
+        if (id == 1) bottomSheetConnect1 = null;
+        else if (id == 2) bottomSheetConnect2 = null;
+    }
+
+    private static class BottomSheetLongClickListener implements View.OnLongClickListener {
+        @Override
+        public boolean onLongClick(View v) {
+            if (!(v.getTag() instanceof Integer)) {
+                return false;
+            }
+
+            BottomSheetDialog dialog = weakBottomSheetDialog.get();
+            View bottomSheet = weakBottomSheetView.get();
+            bottomSheetWidgetSerial = (int) v.getTag();
+
+            if (bottomSheet != null) {
+                ((TextView) bottomSheet.findViewById(R.id.bottomSheetTitle)).setText(
+                        String.format(Locale.ENGLISH, "%s %d",
+                                DataLoader.getAppResources().getString(R.string.serial),
+                                bottomSheetWidgetSerial
+                        )
+                );
+
+                Module module = ModulesLoader.getModule(bottomSheetWidgetSerial);
+
+                if (module != null && ModulesLoader.hasSpecial(module)) {
+                    bottomSheet.findViewById(R.id.bottomSheetConfigure).setClickable(true);
+
+                    ((Button) bottomSheet.findViewById(R.id.bottomSheetConfigureButton)).setTextColor(
+                            Color.parseColor("#333333")
+                    );
+
+                    ((ImageView) bottomSheet.findViewById(R.id.bottomSheetConfigureIcon)).setColorFilter(
+                            Color.parseColor("#333333")
+                    );
+
+                } else {
+                    bottomSheet.findViewById(R.id.bottomSheetConfigure).setClickable(false);
+
+                    ((Button) bottomSheet.findViewById(R.id.bottomSheetConfigureButton)).setTextColor(
+                            Color.parseColor("#999999")
+                    );
+
+                    ((ImageView) bottomSheet.findViewById(R.id.bottomSheetConfigureIcon)).setColorFilter(
+                            Color.parseColor("#999999")
+                    );
+                }
+            }
+
+            if (dialog != null) {
+                dialog.show();
+            }
+
+            return false;
+        }
+    }
+
+    private static class BottomSheetClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Module module = ModulesLoader.getModule(bottomSheetWidgetSerial);
+            if (module == null) return;
+
+            switch (v.getId()) {
+                case R.id.bottomSheetConfigure:
+                    openSpecial(module);
+                    break;
+
+                case R.id.bottomSheetDelete:
+                    deleteWidget();
+                    break;
+            }
+        }
+
+        private void openSpecial(@NonNull Module module) {
+            if (ModulesLoader.hasSpecial(module)) {
+                if (ModulesLoader.callSpecial(2, module, FragmentsLoader.getPrimaryNavigationFragment())) {
+                    BottomSheetDialog dialog = weakBottomSheetDialog.get();
+                    if (dialog != null) dialog.cancel();
+                }
+            }
+        }
+
+        private void deleteWidget() {
+
         }
     }
 }

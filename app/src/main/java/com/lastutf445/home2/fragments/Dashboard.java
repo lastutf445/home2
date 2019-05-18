@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import java.lang.ref.WeakReference;
 
 public class Dashboard extends NavigationFragment {
 
+    private BottomSheetDialog bottomSheet;
+    private View bottomSheetView;
     private Updater updater;
 
     @Nullable
@@ -37,12 +40,12 @@ public class Dashboard extends NavigationFragment {
     protected void init() {
         updater = new Updater(view);
         LinearLayout content = view.findViewById(R.id.dashboardContent);
-        LinearLayout sheet = view.findViewById(R.id.bottomSheet);
+        bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet, (ViewGroup) view, false);
 
-        BottomSheetBehavior behavior = BottomSheetBehavior.from(sheet);
-        behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        bottomSheet = new BottomSheetDialog(getActivity());
+        bottomSheet.setContentView(bottomSheetView);
 
-        WidgetsLoader.init(updater, getLayoutInflater(), content, behavior);
+        WidgetsLoader.init(updater, getLayoutInflater(), content, bottomSheet, bottomSheetView);
 
         Sync.addTrigger(
                 Sync.FRAGMENT_DASHBOARD_TRIGGER,
@@ -109,7 +112,10 @@ public class Dashboard extends NavigationFragment {
 
         private void updateWidget(Bundle data) {
             if (data == null) return;
-            WidgetsLoader.update(data.getInt("id"));
+            WidgetsLoader.update(
+                    data.getInt("id", Integer.MAX_VALUE),
+                    data.getBoolean("updateTimestamp", false)
+            );
         }
     }
 }

@@ -117,21 +117,27 @@ public class NodesLoader {
         db.delete("nodes", "serial=?", args);
         nodes.remove(node.getSerial());
         node.wipeSyncing();
+
+        Sync.removeSyncProvider(node.getSerial());
     }
 
     public static void onModuleLinkChanged(@NonNull Module module, boolean linked) {
         Node node = getNode(module.getNode());
 
         if (node != null) {
-            if (linked) {
-                node.addModule(module);
-                WidgetsLoader.onModuleLinkChanged(module, true);
-            }
-            else {
-                module.getOps().remove("value");
-                WidgetsLoader.onModuleLinkChanged(module, false);
-                node.removeModule(module);
-            }
+            onModuleLinkChanged(node, module, linked);
+        }
+    }
+
+    public static void onModuleLinkChanged(@NonNull Node node, @NonNull Module module, boolean linked) {
+        if (linked) {
+            node.addModule(module);
+            WidgetsLoader.onModuleLinkChanged(module, true);
+
+        } else {
+            module.getOps().remove("value");
+            WidgetsLoader.onModuleLinkChanged(module, false);
+            node.removeModule(module);
         }
     }
 

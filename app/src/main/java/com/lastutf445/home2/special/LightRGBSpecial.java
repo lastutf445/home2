@@ -88,7 +88,6 @@ public class LightRGBSpecial extends Special {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         });
 
@@ -142,6 +141,4 @@ public class LightRGBSpecial extends Special {
             e.printStackTrace();
         }
     }
-
-
 }

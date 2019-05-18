@@ -22,7 +22,7 @@ import java.util.concurrent.CancellationException;
 public class Receiver {
 
     private static StringBuffer buf = new StringBuffer();
-    private static BufferedReader tIn;
+    private volatile static BufferedReader tIn;
     private static DatagramSocket uSocket;
     private static Thread thread;
 
@@ -44,6 +44,8 @@ public class Receiver {
                 if (!Thread.interrupted()) sleep();
                 else break;
             }
+
+            Log.d("LOGTAG", "RECEIVER: bye-bye");
         }
     };
 
@@ -70,6 +72,10 @@ public class Receiver {
                     Thread.currentThread().interrupt();
                     return;
                 }
+            }
+
+            if (buf.length() >= 1024) {
+                buf = new StringBuffer();
             }
 
             if (reading) return;
@@ -113,7 +119,7 @@ public class Receiver {
             Thread.sleep(500);
 
         } catch (InterruptedException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             Thread.currentThread().interrupt();
         }
     }
@@ -135,7 +141,11 @@ public class Receiver {
                 String raw_data = json.getString("data");
                 String decrypted = CryptoLoader.AESDecrypt(raw_data);
 
-                if (decrypted == null) return;
+                if (decrypted == null) {
+                    Log.d("LOGTAG", "decrypt error");
+                    return;
+                }
+
                 data = new JSONObject(decrypted);
 
             } else {
@@ -179,13 +189,13 @@ public class Receiver {
 
         thread = new Thread(task);
         thread.setName("Receiver");
-        thread.setPriority(2);
+        thread.setPriority(3);
         thread.start();
 
         Sender.setupReceiver();
     }
 
-    public static void stop() {
+    public synchronized static void stop() {
         if (thread != null) {
             thread.interrupt();
 

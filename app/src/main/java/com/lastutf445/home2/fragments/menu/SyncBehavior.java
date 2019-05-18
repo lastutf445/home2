@@ -1,5 +1,8 @@
 package com.lastutf445.home2.fragments.menu;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,7 +39,6 @@ public class SyncBehavior extends NavigationFragment {
 
     @Override
     protected void init() {
-
         syncClientPort = view.findViewById(R.id.syncClientPort);
         syncDiscoveryPort = view.findViewById(R.id.syncDiscoveryPort);
         syncDiscoveryAttempts = view.findViewById(R.id.syncDiscoveryAttempts);
@@ -47,10 +49,19 @@ public class SyncBehavior extends NavigationFragment {
         View.OnClickListener c = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                save();
+                switch (v.getId()) {
+                    case R.id.syncBehaviorDefaults:
+                        loadDefaults();
+                        break;
+                    case R.id.syncBehaviorSave:
+                        save();
+                        break;
+                }
+
             }
         };
 
+        view.findViewById(R.id.syncBehaviorDefaults).setOnClickListener(c);
         view.findViewById(R.id.syncBehaviorSave).setOnClickListener(c);
         reload();
     }
@@ -80,7 +91,37 @@ public class SyncBehavior extends NavigationFragment {
         syncNotificationsInterval.setText(
                 String.valueOf(DataLoader.getInt("SyncNotificationsInterval", 2000))
         );
+    }
 
+    private void loadDefaults() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity()
+        );
+
+        Resources res = DataLoader.getAppResources();
+        builder.setTitle(res.getString(R.string.loadDefaults));
+        builder.setMessage(res.getString(R.string.loadDefaultsMessage));
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setPositiveButton(R.string.load, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                syncClientPort.setText(String.valueOf(44501));
+                syncDiscoveryPort.setText(String.valueOf(44500));
+                syncDiscoveryAttempts.setText(String.valueOf(3));
+                syncDashboardInterval.setText(String.valueOf(5000));
+                syncMessagesInterval.setText(String.valueOf(500));
+                syncNotificationsInterval.setText(String.valueOf(2000));
+            }
+        });
+
+        builder.create().show();
     }
 
     private void save() {

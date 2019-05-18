@@ -139,7 +139,7 @@ public class Sender {
         }
     };
 
-    private static int mSend(SyncProvider provider, long time) {
+    private synchronized static int mSend(SyncProvider provider, long time) {
         if (!makeConnection(
                 DataLoader.getString("MasterServerAddress", "false"),
                 DataLoader.getInt("MasterServerPort", Sync.DEFAULT_PORT),
@@ -149,7 +149,7 @@ public class Sender {
         return tSend(provider);
     }
 
-    private static int eSend(SyncProvider provider, long time) {
+    private synchronized static int eSend(SyncProvider provider, long time) {
         if (!makeConnection(
                 DataLoader.getString("ExternalAddress", "false"),
                 DataLoader.getInt("ExternalPort", Sync.DEFAULT_PORT),
@@ -161,9 +161,10 @@ public class Sender {
 
     private synchronized static int tSend(SyncProvider provider) {
         if (tOut != null) {
-            JSONObject query = provider.getQuery();
 
             try {
+                JSONObject query = new JSONObject(provider.getQuery().toString());
+
                 if (provider.getBrodcast()) query.put("ip", "broadcast");
                 else if (provider.getIP() != null) {
                     query.put("ip", provider.getIP().getHostAddress());
@@ -191,15 +192,15 @@ public class Sender {
 
                     query.put("session", UserLoader.getSession());
                     query.put("data", encrypted);
+
+                    tOut.write(query.toString() + "\n");
+                    tOut.flush();
+                    return 1;
                 }
 
             } catch (JSONException e) {
                 //e.printStackTrace();
             }
-
-            tOut.write(query.toString() + "\n");
-            tOut.flush();
-            return 1;
         }
 
         return 0;
@@ -289,11 +290,11 @@ public class Sender {
         Sender.tAlive = tAlive;
     }
 
-    public static void setupReceiver() {
+    public synchronized static void setupReceiver() {
         Receiver.settIn(tIn);
     }
 
-    public static boolean isMasterConnectionUsed() {
+    public synchronized static boolean isMasterConnectionUsed() {
         if (Sync.getNetworkState() == 0) {
             return false;
         }
@@ -315,7 +316,7 @@ public class Sender {
 
         thread = new Thread(task);
         thread.setName("Sender");
-        thread.setPriority(1);
+        thread.setPriority(3);
         thread.start();
     }
 
