@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
+import java.util.Iterator;
 import java.util.UUID;
 
 public final class UserLoader {
@@ -32,6 +33,21 @@ public final class UserLoader {
         Resources res = DataLoader.getAppResources();
         String name = DataLoader.getString("Username", res.getString(R.string.usernameError));
         return isAuthenticated() ? name : res.getString(R.string.notAuthenticated);
+    }
+
+    public synchronized static void setOnlineUsername(@NonNull String s, @NonNull Handler handler) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("Username", s);
+
+            Sync.addSyncProvider(
+                    new Editor(data, handler, false)
+            );
+
+        } catch (JSONException e) {
+            //e.printStackTrace();
+            handler.sendEmptyMessage(0);
+        }
     }
 
     public synchronized static void getPublicKey(@NonNull GetPublicKey.Callback callback) {
@@ -91,13 +107,7 @@ public final class UserLoader {
         return DataLoader.getString("AESKey", null);
     }
 
-    private static class GetPublicKey extends SyncProvider {
-
-        interface Callback {
-            void onValid(@NonNull String modulus, @NonNull String pubExp);
-            void onInvalid();
-        }
-
+    private final static class GetPublicKey extends SyncProvider {
         private Callback callback;
 
         public GetPublicKey(@NonNull Callback callback) throws JSONException {
@@ -139,9 +149,14 @@ public final class UserLoader {
         public boolean getUseMasterConnectionOnly() {
             return true;
         }
+
+        interface Callback {
+            void onValid(@NonNull String modulus, @NonNull String pubExp);
+            void onInvalid();
+        }
     }
 
-    private static class CredentialsProvider extends SyncProvider {
+    private final static class CredentialsProvider extends SyncProvider {
 
         interface Callback {
             void onStatusReceived(JSONObject data);
@@ -169,7 +184,7 @@ public final class UserLoader {
         }
     }
 
-    private static class Authenticator implements GetPublicKey.Callback, CredentialsProvider.Callback {
+    private final static class Authenticator implements GetPublicKey.Callback, CredentialsProvider.Callback {
 
         private WeakReference<Handler> weakHandler;
         private String login, password, key;
@@ -181,7 +196,6 @@ public final class UserLoader {
         }
 
         /**
-         *
          * HANDLER RETURN CODES:
          * 0 - unexpected error
          * 1 - requesting publicKey
@@ -266,7 +280,6 @@ public final class UserLoader {
 
                     DataLoader.set("Session", data.getString("session"));
                     DataLoader.set("AESKey", key);
-                    //CryptoLoader.init();
                     CryptoLoader.setAESKey(key);
                     DataLoader.save();
 
@@ -279,12 +292,94 @@ public final class UserLoader {
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
 
                 if (handler != null) {
                     handler.sendEmptyMessage(0);
                 }
             }
+        }
+    }
+
+    private final static class Editor extends SyncProvider {
+        private WeakReference<Handler> weakHandler;
+        private boolean sessionParams;
+
+        /**
+         * HANDLER RETURN CODES:
+         * 0 - unexpected error
+         * 1 - processing
+         * 2 - done
+         */
+
+        public Editor(@NonNull JSONObject data, @NonNull Handler handler, boolean sessionParams) throws JSONException {
+            super(
+                    Sync.PROVIDER_EDITOR,
+                    sessionParams ? "editSession" : "editProfile",
+                    data,
+                    null,
+                    Sync.DEFAULT_PORT
+            );
+
+            weakHandler = new WeakReference<>(handler);
+            this.sessionParams = sessionParams;
+        }
+
+        @Override
+        public boolean getUseMasterConnectionOnly() {
+            return true;
+        }
+
+        @Override
+        public void onPostPublish(int statusCode) {
+            if (statusCode == 1) {
+                Handler handler = weakHandler.get();
+
+                if (handler != null) {
+                    handler.sendEmptyMessage(1);
+                }
+            }
+        }
+
+        @Override
+        public void onReceive(JSONObject data) {
+            Handler handler = weakHandler.get();
+            Sync.removeSyncProvider(Sync.PROVIDER_EDITOR);
+            //Log.d("LOGTAG", data.toString());
+
+            try {
+                String status = data.getString("status");
+                if (status != null && status.equals("ok")) {
+                    if (!sessionParams) {
+                        JSONObject user = query.getJSONObject("data");
+                        //Log.d("LOGTAG", user.toString());
+                        Iterator<String> it = user.keys();
+
+                        while (it.hasNext()) {
+                            String key = it.next();
+                            if (!DataLoader.has(key)) continue;
+
+                            Object a = DataLoader.get(key);
+                            Object b = user.get(key);
+
+                            if (a == null || (b != null && a.getClass().getName().equals(b.getClass().getName()))) {
+                                //Log.d("LOGTAG", "set: " + key);
+                                DataLoader.set(key, b);
+                            }
+                        }
+
+                        DataLoader.save();
+                    }
+
+                    handler.sendEmptyMessage(2);
+                    return;
+                }
+
+            } catch (JSONException e) {
+                //e.printStackTrace();
+            }
+
+            handler.sendEmptyMessage(0);
         }
     }
 }

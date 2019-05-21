@@ -13,18 +13,26 @@
         android:layout_weight="0"
         android:text="@string/modules" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/modulesContent"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/modules_item">
+        android:layout_weight="0">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/modulesContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/modules_item">
 
-    <TextView
-        android:id="@+id/modulesNoContent"
-        style="@style/StyledNoContent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/noContent" />
+        </android.support.v7.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/modulesNoContent"
+            style="@style/StyledNoContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/noContent" />
+
+    </FrameLayout>
+
 </LinearLayout>

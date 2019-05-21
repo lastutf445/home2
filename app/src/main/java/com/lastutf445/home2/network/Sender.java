@@ -1,5 +1,7 @@
 package com.lastutf445.home2.network;
 
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -34,21 +37,31 @@ public class Sender {
 
     private static final SparseArray<SyncProvider> syncing = Sync.getSyncing();
     private static final HashSet<Integer> removed = Sync.getRemoved();
+    private volatile static WeakReference<Handler> subscriber;
     private static SparseArray<SyncProvider> local;
 
     private volatile static BufferedReader tIn;
+    private volatile static long tAlive;
+
     private static DatagramSocket uSocket;
     private static PrintWriter tOut;
     private static Socket tSocket;
     private static Thread thread;
-    private static long tAlive;
 
-    /** RETURN CODES
+    /** PROVIDER RETURN CODES
      *  0 - Unknown exception
      *  1 - Sent successfully
      *  2 - External address is undefined
      *  3 - No Internet connection
      *  4 - Encryption error
+     *  5 - MasterServer required
+     */
+
+    /** SUBSCRIBER RETURN CODES
+     *  -1 - Disconnected
+     *  -2 - Home network
+     *  -3 - Master Server
+     *  -4 - Idle
      */
 
     private static Runnable task = new Runnable() {
@@ -71,7 +84,7 @@ public class Sender {
 
                 for (int i = 0; i < local.size(); ++i) {
                     SyncProvider current = local.valueAt(i);
-                    long time = Calendar.getInstance().getTimeInMillis();
+                    long time = System.currentTimeMillis();
                     long last = current.getLastAccess();
 
                     switch (current.getGroup()) {
@@ -81,11 +94,14 @@ public class Sender {
                             break;
                         case Sync.SYNC_MESSAGES:
                             if (!DataLoader.getBoolean("SyncMessages", false)) continue;
-                            if (last + DataLoader.getInt("SyncMessagesInterval", 800) > time) continue;
+                            if (last + DataLoader.getInt("SyncMessagesInterval", 500) > time) continue;
                             break;
                         case Sync.SYNC_NOTIFICATIONS:
                             if (!DataLoader.getBoolean("SyncNotifications", false)) continue;
                             if (last + DataLoader.getInt("SyncNotificationsInterval", 1000) > time) continue;
+                            break;
+                        case Sync.SYNC_PING:
+                            if (last + DataLoader.getInt("SyncPingInterval", 1000) > time) continue;
                             break;
                         default:
                             if (last + 1000 > time) continue;
@@ -94,6 +110,7 @@ public class Sender {
 
                     if (current.getUseMasterConnectionOnly() && !isMasterConnectionUsed()) {
                         Log.d("LOGTAG", "requires master-connection for " + current.getQuery().toString());
+                        current.onPostPublish(5);
                         continue;
                     }
 
@@ -123,12 +140,7 @@ public class Sender {
 
                 if (!accessed) {
                     try {
-                        // TODO: polite sleep
-
-                        Thread.sleep(
-                                500
-                                //DataLoader.getInt("SyncSleepTime", 500)
-                        );
+                        Thread.sleep(250);
 
                     } catch (InterruptedException e) {
                         //e.printStackTrace();
@@ -136,6 +148,8 @@ public class Sender {
                     }
                 }
             }
+
+            publish(-1);
         }
     };
 
@@ -161,12 +175,13 @@ public class Sender {
 
     private synchronized static int tSend(SyncProvider provider) {
         if (tOut != null) {
-
             try {
                 JSONObject query = new JSONObject(provider.getQuery().toString());
 
-                if (provider.getBrodcast()) query.put("ip", "broadcast");
-                else if (provider.getIP() != null) {
+                if (provider.getBrodcast()) {
+                    query.put("ip", "broadcast");
+
+                } else if (provider.getIP() != null) {
                     query.put("ip", provider.getIP().getHostAddress());
                 }
 
@@ -193,10 +208,12 @@ public class Sender {
                     query.put("session", UserLoader.getSession());
                     query.put("data", encrypted);
 
-                    tOut.write(query.toString() + "\n");
-                    tOut.flush();
-                    return 1;
                 }
+
+                publish(-3);
+                tOut.write(query.toString() + "\n");
+                tOut.flush();
+                return 1;
 
             } catch (JSONException e) {
                 //e.printStackTrace();
@@ -213,6 +230,7 @@ public class Sender {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                publish(-1);
                 return 0;
             }
         }
@@ -220,6 +238,8 @@ public class Sender {
         InetAddress address = provider.getBrodcast() ? Sync.getBroadcast() : provider.getIP();
         JSONObject query = provider.getQuery();
         int port = provider.getPort();
+
+        publish(-2);
 
         try {
             query.put("port", DataLoader.getInt("SyncClientPort", Sync.DEFAULT_PORT));
@@ -245,10 +265,12 @@ public class Sender {
         if (tSocket != null && tSocket.isConnected() && tSocket.getInetAddress().getHostAddress().equals(ip) && tSocket.getPort() == port && time < tAlive) return true;
         Log.d("LOGTAG", "makeConnection triggered");
         killConnection();
+        publish(-4);
 
         try {
             tSocket = new Socket(ip, port);
-            tSocket.setSoTimeout(500);
+            tSocket.setReuseAddress(true);
+            tSocket.setSoTimeout(1000);
 
             tOut = new PrintWriter(
                     new BufferedWriter(
@@ -259,7 +281,8 @@ public class Sender {
 
             tIn = new BufferedReader(new InputStreamReader(tSocket.getInputStream()));
             tAlive = time + 8000;
-            setupReceiver();
+            connectReceiver();
+            publish(-3);
             return true;
 
         } catch (UnknownHostException e) {
@@ -275,26 +298,28 @@ public class Sender {
     }
 
     public synchronized static void killConnection() {
+        publish(-1);
         if (tSocket == null) return;
 
         try {
             tSocket.close();
-            tSocket = null;
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        tSocket = null;
     }
 
-    public synchronized static void setTAlive(long tAlive) {
+    public static void setTAlive(long tAlive) {
         Sender.tAlive = tAlive;
     }
 
-    public synchronized static void setupReceiver() {
+    public synchronized static void connectReceiver() {
         Receiver.settIn(tIn);
     }
 
-    public synchronized static boolean isMasterConnectionUsed() {
+    public static boolean isMasterConnectionUsed() {
         if (Sync.getNetworkState() == 0) {
             return false;
         }
@@ -311,8 +336,29 @@ public class Sender {
         return false;
     }
 
+    public static void subscribe(@NonNull Handler handler) {
+        subscriber = new WeakReference<>(handler);
+    }
+
+    public static void unsubscribe() {
+        if (subscriber != null) {
+            subscriber.clear();
+        }
+    }
+
+    private static void publish(int code) {
+        //Log.d("LOGTAG", "publish: " + code);
+        if (subscriber == null) return;
+
+        Handler handler = subscriber.get();
+
+        if (handler != null) {
+            handler.sendEmptyMessage(code);
+        }
+    }
+
     public synchronized static void start() {
-        if (thread != null && thread.isAlive()) return;
+        if (thread != null) return;
 
         thread = new Thread(task);
         thread.setName("Sender");
@@ -333,6 +379,7 @@ public class Sender {
         }
 
         killConnection();
+        publish(0);
         thread = null;
     }
 }

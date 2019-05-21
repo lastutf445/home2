@@ -118,8 +118,6 @@ public final class Menu extends NavigationFragment {
 
     @Override
     public void onResult(Bundle data) {
-        if (data.getBoolean("reload")) {
-            reload();
-        }
+        reload();
     }
 }

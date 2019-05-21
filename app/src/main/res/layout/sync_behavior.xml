@@ -124,6 +124,77 @@
                 android:inputType="number"
                 android:maxLength="3"
                 android:singleLine="true" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView40"
+            style="@style/StyledSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncBehaviorPing" />
+
+        <TextView
+            android:id="@+id/textView47"
+            style="@style/StyledDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncBehaviorPingDesc" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <TextView
+                android:id="@+id/textView48"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/syncPingAttempts"
+                android:textColor="#333" />
+
+            <EditText
+                android:id="@+id/syncPingAttempts"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:digits="1234567890."
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="3"
+                android:singleLine="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <TextView
+                android:id="@+id/textView49"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/syncPingInterval"
+                android:textColor="#333" />
+
+            <EditText
+                android:id="@+id/syncPingInterval"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:digits="1234567890."
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="6"
+                android:singleLine="true" />
+
         </LinearLayout>
 
         <TextView

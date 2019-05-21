@@ -1,8 +1,12 @@
 package com.lastutf445.home2.util;
 
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.network.Sync;
 
 import org.json.JSONException;
@@ -13,8 +17,8 @@ import java.net.InetAddress;
 
 public class Ping extends SyncProvider {
 
-    protected boolean useMasterServerOnly = false;
     private WeakReference<Handler> weakHandler;
+    private int attempts;
 
     public Ping(@NonNull InetAddress ip, int port) throws JSONException {
         super(
@@ -24,19 +28,27 @@ public class Ping extends SyncProvider {
                 ip,
                 port
         );
+
+        attempts = DataLoader.getInt("SyncPingAttempts", 3);
+        setGroup(Sync.SYNC_PING);
     }
 
-    public void setWeakHandler(@NonNull Handler handler) {
+    public void setHandler(@NonNull Handler handler) {
         this.weakHandler = new WeakReference<>(handler);
     }
 
-    public void setUseMasterServerOnly(boolean useMasterServerOnly) {
-        this.useMasterServerOnly = useMasterServerOnly;
-    }
-
     @Override
-    public boolean getUseMasterConnectionOnly() {
-        return useMasterServerOnly;
+    public void onPostPublish(int statusCode) {
+        if (statusCode != 1) return;
+        Log.d("LOGTAG", "PING: HEARTBEAT");
+        if (attempts-- > 1) return;
+
+        Sync.removeSyncProvider(Sync.PROVIDER_PING);
+        Handler handler = weakHandler.get();
+
+        if (handler != null) {
+            handler.sendEmptyMessage(-1);
+        }
     }
 
     @Override
@@ -44,21 +56,28 @@ public class Ping extends SyncProvider {
         Handler handler = weakHandler.get();
 
         if (handler == null) {
-            Sync.removeSyncProvider(Sync.PROVIDER_PING);
             return;
         }
 
+        Message msg = handler.obtainMessage(-1);
+        Bundle msgData = new Bundle();
+
         try {
-            if (data.has("status") && data.getString("status").equals("Success")) {
+            if (data.has("success") && data.getBoolean("success")) {
                 Sync.removeSyncProvider(Sync.PROVIDER_PING);
-                handler.sendEmptyMessage(-1);
-                return;
+                msgData.putBoolean("success", true);
+
+            } else {
+                msgData.putBoolean("success", false);
             }
+
+            Log.d("LOGTAG", "PING: msg sent");
+
+            msg.setData(msgData);
+            handler.sendMessage(msg);
 
         } catch (JSONException e) {
             //e.printStackTrace();
         }
-
-        handler.sendEmptyMessage(-2);
     }
 }

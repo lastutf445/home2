@@ -124,7 +124,7 @@
             style="@style/StyledButtonIcon.Chevron"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/syncMasterServer" />
+            android:text="@string/masterServer" />
 
         <Button
             android:id="@+id/syncExternalConnection"

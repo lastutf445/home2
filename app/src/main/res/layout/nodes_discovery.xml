@@ -15,12 +15,44 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/nodesDiscoverySwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/nodesDiscoveryContent"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/nodes_item" />
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/nodesDiscoveryContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/nodes_item">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/nodesDiscoveryHint"
+                style="@style/StyledNoContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawableTop="@drawable/search"
+                android:drawablePadding="24dp"
+                android:drawableTint="#666"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:text="@string/pullToRefresh"
+                android:textAllCaps="true" />
+
+            <TextView
+                android:id="@+id/nodesDiscoveryNoContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/noContent"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
     </android.support.v4.widget.SwipeRefreshLayout>
+
 </LinearLayout>

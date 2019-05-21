@@ -2,26 +2,39 @@ package com.lastutf445.home2.fragments.menu;
 
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.network.Receiver;
 import com.lastutf445.home2.network.Sender;
+import com.lastutf445.home2.network.Sync;
+import com.lastutf445.home2.util.GlobalPing;
 import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.SimpleAnimator;
 
+import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class MasterServer extends NavigationFragment {
+
+    private GlobalPing ping;
+    private Updater updater;
 
     @Nullable
     @Override
@@ -66,7 +79,7 @@ public class MasterServer extends NavigationFragment {
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.masterServerCheck:
-                        check();
+                        globalPing();
                         break;
                     case R.id.masterServerDisable:
                         disable();
@@ -82,6 +95,7 @@ public class MasterServer extends NavigationFragment {
         view.findViewById(R.id.masterServerCheck).setOnClickListener(c);
         view.findViewById(R.id.masterServerDisable).setOnClickListener(c);
         view.findViewById(R.id.masterServerEnable).setOnClickListener(c);
+        updater = new Updater(view);
         reload();
     }
 
@@ -107,8 +121,30 @@ public class MasterServer extends NavigationFragment {
         }
     }
 
-    private void check() {
-        // TODO: PING
+    private void globalPing() {
+        String raw_address = ((EditText) view.findViewById(R.id.masterServerIp)).getText().toString().trim();
+        String raw_port = ((EditText) view.findViewById(R.id.masterServerPort)).getText().toString().trim();
+
+        try {
+            switch (Sync.validateAddress(raw_address, raw_port)) {
+                case 0:
+                    NotificationsLoader.makeToast("Unexpected error", true);
+                    break;
+                case 1:
+                    ping = new GlobalPing(updater, InetAddress.getByName(raw_address), Integer.valueOf(raw_port));
+                    new Thread(ping).start();
+                    break;
+                case 2:
+                    NotificationsLoader.makeToast("Invalid address", true);
+                    break;
+                case 3:
+                    NotificationsLoader.makeToast("Invalid port", true);
+                    break;
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            NotificationsLoader.makeToast("Unexpected error", true);
+        }
     }
 
     private void disable() {
@@ -121,43 +157,122 @@ public class MasterServer extends NavigationFragment {
         DataLoader.save();
         reload();
 
-        Sender.killConnection();
+        Sync.restart();
         NotificationsLoader.makeToast("Disabled", true);
     }
 
     private void enable() {
         String raw_address = ((EditText) view.findViewById(R.id.masterServerIp)).getText().toString().trim();
         String raw_port = ((EditText) view.findViewById(R.id.masterServerPort)).getText().toString().trim();
-        // TODO: processing
 
         try {
-            if (raw_address.length() == 0) {
-                throw new UnknownHostException("Null-length address");
+            switch (Sync.validateAddress(raw_address, raw_port)) {
+                case 0:
+                    NotificationsLoader.makeToast("Unexpected error", true);
+                    break;
+                case 1:
+                    NotificationsLoader.makeToast("Success", true);
+                    DataLoader.set("MasterServerAddress", InetAddress.getByName(raw_address).getHostAddress());
+                    DataLoader.set("MasterServerPort", Integer.valueOf(raw_port));
+                    DataLoader.set("MasterServer", true);
+                    DataLoader.save();
+                    Sync.restart();
+                    reload();
+                    break;
+                case 2:
+                    NotificationsLoader.makeToast("Invalid address", true);
+                    break;
+                case 3:
+                    NotificationsLoader.makeToast("Invalid port", true);
+                    break;
+
             }
-
-            InetAddress ip = InetAddress.getByName(raw_address);
-            int port = Integer.valueOf(raw_port);
-
-            DataLoader.set("MasterServerAddress", ip.getHostAddress());
-            DataLoader.set("MasterServerPort", port);
-            DataLoader.set("MasterServer", true);
-            DataLoader.save();
-            reload();
-
-            NotificationsLoader.makeToast("Success", true);
-
-        } catch (UnknownHostException e) {
-            //e.printStackTrace();
-            NotificationsLoader.makeToast("Invalid address", true);
-
-        } catch (NumberFormatException e) {
-            //e.printStackTrace();
-            NotificationsLoader.makeToast("Invalid port", true);
 
         } catch (Exception e) {
             //e.printStackTrace();
             NotificationsLoader.makeToast("Unexpected error", true);
+        }
+    }
 
+    @Override
+    public void onDestroy() {
+        if (ping != null) {
+            ping.abort();
+        }
+
+        super.onDestroy();
+    }
+
+    private static class Updater extends Handler {
+        private WeakReference<View> weakView;
+
+        Updater(View view) {
+            this.weakView = new WeakReference<>(view);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case -2:
+                    beginPing();
+                    break;
+                case -1:
+                    updateConnectionStatus(msg.getData());
+                    break;
+            }
+        }
+
+        private void beginPing() {
+            View view = weakView.get();
+            if (view == null) return;
+
+            SimpleAnimator.fadeIn(view.findViewById(R.id.masterServerSpinner), 300);
+            TextView connection = view.findViewById(R.id.masterServerConnection);
+            View check = view.findViewById(R.id.masterServerCheck);
+
+            SimpleAnimator.alpha(check, 1f, 0.6f, 100);
+
+            connection.setText(
+                    DataLoader.getAppResources().getString(R.string.pending)
+            );
+
+            check.setClickable(false);
+        }
+
+        private void updateConnectionStatus(Bundle data) {
+            View view = weakView.get();
+            if (view == null) return;
+
+            TextView connection = view.findViewById(R.id.masterServerConnection);
+            View check = view.findViewById(R.id.masterServerCheck);
+
+            if (data == null || !data.containsKey("success") || !data.getBoolean("success", false)) {
+                connection.setText(
+                        DataLoader.getAppResources().getString(R.string.unreachable)
+                );
+
+            } else {
+                connection.setText(
+                        DataLoader.getAppResources().getString(R.string.reachable)
+                );
+            }
+
+            final View spinner = view.findViewById(R.id.masterServerSpinner);
+            SimpleAnimator.alpha(check, 0.6f, 1f, 100);
+            check.setClickable(true);
+
+            SimpleAnimator.fadeOut(spinner, 300, new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    spinner.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
         }
     }
 }

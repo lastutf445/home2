@@ -13,17 +13,20 @@
         style="@style/StyledSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/serial" />
+        android:fontFamily="sans-serif"
+        android:text="@string/serial"
+        android:textColor="#666" />
 
     <TextView
         android:id="@+id/bottomSheetLastUpdate"
         style="@style/StyledSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
         android:paddingTop="16dp"
         android:paddingBottom="24dp"
         android:text="@string/lastUpdated"
-        android:textColor="#888" />
+        android:textColor="#666" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/bottomSheetConfigure"

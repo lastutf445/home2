@@ -51,6 +51,11 @@ public class JSONPayload {
         return res != null ? (int) res : std;
     }
 
+    public long getLong(String key, long std) {
+        Object res = get(key);
+        return res != null ? (long) res : std;
+    }
+
     public String getString(String key, String std) {
         Object res = get(key);
         return res != null ? (String) res : std;

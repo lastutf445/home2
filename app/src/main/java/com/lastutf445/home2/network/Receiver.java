@@ -1,8 +1,10 @@
 package com.lastutf445.home2.network;
 
 import android.content.ContentValues;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.Pair;
 
 import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
@@ -18,12 +20,14 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.Calendar;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Receiver {
 
     private static StringBuffer buf = new StringBuffer();
-    private volatile static BufferedReader tIn;
     private static DatagramSocket uSocket;
+    private static BufferedReader tIn;
     private static Thread thread;
 
 
@@ -44,46 +48,18 @@ public class Receiver {
                 if (!Thread.interrupted()) sleep();
                 else break;
             }
-
-            Log.d("LOGTAG", "RECEIVER: bye-bye");
         }
     };
 
-    private synchronized static void tReceive() {
+    private static void tReceive() {
         if (tIn == null) {
             sleep();
             return;
         }
 
         try {
-            int c;
-            boolean reading = true;
-
-            while ((c = tIn.read()) != -1 && buf.length() <= 1024) {
-                if ((char) c != '\n') {
-                    buf.append((char) c);
-
-                } else {
-                    reading = false;
-                    break;
-                }
-
-                if (Thread.interrupted()) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-            }
-
-            if (buf.length() >= 1024) {
-                buf = new StringBuffer();
-            }
-
-            if (reading) return;
-
-            String s = new String(buf);
+            String s = tIn.readLine();
             onReceived(s.trim());
-
-            buf = new StringBuffer();
 
         } catch (Exception e) {
             //Log.d("LOGTAG-ERROR", e.getMessage());
@@ -91,7 +67,7 @@ public class Receiver {
         }
     }
 
-    private synchronized static void uReceive() {
+    private static void uReceive() {
         if (!setuSocket()) {
             sleep();
             return;
@@ -101,7 +77,6 @@ public class Receiver {
         DatagramPacket p = new DatagramPacket(buf, buf.length);
 
         try {
-            //Log.d("LOGTAG", "am i interrupted? " + (thread.isInterrupted() ? "yes" : "no"));
             uSocket.receive(p);
 
             if (Sync.getLocal().equals(p.getAddress())) return;
@@ -114,20 +89,18 @@ public class Receiver {
         sleep();
     }
 
-    private synchronized static void sleep() {
+    private static void sleep() {
         try {
             Thread.sleep(500);
 
         } catch (InterruptedException e) {
-            e.printStackTrace();
             Thread.currentThread().interrupt();
         }
     }
 
-    private synchronized static void onReceived(String result) {
-        Sender.setTAlive(Calendar.getInstance().getTimeInMillis() + 8000);
-        //Log.d("LOGTAG", "am i interrupted? " + (thread.isInterrupted() ? "yes" : "no"));
-        //Log.d("LOGTAG", "result: " + result);
+    private static void onReceived(final String result) {
+        Sender.setTAlive(System.currentTimeMillis() + 8000);
+        //Log.d("LOGTAG","result: " + result);
 
         if (result.equals("alive")) {
             return;
@@ -154,22 +127,32 @@ public class Receiver {
 
             int source = json.getInt("id");
             Log.d("LOGTAG", "result, id " + source + ": " + data.toString());
-            Sync.callProvider(source, data);
+
+            new AsyncTask<Result, Void,  Void>() {
+                @Override
+                protected Void doInBackground(Result... results) {
+                    if (results[0] != null) {
+                        Sync.callProvider(results[0].getSource(), results[0].getData());
+                    }
+
+                    return null;
+                }
+            }.execute(new Result(source, data));
 
         } catch (JSONException e) {
             //e.printStackTrace();
         }
     }
 
-    private synchronized static boolean setuSocket() {
-        if (uSocket != null) return true;
+    private static boolean setuSocket() {
+        if (uSocket != null && !uSocket.isClosed()) return true;
 
         try {
             uSocket = new DatagramSocket(
                     DataLoader.getInt("SyncClientPort", Sync.DEFAULT_PORT)
             );
 
-            uSocket.setSoTimeout(500);
+            uSocket.setSoTimeout(1000);
 
             //uSocket.setReuseAddress(true);
             return true;
@@ -185,45 +168,50 @@ public class Receiver {
     }
 
     public synchronized static void start() {
-        if (thread != null && thread.isAlive()) return;
+        if (thread != null) return;
 
         thread = new Thread(task);
         thread.setName("Receiver");
         thread.setPriority(3);
         thread.start();
-
-        Sender.setupReceiver();
     }
 
     public synchronized static void stop() {
+        if (uSocket != null && !uSocket.isClosed()) {
+            uSocket.close();
+        }
+
         if (thread != null) {
             thread.interrupt();
 
-            if (uSocket != null) {
-                uSocket.close();
-            }
-
-            if (tIn != null) {
-                try {
-                    tIn.close();
-                    tIn = null;
-
-                } catch (IOException e) {
-                    //e.printStackTrace();
-                }
-            }
-
-            uSocket = null;
-            tIn = null;
-
             try {
                 thread.join();
-//
+
             } catch (InterruptedException e) {
                 //e.printStackTrace();
             }
         }
 
+        uSocket = null;
         thread = null;
+        tIn = null;
+    }
+
+    private final static class Result {
+        private int source;
+        private JSONObject data;
+
+        public Result(int source, JSONObject data) {
+            this.source = source;
+            this.data = data;
+        }
+
+        public int getSource() {
+            return source;
+        }
+
+        public JSONObject getData() {
+            return data;
+        }
     }
 }

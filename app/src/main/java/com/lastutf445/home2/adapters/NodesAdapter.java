@@ -60,6 +60,12 @@ public class NodesAdapter extends RecyclerView.Adapter<NodesAdapter.ViewHolder> 
         notifyItemRemoved(pos);
     }
 
+    public void deleteAll() {
+        int oldSize = data.size();
+        data = new SparseArray<>();
+        notifyItemRangeRemoved(0, oldSize);
+    }
+
     public void update(int pos) {
         if (pos < 0 || pos >= data.size()) return;
         notifyItemChanged(pos);

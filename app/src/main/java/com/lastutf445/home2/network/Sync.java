@@ -9,12 +9,16 @@ import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.EditText;
 
+import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
+import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.util.SyncProvider;
 
 import org.json.JSONObject;
@@ -31,6 +35,7 @@ public class Sync {
     public static final int SYNC_DASHBOARD = 0;
     public static final int SYNC_MESSAGES = 1;
     public static final int SYNC_NOTIFICATIONS = 2;
+    public static final int SYNC_PING = 3;
 
     public static final int PROVIDER_MESSAGES = -1;
     public static final int PROVIDER_NOTIFICATIONS = -2;
@@ -39,7 +44,8 @@ public class Sync {
     public static final int PROVIDER_MODULE_EDIT_REQUEST = -5;
     public static final int PROVIDER_GET_PUBLIC_KEY = -6;
     public static final int PROVIDER_CREDENTIALS = -7;
-    public static final int PROVIDER_PING = -8;
+    public static final int PROVIDER_EDITOR = -8;
+    public static final int PROVIDER_PING = -9;
 
     public static final int MENU_SYNC_TRIGGER = 0;
     public static final int FRAGMENT_DASHBOARD_TRIGGER = 1;
@@ -67,26 +73,22 @@ public class Sync {
                 new ConnectivityManager.NetworkCallback() {
                     @Override
                     public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
-                        super.onCapabilitiesChanged(network, networkCapabilities);
-                        updateNetworkState(true);
+                        updateNetworkState();
                     }
 
                     @Override
                     public void onAvailable(Network network) {
-                        super.onAvailable(network);
-                        updateNetworkState(true);
+                        updateNetworkState();
                     }
 
                     @Override
                     public void onUnavailable() {
-                        super.onUnavailable();
-                        updateNetworkState(false);
+                        updateNetworkState();
                     }
 
                     @Override
                     public void onLost(Network network) {
-                        super.onLost(network);
-                        updateNetworkState(false);
+                        updateNetworkState();
                     }
                 }
         );
@@ -94,11 +96,11 @@ public class Sync {
         start();
     }
 
-    public static void updateNetworkState(boolean available) {
+    public static void updateNetworkState() {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 
-        if (available && networkInfo != null && networkInfo.isConnected()) {
+        if (networkInfo != null && networkInfo.isConnected()) {
             if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
                 setNetworkState(1, null);
                 return;
@@ -150,6 +152,42 @@ public class Sync {
         }
 
         return InetAddress.getByAddress(quads);
+    }
+
+    /**
+     * RETURN CODES:
+     * 0 - unexpected error
+     * 1 - valid
+     * 2 - invalid ip
+     * 3 - invalid port
+     */
+
+    public static int validateAddress(String raw_ip, String raw_port) {
+        try {
+            if (raw_ip.length() == 0) {
+                throw new UnknownHostException("Null-length address");
+            }
+
+            InetAddress.getByName(raw_ip);
+            Integer.valueOf(raw_port);
+            return 1;
+
+        } catch (UnknownHostException e) {
+            //e.printStackTrace();
+            return 2;
+
+        } catch (NetworkOnMainThreadException e) {
+            //e.printStackTrace();
+            return 2;
+
+        } catch (NumberFormatException e) {
+            //e.printStackTrace();
+            return 3;
+
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return 0;
+        }
     }
 
     private synchronized static void setNetworkState(int mode, String bssid) {
@@ -217,6 +255,13 @@ public class Sync {
     public static void stop() {
         Sender.stop();
         Receiver.stop();
+    }
+
+    public static void restart() {
+        Receiver.stop();
+        Sender.stop();
+        Sender.start();
+        Receiver.start();
     }
 
     public synchronized static void addTrigger(int id, Runnable runnable) {

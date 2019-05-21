@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
+import com.lastutf445.home2.network.Sender;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
 
@@ -46,7 +48,12 @@ public class Dashboard extends NavigationFragment {
         bottomSheet.setContentView(bottomSheetView);
 
         WidgetsLoader.init(updater, getLayoutInflater(), content, bottomSheet, bottomSheetView);
+    }
 
+
+
+    @Override
+    public void onResume() {
         Sync.addTrigger(
                 Sync.FRAGMENT_DASHBOARD_TRIGGER,
                 new Runnable() {
@@ -58,13 +65,8 @@ public class Dashboard extends NavigationFragment {
         );
 
         updater.sendEmptyMessage(0);
-    }
-
-    @Override
-    public void onDestroy() {
-        // Sync.removeTrigger(Sync.FRAGMENT_DASHBOARD_TRIGGER);
-        // it causes crashes
-        super.onDestroy();
+        Sender.subscribe(updater);
+        super.onResume();
     }
 
     private static class Updater extends Handler {
@@ -77,6 +79,18 @@ public class Dashboard extends NavigationFragment {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                case -4:
+                    updateStatus2(R.string.idle);
+                    break;
+                case -3:
+                    updateStatus2(R.string.masterServer);
+                    break;
+                case -2:
+                    updateStatus2(R.string.homeNetwork);
+                    break;
+                case -1:
+                    updateStatus2(R.string.disconnected);
+                    break;
                 case 0:
                     updateNetworkState();
                     break;
@@ -84,6 +98,15 @@ public class Dashboard extends NavigationFragment {
                     updateWidget(msg.getData());
                     break;
             }
+        }
+
+        private void updateStatus2(int statusId) {
+            View view = weakView.get();
+            if (view == null) return;
+
+            ((TextView) view.findViewById(R.id.dashboardStatus2)).setText(
+                    DataLoader.getAppResources().getString(statusId)
+            );
         }
 
         private void updateNetworkState() {
@@ -95,7 +118,7 @@ public class Dashboard extends NavigationFragment {
 
             switch (state) {
                 case 0:
-                    title = R.string.disconnected;
+                    title = R.string.notAvailable;
                     break;
                 case 1:
                     title = R.string.connectionMobile;
@@ -113,8 +136,7 @@ public class Dashboard extends NavigationFragment {
         private void updateWidget(Bundle data) {
             if (data == null) return;
             WidgetsLoader.update(
-                    data.getInt("id", Integer.MAX_VALUE),
-                    data.getBoolean("updateTimestamp", false)
+                    data.getInt("id", Integer.MAX_VALUE)
             );
         }
     }

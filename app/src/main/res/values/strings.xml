@@ -52,9 +52,13 @@
 
     <string name="widgetRemoveTitle">Remove widget</string>
     <string name="widgetRemoveMessages">Are you sure to remove the widget?</string>
+    <string name="widgetRemoveMessagesAndSave">Are you sure to remove the widget and save the state?</string>
 
     <string name="widgetsRemoveTitle">Remove all widgets</string>
     <string name="widgetsRemoveMessages">Are you sure to remove all widgets?</string>
+
+    <string name="savedMode">All changes saved</string>
+    <string name="unsavedMode">Unsaved changes detected</string>
 
     <string name="moduleSummary">Summary</string>
     <string name="moduleEditTitle">Edit title</string>
@@ -106,7 +110,6 @@
     <string name="syncBehavior">Behavior</string>
     <string name="syncInterval">Interval between sync ticks</string>
 
-    <string name="syncMasterServer">Master Server</string>
     <string name="syncMasterServerDesc">This technique let you define an address to \"core\" of your home network to transfer each packet through it. Application of the method is only limited by your fantasy.</string>
 
     <string name="syncExternalAddress">External address</string>
@@ -126,8 +129,14 @@
     <string name="syncDiscoveryPort">Discovery port</string>
     <string name="syncDiscoveryAttempts">Search attempts</string>
 
+    <string name="syncBehaviorPing">Ping settings</string>
+    <string name="syncBehaviorPingDesc">Define an interval between ping packets and count of them.</string>
+
+    <string name="syncPingAttempts">Ping attempts</string>
+    <string name="syncPingInterval">Ping interval</string>
+
     <string name="syncBehaviorIntervals">Intervals settings</string>
-    <string name="syncBehaviorIntervalsDesc">Define threads synchronization frequencies.\n(a multiple of 500 or rounded, ms)</string>
+    <string name="syncBehaviorIntervalsDesc">Define threads synchronization pauses.\n(rounded to least multiple of 500, ms)</string>
 
     <string name="syncDashboardInterval">Sync dashboard interval</string>
     <string name="syncMessagesInterval">Sync messages interval</string>
@@ -170,6 +179,7 @@
     <string name="notAvailableShort">N/A</string>
     <string name="noContent">There\'s nothing to show</string>
     <string name="missedField">Please, check for a missed field</string>
+    <string name="pullToRefresh">Pull down to refresh</string>
 
     <string name="IPAddress">IP address</string>
     <string name="port">Port</string>
@@ -187,6 +197,9 @@
     <string name="disconnected">Disconnected</string>
     <string name="connectionMobile">Mobile connection</string>
     <string name="connectionWiFi">WiFi connection</string>
+    <string name="masterServer">Master Server</string>
+    <string name="homeNetwork">Home network</string>
+    <string name="idle">Idle</string>
 
     <string name="node">Node:</string>
     <string name="status">Status:</string>
@@ -201,13 +214,12 @@
     <string name="undefined">undefined</string>
     <string name="BSSIDError">unable to get bssid</string>
 
-    <string name="syncDisconnected">Please, check your Internet connection</string>
-
     <string name="unknownModule">Unknown module</string>
     <string name="unknownNode">Unknown node</string>
     <string name="unknownTitle">Unknown title</string>
     <string name="unknownType">Unknown type</string>
     <string name="unknownError">Unknown error</string>
+    <string name="unknownAddress">Unknown address</string>
 
     <string name="defaultTitleTemperature">Temperature</string>
     <string name="defaultTitleHumidity">Humidity</string>

@@ -3,40 +3,40 @@ package com.lastutf445.home2.fragments.menu;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.InterpolatorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.Interpolator;
+import android.view.animation.TranslateAnimation;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.adapters.NodesAdapter;
-import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.containers.Node;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.SimpleAnimator;
 import com.lastutf445.home2.util.SyncProvider;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 public class NodesDiscovery extends NavigationFragment {
 
+    private View hint, noContent;
     private Discoverer discoverer;
 
     private NodesAdapter adapter;
@@ -56,6 +56,8 @@ public class NodesDiscovery extends NavigationFragment {
         updater = new Updater(view);
         content = view.findViewById(R.id.nodesDiscoveryContent);
         content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()));
+        noContent = view.findViewById(R.id.nodesDiscoveryNoContent);
+        hint = view.findViewById(R.id.nodesDiscoveryHint);
 
         try {
             discoverer = new Discoverer(updater);
@@ -67,11 +69,44 @@ public class NodesDiscovery extends NavigationFragment {
             getActivity().onBackPressed();
         }
 
-        ((SwipeRefreshLayout) view.findViewById(R.id.nodesDiscoverySwipeRefreshLayout)).setOnRefreshListener(
+        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.nodesDiscoverySwipeRefreshLayout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+
+        swipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
                         Sync.addSyncProvider(discoverer);
+
+                        SimpleAnimator.fadeOut(noContent, 200, new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {}
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                noContent.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {}
+                        });
+
+                        adapter.deleteAll();
+
+                        if (hint.getVisibility() != View.GONE) {
+                            SimpleAnimator.fadeOut(hint, 200, new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {}
+
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    hint.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {}
+                            });
+                        }
                     }
                 }
         );
@@ -139,9 +174,15 @@ public class NodesDiscovery extends NavigationFragment {
         }
 
         private void stopRefreshing() {
+            NodesAdapter adapter = weakAdapter.get();
             View view = weakView.get();
             if (view == null) return;
+
             ((SwipeRefreshLayout) view.findViewById(R.id.nodesDiscoverySwipeRefreshLayout)).setRefreshing(false);
+
+            if (adapter != null && adapter.getItemCount() == 0) {
+                SimpleAnimator.fadeIn(view.findViewById(R.id.nodesDiscoveryNoContent), 200);
+            }
         }
 
         private void pushNode(Bundle data) {
@@ -164,6 +205,26 @@ public class NodesDiscovery extends NavigationFragment {
 
                 adapter.pushData(node);
 
+                if (adapter.getItemCount() == 1) {
+                    View view = weakView.get();
+
+                    if (view != null) {
+                        final View noContent = view.findViewById(R.id.nodesDiscoveryNoContent);
+                        SimpleAnimator.fadeOut(noContent, 200, new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {}
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                noContent.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {}
+                        });
+                    }
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -172,8 +233,9 @@ public class NodesDiscovery extends NavigationFragment {
     }
 
     private static class Discoverer extends SyncProvider {
-        private int attempts = 0;
         private Handler handler;
+        private int maxAttempts;
+        private int attempts;
 
         Discoverer(@NonNull Handler handler) throws JSONException {
             super(
@@ -184,13 +246,14 @@ public class NodesDiscovery extends NavigationFragment {
                     DataLoader.getInt("SyncDiscoveryPort", Sync.DEFAULT_PORT)
             );
 
+            maxAttempts = DataLoader.getInt("SyncDiscoveryAttempts", 3);
+            attempts = maxAttempts;
             this.handler = handler;
         }
 
         @Override
-        public JSONObject getQuery() {
-            if (++attempts >= DataLoader.getInt("SyncDiscoveryAttempts", 5)) stop();
-            return super.getQuery();
+        public void onPostPublish(int statusCode) {
+            if (attempts-- == 1) stop();
         }
 
         @Override
@@ -209,7 +272,6 @@ public class NodesDiscovery extends NavigationFragment {
 
                 msg.setData(msgData);
                 handler.sendMessage(msg);
-                //stop();
 
             } catch (JSONException e) {
                 //e.printStackTrace();
@@ -219,7 +281,7 @@ public class NodesDiscovery extends NavigationFragment {
         private void stop() {
             handler.sendEmptyMessage(0);
             Sync.removeSyncProvider(source);
-            attempts = 0;
+            attempts = maxAttempts;
         }
     }
 }

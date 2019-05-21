@@ -10,6 +10,7 @@ import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +28,12 @@ import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.Ping;
 import com.lastutf445.home2.util.SimpleAnimator;
+
+import org.json.JSONException;
 
 import java.lang.ref.WeakReference;
 
@@ -38,7 +43,6 @@ public class Module extends NavigationFragment {
     private Node node;
     private int pos;
 
-    //private Thread ping;
     private Updater updater;
 
     @Nullable
@@ -57,32 +61,11 @@ public class Module extends NavigationFragment {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
+                    case R.id.moduleConnection:
+                        ping();
+                        break;
                     case R.id.moduleEditTitle:
-                        Rename rename = new Rename();
-                        Resources res = DataLoader.getAppResources();
-                        rename.setTitle(res.getString(R.string.moduleTitle));
-                        rename.setHint(res.getString(R.string.moduleHint));
-                        rename.setOld(module.getTitle());
-
-                        rename.setCallback(new Rename.Callback() {
-                            @Override
-                            public boolean onApply(String s) {
-                                String t = s.trim();
-
-                                if (t.length() == 0) {
-                                    NotificationsLoader.makeToast("Invalid module title", true);
-                                    return false;
-
-                                } else {
-                                    NotificationsLoader.makeToast("Success", true);
-                                    toParent.putBoolean("updated", true);
-                                    module.setTitle(t);
-                                    return true;
-                                }
-                            }
-                        });
-
-                        FragmentsLoader.addChild(rename, Module.this);
+                        editTitle();
                         break;
                     case R.id.moduleConfigure:
                         configureSpecial();
@@ -97,6 +80,7 @@ public class Module extends NavigationFragment {
             }
         };
 
+        view.findViewById(R.id.moduleConnection).setOnClickListener(c);
         view.findViewById(R.id.moduleEditTitle).setOnClickListener(c);
         view.findViewById(R.id.moduleConfigure).setOnClickListener(c);
         view.findViewById(R.id.moduleSync).setOnClickListener(c);
@@ -164,6 +148,54 @@ public class Module extends NavigationFragment {
         this.pos = pos;
     }
 
+    private void ping() {
+        if (node != null && node.getIp() != null) {
+            try {
+                Ping ping = new Ping(node.getIp(), node.getPort());
+                ping.setHandler(updater);
+
+                updater.sendEmptyMessage(-2);
+                Sync.addSyncProvider(ping);
+                return;
+
+            } catch (JSONException e) {
+                //e.printStackTrace();
+            }
+        }
+
+        ((TextView) view.findViewById(R.id.moduleConnection)).setText(
+                DataLoader.getAppResources().getString(R.string.unknownAddress)
+        );
+    }
+
+    private void editTitle() {
+        Rename rename = new Rename();
+        Resources res = DataLoader.getAppResources();
+        rename.setTitle(res.getString(R.string.moduleTitle));
+        rename.setHint(res.getString(R.string.moduleHint));
+        rename.setOld(module.getTitle());
+
+        rename.setCallback(new Rename.Callback() {
+            @Override
+            public boolean onApply(String s) {
+                String t = s.trim();
+
+                if (t.length() == 0) {
+                    NotificationsLoader.makeToast("Invalid module title", true);
+                    return false;
+
+                } else {
+                    NotificationsLoader.makeToast("Success", true);
+                    toParent.putBoolean("updated", true);
+                    module.setTitle(t);
+                    return true;
+                }
+            }
+        });
+
+        FragmentsLoader.addChild(rename, Module.this);
+    }
+
     private void configureSpecial() {
         ModulesLoader.callSpecial(1, module, this);
     }
@@ -217,6 +249,12 @@ public class Module extends NavigationFragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        Sync.removeSyncProvider(Sync.PROVIDER_PING);
+        super.onDestroy();
+    }
+
     private static class Updater extends Handler {
         private WeakReference<View> weakView;
 
@@ -227,10 +265,64 @@ public class Module extends NavigationFragment {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                case -2:
+                    beginPing();
+                    break;
+                case -1:
+                    updateConnectionStatus(msg.getData());
+                    break;
                 case 0:
                     unlockSyncButton();
                     break;
             }
+        }
+
+        private void beginPing() {
+            View view = weakView.get();
+            if (view == null) return;
+
+            SimpleAnimator.fadeIn(view.findViewById(R.id.moduleSpinner), 300);
+            TextView connection = view.findViewById(R.id.moduleConnection);
+
+            connection.setText(
+                    DataLoader.getAppResources().getString(R.string.pending)
+            );
+
+            connection.setClickable(false);
+        }
+
+        private void updateConnectionStatus(Bundle data) {
+            View view = weakView.get();
+            if (view == null) return;
+
+            TextView connection = view.findViewById(R.id.moduleConnection);
+
+            if (data == null || !data.containsKey("success") || !data.getBoolean("success", false)) {
+                connection.setText(
+                        DataLoader.getAppResources().getString(R.string.unreachable)
+                );
+
+            } else {
+                connection.setText(
+                        DataLoader.getAppResources().getString(R.string.reachable)
+                );
+            }
+
+            final View spinner = view.findViewById(R.id.moduleSpinner);
+            connection.setClickable(true);
+
+            SimpleAnimator.fadeOut(spinner, 300, new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    spinner.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
         }
 
         private void unlockSyncButton() {

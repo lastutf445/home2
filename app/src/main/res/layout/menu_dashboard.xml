@@ -11,6 +11,42 @@
         android:layout_height="wrap_content"
         android:text="@string/dashboard" />
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
+
+    <TextView
+        android:id="@+id/dashboardSaved"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/done"
+        android:drawablePadding="24dp"
+        android:drawableTint="#999"
+        android:lineSpacingExtra="8sp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/savedMode"
+        android:textColor="#999"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/dashboardUnsaved"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/error_outline"
+        android:drawablePadding="24dp"
+        android:drawableTint="#999"
+        android:lineSpacingExtra="8sp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/unsavedMode"
+        android:textColor="#999"
+        android:visibility="visible" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="24dp" />
+
     <Button
         android:id="@+id/dashboardCreateWidget"
         style="@style/StyledButtonIcon"
@@ -38,4 +74,5 @@
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/delete"
         android:text="@string/removeWidgets" />
+
 </LinearLayout>

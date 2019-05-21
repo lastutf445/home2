@@ -36,6 +36,8 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
         this.inflater = inflater;
         this.activity = activity;
         this.content = content;
+
+        WidgetsLoader.setWidgetsAdapterRemover(new Remover());
     }
 
     public void initCallback() {
@@ -82,9 +84,6 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
                     activity
             );
 
-            //Log.d("LOGTAG", "DATA SIZE BEFORE = " + data.size());
-            //Log.d("LOGTAG", "pos = " + viewHolder.getAdapterPosition());
-
             Resources res = DataLoader.getAppResources();
             builder.setTitle(res.getString(R.string.widgetRemoveTitle));
             builder.setMessage(res.getString(R.string.widgetRemoveMessages));
@@ -100,29 +99,17 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
                 @Override
                 public void onCancel(DialogInterface dialog) {
                     notifyItemChanged(viewHolder.getAdapterPosition());
-                    //Log.d("LOGTAG", "pos = " + viewHolder.getAdapterPosition());
                 }
             });
 
             builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //Notifications.makeToast("deleted");
-                    //notifyItemRemoved(viewHolder.getAdapterPosition());
-                    //notifyDataSetChanged();
                     removeItem(viewHolder.getAdapterPosition());
                 }
             });
 
             builder.create().show();
-        }
-
-        private void removeItem(int pos) {
-            synchronized (data) {
-                WidgetsLoader.remove(data.valueAt(pos));
-                data.removeAt(pos);
-                notifyItemRemoved(pos);
-            }
         }
 
         @Override
@@ -167,6 +154,16 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
         notifyDataSetChanged();
     }
 
+    private void removeItem(int pos) {
+        if (pos < 0 || pos >= data.size()) return;
+
+        synchronized (data) {
+            WidgetsLoader.remove(data.valueAt(pos));
+            data.removeAt(pos);
+            notifyItemRemoved(pos);
+        }
+    }
+
     @NonNull
     @Override
     public WidgetsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -195,5 +192,11 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public class Remover {
+        public void remove(int pos) {
+            removeItem(pos);
+        }
     }
 }

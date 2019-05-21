@@ -1,6 +1,10 @@
 package com.lastutf445.home2.loaders;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,6 +31,7 @@ import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.activities.MainActivity;
+import com.lastutf445.home2.adapters.WidgetsAdapter;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.containers.Widget;
 import com.lastutf445.home2.fragments.Dashboard;
@@ -37,7 +42,10 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class WidgetsLoader {
@@ -60,6 +68,7 @@ public class WidgetsLoader {
     private static final SparseArray<Module> free = new SparseArray<>();
     private static final SparseIntArray serials = new SparseIntArray();
     private static Special.Connector bottomSheetConnect1, bottomSheetConnect2;
+    private static WeakReference<WidgetsAdapter.Remover> weakRemover;
     private static int headId = 0, headSerial = 0;
     private static boolean unsaved = false;
 
@@ -231,22 +240,19 @@ public class WidgetsLoader {
     public static void updateAll() {
         for (int i = 0; i < widgets.size(); ++i)  {
             Widget widget = widgets.valueAt(i);
-            createUpdateEvent(widget.getId(), false);
+            createUpdateEvent(widget.getId());
         }
     }
 
-    public static void createUpdateEvent(int id, boolean updateTimestamp) {
+    public static void createUpdateEvent(int id) {
         Message msg = handler.obtainMessage(1);
         Bundle data = new Bundle();
-
-        data.putBoolean("updateTimestamp", updateTimestamp);
         data.putInt("id", id);
-
         msg.setData(data);
         handler.sendMessage(msg);
     }
 
-    public static void update(int id, boolean updateTimestamp) {
+    public static void update(int id) {
         Log.d("LOGTAG", "update request to " + id);
 
         Widget widget = widgets.get(id);
@@ -254,18 +260,22 @@ public class WidgetsLoader {
 
         Module module = ModulesLoader.getModule(widget.getSerial());
 
+        if (module != null && module.getSerial() == bottomSheetWidgetSerial) {
+            bottomSheetLongClickListener.lastUpdated(module);
+        }
+
         switch (widget.getType()) {
             case "temperature":
-                updateTemperature(widget, module, updateTimestamp);
+                updateTemperature(widget, module);
                 break;
             case "humidity":
-                updateHumidity(widget, module, updateTimestamp);
+                updateHumidity(widget, module);
                 break;
             case "lightrgb":
-                updateLightRGB(widget, module, updateTimestamp);
+                updateLightRGB(widget, module);
                 break;
             case "socket":
-                updateSocket(widget, module, updateTimestamp);
+                updateSocket(widget, module);
                 break;
             case "title":
                 updateTitle(widget);
@@ -285,13 +295,8 @@ public class WidgetsLoader {
         }
     }
 
-    private static void updateTemperature(@NonNull Widget widget, @Nullable Module module, boolean updateTimestamp) {
+    private static void updateTemperature(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
-
-        if (updateTimestamp) {
-            widget.set("lastAccess", System.currentTimeMillis());
-        }
-
         updateSimpleWidget(
                 widget.getView(),
                 module.getTitle(),
@@ -300,12 +305,8 @@ public class WidgetsLoader {
         );
     }
 
-    private static void updateHumidity(@NonNull Widget widget, @Nullable Module module, boolean updateTimestamp) {
+    private static void updateHumidity(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
-
-        if (updateTimestamp) {
-            widget.set("lastAccess", System.currentTimeMillis());
-        }
 
         updateSimpleWidget(
                 widget.getView(),
@@ -315,13 +316,8 @@ public class WidgetsLoader {
         );
     }
 
-    private static void updateLightRGB(@NonNull Widget widget, @Nullable Module module, boolean updateTimestamp) {
+    private static void updateLightRGB(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
-
-        if (updateTimestamp) {
-            widget.set("lastAccess", System.currentTimeMillis());
-        }
-
         updateSimpleWidget(
                 widget.getView(),
                 module.getTitle(),
@@ -343,12 +339,8 @@ public class WidgetsLoader {
         }
     }
 
-    private static void updateSocket(@NonNull Widget widget, @Nullable Module module, boolean updateTimestamp) {
+    private static void updateSocket(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
-
-        if (updateTimestamp) {
-            widget.set("lastAccess", System.currentTimeMillis());
-        }
 
         updateSimpleWidget(
                 widget.getView(),
@@ -395,7 +387,6 @@ public class WidgetsLoader {
 
     public static boolean addWidget(@NonNull Widget widget) {
         if (serials.get(widget.getSerial(), Integer.MAX_VALUE) != Integer.MAX_VALUE) return false;
-        widget.set("lastAccess", System.currentTimeMillis());
 
         SQLiteDatabase db = DataLoader.getDb();
         ContentValues cv = new ContentValues();
@@ -422,7 +413,7 @@ public class WidgetsLoader {
                     renderWidget(widget, inflater, content, 0);
                     serials.put(widget.getSerial(), widget.getId());
                     widgets.put(widget.getId(), widget);
-                    createUpdateEvent(widget.getId(), false);
+                    createUpdateEvent(widget.getId());
                     free.delete(widget.getSerial());
                     return true;
                 }
@@ -434,7 +425,6 @@ public class WidgetsLoader {
 
     public static boolean replaceWidget(@NonNull Widget widget) {
         if (widgets.get(widget.getId()) == null) return false;
-        widget.set("lastAccess", System.currentTimeMillis());
 
         LayoutInflater inflater = weakInflater.get();
         LinearLayout content = weakContent.get();
@@ -450,7 +440,7 @@ public class WidgetsLoader {
                 content.removeViewAt(pos);
 
                 renderWidget(widget, inflater, content, pos);
-                createUpdateEvent(widget.getId(), false);
+                createUpdateEvent(widget.getId());
                 saveWidget(widget);
 
                 return true;
@@ -459,6 +449,8 @@ public class WidgetsLoader {
     }
 
     public static void swapWidgets(int from, int to) {
+        if (from == to) return;
+
         if (from < to) {
             for (int i = from; i < to; ++i) {
                 swapAdjacentWidgets(i, i + 1);
@@ -473,6 +465,8 @@ public class WidgetsLoader {
     }
 
     public static void swapAdjacentWidgets(int i, int j) {
+        if (i == j) return;
+
         synchronized (widgets) {
             synchronized (serials) {
                 Widget w1 = widgets.valueAt(i);
@@ -492,6 +486,8 @@ public class WidgetsLoader {
     }
 
     public static void swapViews(int i, int j) {
+        if (i == j) return;
+
         synchronized (widgets) {
             synchronized (serials) {
                 LayoutInflater inflater = weakInflater.get();
@@ -540,6 +536,7 @@ public class WidgetsLoader {
                 SQLiteDatabase db = DataLoader.getDb();
                 db.delete("dashboard", null, null);
 
+                unsaved = false;
                 headSerial = 0;
                 headId = 0;
             }
@@ -618,7 +615,7 @@ public class WidgetsLoader {
 
         if (!linked) {
             free.remove(module.getSerial());
-            update(id, false);
+            update(id);
             return;
         }
 
@@ -626,7 +623,7 @@ public class WidgetsLoader {
             Widget widget = widgets.get(id);
 
             if (widget.getType().equals(module.getType())) {
-                createUpdateEvent(id, false);
+                createUpdateEvent(id);
 
             } else {
                 replaceWidget(new Widget(
@@ -648,7 +645,7 @@ public class WidgetsLoader {
         int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
 
         if (id != Integer.MAX_VALUE) {
-            createUpdateEvent(id, false);
+            createUpdateEvent(id);
         }
     }
 
@@ -656,7 +653,7 @@ public class WidgetsLoader {
         int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
 
         if (id != Integer.MAX_VALUE) {
-            createUpdateEvent(id, true);
+            createUpdateEvent(id);
         }
 
         if (bottomSheetConnect1 != null && module.getSerial() == bottomSheetConnect1.getSerial()) {
@@ -676,6 +673,27 @@ public class WidgetsLoader {
     public static void delBottomSheetConnector(int id) {
         if (id == 1) bottomSheetConnect1 = null;
         else if (id == 2) bottomSheetConnect2 = null;
+    }
+
+    public static void setWidgetsAdapterRemover(WidgetsAdapter.Remover remover) {
+        weakRemover = new WeakReference<>(remover);
+    }
+
+    public static boolean callWidgetsAdapterRemover(int id) {
+        WidgetsAdapter.Remover remover = weakRemover != null ? weakRemover.get() : null;
+        Widget widget = widgets.get(id);
+
+        if (remover != null) {
+            remover.remove(widgets.indexOfKey(id));
+
+        } else if (widget != null) {
+            remove(widget);
+
+        } else {
+            return false;
+        }
+
+        return true;
     }
 
     private static class BottomSheetLongClickListener implements View.OnLongClickListener {
@@ -698,6 +716,7 @@ public class WidgetsLoader {
                 );
 
                 Module module = ModulesLoader.getModule(bottomSheetWidgetSerial);
+                lastUpdated(module);
 
                 if (module != null && ModulesLoader.hasSpecial(module)) {
                     bottomSheet.findViewById(R.id.bottomSheetConfigure).setClickable(true);
@@ -729,6 +748,28 @@ public class WidgetsLoader {
 
             return false;
         }
+
+        public void lastUpdated(Module module) {
+            View bottomSheet = weakBottomSheetView.get();
+
+            if (bottomSheet != null && module != null) {
+                long lastUpdated = module.getLong("lastUpdated", 0);
+                String formatted = DataLoader.getAppResources().getString(R.string.undefined);
+
+                if (lastUpdated != 0) {
+                    Date date = new Date(lastUpdated);
+                    formatted = new SimpleDateFormat("HH:mm:ss dd.mm.yyyy", Locale.ENGLISH).format(date);
+                }
+
+                ((TextView) bottomSheet.findViewById(R.id.bottomSheetLastUpdate)).setText(
+                        String.format(Locale.ENGLISH, "%s %s",
+                                DataLoader.getAppResources().getString(R.string.lastUpdated),
+                                formatted
+                        )
+                );
+            }
+
+        }
     }
 
     private static class BottomSheetClickListener implements View.OnClickListener {
@@ -743,7 +784,7 @@ public class WidgetsLoader {
                     break;
 
                 case R.id.bottomSheetDelete:
-                    deleteWidget();
+                    deleteWidget(module);
                     break;
             }
         }
@@ -757,8 +798,54 @@ public class WidgetsLoader {
             }
         }
 
-        private void deleteWidget() {
+        private void deleteWidget(@NonNull final Module module) {
+            Activity activity = MainActivity.getInstance();
 
+            if (activity == null) {
+                NotificationsLoader.makeToast("Unexpected error", true);
+                return;
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(
+                    activity
+            );
+
+            Resources res = DataLoader.getAppResources();
+            builder.setTitle(res.getString(R.string.widgetRemoveTitle));
+            builder.setMessage(res.getString(R.string.widgetRemoveMessagesAndSave));
+
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    deleteWidgetCallback(module);
+                }
+            });
+
+            builder.create().show();
+        }
+
+        private void deleteWidgetCallback(@NonNull Module module) {
+            synchronized (serials) {
+                synchronized (widgets) {
+                    int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
+
+                    if (id == Integer.MAX_VALUE || !callWidgetsAdapterRemover(id)) {
+                        NotificationsLoader.makeToast("Unexpected error", true);
+
+                    } else {
+                        NotificationsLoader.makeToast("Deleted", true);
+                        BottomSheetDialog dialog = weakBottomSheetDialog.get();
+                        if (dialog != null) dialog.cancel();
+                    }
+                }
+            }
         }
     }
 }

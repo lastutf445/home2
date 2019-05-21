@@ -44,6 +44,8 @@ public class DataLoader {
         ops.put("SyncHomeNetwork", null);
         // sync behavior
         ops.put("SyncClientPort", 44501);
+        ops.put("SyncPingAttempts", 3);
+        ops.put("SyncPingInterval", 1000);
         ops.put("SyncDiscoveryPort", 44500);
         ops.put("SyncDiscoveryAttempts", 3);
         ops.put("SyncDashboardInterval", 5000);
@@ -162,6 +164,12 @@ public class DataLoader {
     public synchronized static void set(String key, Object value) {
         synchronized (ops) {
             ops.put(key, value);
+        }
+    }
+
+    public synchronized static boolean has(String key) {
+        synchronized (ops) {
+            return ops.containsKey(key);
         }
     }
 

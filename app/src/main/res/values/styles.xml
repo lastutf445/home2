@@ -32,9 +32,9 @@
 
     <style name="StyledTitle">
         <item name="android:textSize">18sp</item>
-        <item name="android:paddingTop">24dp</item>
+        <item name="android:paddingTop">28dp</item>
         <item name="android:paddingStart">24dp</item>
-        <item name="android:paddingBottom">24dp</item>
+        <item name="android:paddingBottom">28dp</item>
         <item name="android:layout_width">match_parent</item>
     </style>
 
@@ -91,8 +91,8 @@
 
     <style name="StyledNoContent">
         <item name="android:textAlignment">center</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:clickable">false</item>
     </style>
 
     <style name="StyledRadio" parent="Widget.AppCompat.CompoundButton.RadioButton">

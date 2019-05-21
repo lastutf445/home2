@@ -15,6 +15,7 @@ import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.network.Receiver;
+import com.lastutf445.home2.network.Sender;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
 
@@ -25,6 +26,8 @@ public class SyncBehavior extends NavigationFragment {
     private TextView syncClientPort;
     private TextView syncDiscoveryPort;
     private TextView syncDiscoveryAttempts;
+    private TextView syncPingAttempts;
+    private TextView syncPingInterval;
     private TextView syncDashboardInterval;
     private TextView syncMessagesInterval;
     private TextView syncNotificationsInterval;
@@ -42,6 +45,8 @@ public class SyncBehavior extends NavigationFragment {
         syncClientPort = view.findViewById(R.id.syncClientPort);
         syncDiscoveryPort = view.findViewById(R.id.syncDiscoveryPort);
         syncDiscoveryAttempts = view.findViewById(R.id.syncDiscoveryAttempts);
+        syncPingAttempts = view.findViewById(R.id.syncPingAttempts);
+        syncPingInterval = view.findViewById(R.id.syncPingInterval);
         syncDashboardInterval = view.findViewById(R.id.syncDashboardInterval);
         syncMessagesInterval = view.findViewById(R.id.syncMessagesInterval);
         syncNotificationsInterval = view.findViewById(R.id.syncNotificationsInterval);
@@ -80,6 +85,14 @@ public class SyncBehavior extends NavigationFragment {
                 String.valueOf(DataLoader.getInt("SyncDiscoveryAttempts", 3))
         );
 
+        syncPingAttempts.setText(
+                String.valueOf(DataLoader.getInt("SyncPingAttempts", 3))
+        );
+
+        syncPingInterval.setText(
+                String.valueOf(DataLoader.getInt("SyncPingInterval", 1000))
+        );
+
         syncDashboardInterval.setText(
                 String.valueOf(DataLoader.getInt("SyncDashboardInterval", 5000))
         );
@@ -115,6 +128,8 @@ public class SyncBehavior extends NavigationFragment {
                 syncClientPort.setText(String.valueOf(44501));
                 syncDiscoveryPort.setText(String.valueOf(44500));
                 syncDiscoveryAttempts.setText(String.valueOf(3));
+                syncPingAttempts.setText(String.valueOf(3));
+                syncPingInterval.setText(String.valueOf(1000));
                 syncDashboardInterval.setText(String.valueOf(5000));
                 syncMessagesInterval.setText(String.valueOf(500));
                 syncNotificationsInterval.setText(String.valueOf(2000));
@@ -129,11 +144,15 @@ public class SyncBehavior extends NavigationFragment {
             int clientPort = Integer.valueOf(syncClientPort.getText().toString());
             int discoveryPort = Integer.valueOf(syncDiscoveryPort.getText().toString());
             int discoveryAttempts = Integer.valueOf(syncDiscoveryAttempts.getText().toString());
+            int pingAttempts = Integer.valueOf(syncPingAttempts.getText().toString());
+            int pingInterval = Integer.valueOf(syncPingInterval.getText().toString());
             int dashboardInterval = Integer.valueOf(syncDashboardInterval.getText().toString());
             int messagesInterval = Integer.valueOf(syncMessagesInterval.getText().toString());
             int notificationsInterval = Integer.valueOf(syncNotificationsInterval.getText().toString());
 
             discoveryAttempts = Math.max(discoveryAttempts, 1);
+            pingAttempts = Math.max(pingAttempts, 1);
+            pingInterval = Math.max((pingInterval / 500) * 500, 500);
             dashboardInterval = Math.max((dashboardInterval / 500) * 500, 500);
             messagesInterval = Math.max((messagesInterval / 500) * 500, 500);
             notificationsInterval = Math.max((notificationsInterval / 500) * 500, 500);
@@ -141,14 +160,15 @@ public class SyncBehavior extends NavigationFragment {
             DataLoader.set("SyncClientPort", clientPort);
             DataLoader.set("SyncDiscoveryPort", discoveryPort);
             DataLoader.set("SyncDiscoveryAttempts", discoveryAttempts);
+            DataLoader.set("SyncPingAttempts", pingAttempts);
+            DataLoader.set("SyncPingInterval", pingInterval);
             DataLoader.set("SyncDashboardInterval", dashboardInterval);
             DataLoader.set("SyncMessagesInterval", messagesInterval);
             DataLoader.set("SyncNotificationsInterval", notificationsInterval);
             DataLoader.save();
             reload();
 
-            Receiver.stop();
-            Receiver.start();
+            Sync.restart();
 
             NotificationsLoader.makeToast("Applied", true);
 

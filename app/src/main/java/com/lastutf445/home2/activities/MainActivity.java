@@ -16,8 +16,11 @@ import com.lastutf445.home2.loaders.*;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
 
+import java.lang.ref.WeakReference;
+
 public class MainActivity extends AppCompatActivity {
 
+    private static WeakReference<MainActivity> instance;
     private NavigationFragment active;
 
     private Dashboard dashboard;
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         notifications = new Notifications();
         menu = new Menu();
 
+        instance = new WeakReference<>(this);
         active = dashboard;
 
         FragmentsLoader.clear();
@@ -116,5 +120,9 @@ public class MainActivity extends AppCompatActivity {
 
         nav.setOnNavigationItemSelectedListener(c);
         FragmentsLoader.changeFragment(dashboard, false, false);
+    }
+
+    public static MainActivity getInstance() {
+        return instance != null ? instance.get() : null;
     }
 }

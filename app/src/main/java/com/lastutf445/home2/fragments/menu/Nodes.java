@@ -63,7 +63,7 @@ public class Nodes extends NavigationFragment {
     protected void reload() {
         Log.d("LOGTAG", "reloaded nodes screen");
         adapter.setData(NodesLoader.getNodes());
-        content.setVisibility(adapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+        view.findViewById(R.id.nodesNoContent).setVisibility(adapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     private void update(int pos) {
@@ -72,7 +72,7 @@ public class Nodes extends NavigationFragment {
 
     private void delete(int pos) {
         adapter.delete(pos);
-        content.setVisibility(adapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+        view.findViewById(R.id.nodesNoContent).setVisibility(adapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override

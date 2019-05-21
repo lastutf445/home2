@@ -126,13 +126,7 @@ public class Module extends JSONPayload {
         WidgetsLoader.onModuleTitleUpdated(this);
         save();
     }
-/*
-    public void setState(JSONObject ops) {
-        this.ops = ops;
-        WidgetsLoader.onModuleStateUpdated(this);
-        save();
-    }
-*/
+
     public void mergeStates(String type, JSONObject ops) {
         if(type == null || ops == null) return;
         boolean wiped = false;
@@ -182,6 +176,7 @@ public class Module extends JSONPayload {
 
         this.ops.remove("wiped");
         WidgetsLoader.onModuleStateUpdated(this);
+        set("lastUpdated", System.currentTimeMillis());
         save();
     }
 

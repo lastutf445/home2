@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
 import com.lastutf445.home2.R;
@@ -19,7 +20,13 @@ import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.Ping;
+import com.lastutf445.home2.util.SimpleAnimator;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
@@ -28,7 +35,6 @@ public class Node extends NavigationFragment {
     private com.lastutf445.home2.containers.Node node;
     private int pos;
 
-    //private Thread ping;
     private Updater updater;
 
     @Nullable
@@ -47,31 +53,11 @@ public class Node extends NavigationFragment {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
+                    case R.id.nodeConnection:
+                        ping();
+                        break;
                     case R.id.nodeEditTitle:
-                        Rename rename = new Rename();
-                        Resources res = DataLoader.getAppResources();
-                        rename.setTitle(res.getString(R.string.nodeTitle));
-                        rename.setHint(res.getString(R.string.nodeHint));
-                        rename.setOld(node.getTitle());
-
-                        rename.setCallback(new Rename.Callback() {
-                            @Override
-                            public boolean onApply(String s) {
-                                String t = s.trim();
-
-                                if (t.length() == 0) {
-                                    NotificationsLoader.makeToast("Invalid node title", true);
-                                    return false;
-
-                                } else {
-                                    NotificationsLoader.makeToast("Success", true);
-                                    node.setTitle(t);
-                                    return true;
-                                }
-                            }
-                        });
-
-                        FragmentsLoader.addChild(rename, Node.this);
+                        editTitle();
                         break;
                     case R.id.nodeModules:
                         Modules modules = new Modules();
@@ -94,6 +80,7 @@ public class Node extends NavigationFragment {
             }
         };
 
+        view.findViewById(R.id.nodeConnection).setOnClickListener(c);
         view.findViewById(R.id.nodeEditTitle).setOnClickListener(c);
         view.findViewById(R.id.nodeModules).setOnClickListener(c);
         view.findViewById(R.id.nodeGetModules).setOnClickListener(c);
@@ -123,6 +110,53 @@ public class Node extends NavigationFragment {
         ((TextView) view.findViewById(R.id.nodeSerial)).setText(
                 String.valueOf(node.getSerial())
         );
+    }
+
+    private void ping() {
+        if (node != null && node.getIp() != null) {
+            try {
+                Ping ping = new Ping(node.getIp(), node.getPort());
+                ping.setHandler(updater);
+
+                updater.sendEmptyMessage(-2);
+                Sync.addSyncProvider(ping);
+                return;
+
+            } catch (JSONException e) {
+                //e.printStackTrace();
+            }
+        }
+
+        ((TextView) view.findViewById(R.id.nodeConnection)).setText(
+                DataLoader.getAppResources().getString(R.string.unknownAddress)
+        );
+    }
+
+    private void editTitle() {
+        Rename rename = new Rename();
+        Resources res = DataLoader.getAppResources();
+        rename.setTitle(res.getString(R.string.nodeTitle));
+        rename.setHint(res.getString(R.string.nodeHint));
+        rename.setOld(node.getTitle());
+
+        rename.setCallback(new Rename.Callback() {
+            @Override
+            public boolean onApply(String s) {
+                String t = s.trim();
+
+                if (t.length() == 0) {
+                    NotificationsLoader.makeToast("Invalid node title", true);
+                    return false;
+
+                } else {
+                    NotificationsLoader.makeToast("Success", true);
+                    node.setTitle(t);
+                    return true;
+                }
+            }
+        });
+
+        FragmentsLoader.addChild(rename, Node.this);
     }
 
     private void disableSync() {
@@ -189,6 +223,12 @@ public class Node extends NavigationFragment {
     }
 
     @Override
+    public void onDestroy() {
+        Sync.removeSyncProvider(Sync.PROVIDER_PING);
+        super.onDestroy();
+    }
+
+    @Override
     public void onResult(Bundle data) {
         if (data.containsKey("syncStateChanged")) {
             reload();
@@ -215,7 +255,66 @@ public class Node extends NavigationFragment {
 
         @Override
         public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case -2:
+                    beginPing();
+                    break;
+                case -1:
+                    updateConnectionStatus(msg.getData());
+                    break;
+            }
+        }
 
+        private void beginPing() {
+            View view = weakView.get();
+            if (view == null) return;
+
+            SimpleAnimator.fadeIn(view.findViewById(R.id.nodeSpinner), 300);
+            TextView connection = view.findViewById(R.id.nodeConnection);
+
+            connection.setText(
+                    DataLoader.getAppResources().getString(R.string.pending)
+            );
+
+            connection.setClickable(false);
+        }
+
+        private void updateConnectionStatus(Bundle data) {
+            View view = weakView.get();
+            if (view == null) return;
+
+            TextView connection = view.findViewById(R.id.nodeConnection);
+
+            if (data != null) {
+                Log.d("LOGTAG", "hello, " + data.getBoolean("success"));
+            }
+
+            if (data == null || !data.containsKey("success") || !data.getBoolean("success", false)) {
+                connection.setText(
+                        DataLoader.getAppResources().getString(R.string.unreachable)
+                );
+
+            } else {
+                connection.setText(
+                        DataLoader.getAppResources().getString(R.string.reachable)
+                );
+            }
+
+            final View spinner = view.findViewById(R.id.nodeSpinner);
+            connection.setClickable(true);
+
+            SimpleAnimator.fadeOut(spinner, 300, new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    spinner.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
         }
     }
 }

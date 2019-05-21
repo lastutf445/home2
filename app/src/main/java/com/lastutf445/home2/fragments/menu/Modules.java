@@ -70,7 +70,7 @@ public class Modules extends NavigationFragment {
     @Override
     protected void reload() {
         adapter.setData(modules, false);
-        view.findViewById(R.id.modulesContent).setVisibility(adapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+        view.findViewById(R.id.modulesNoContent).setVisibility(adapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     public void setForceDelete(boolean forceDelete) {
@@ -79,7 +79,7 @@ public class Modules extends NavigationFragment {
 
     private void delete(int pos) {
         adapter.delete(pos);
-        view.findViewById(R.id.modulesContent).setVisibility(adapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+        view.findViewById(R.id.modulesNoContent).setVisibility(adapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
     }
 
     private void update(int pos) {

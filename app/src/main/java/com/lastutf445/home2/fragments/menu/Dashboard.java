@@ -4,8 +4,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,8 @@ import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
 import com.lastutf445.home2.util.NavigationFragment;
+
+import java.lang.ref.WeakReference;
 
 public class Dashboard extends NavigationFragment {
 
@@ -51,6 +56,22 @@ public class Dashboard extends NavigationFragment {
         view.findViewById(R.id.dashboardCreateWidget).setOnClickListener(c);
         view.findViewById(R.id.dashboardMoveWidgets).setOnClickListener(c);
         view.findViewById(R.id.dashboardRemoveWidgets).setOnClickListener(c);
+        reload();
+    }
+
+    @Override
+    protected void reload() {
+        View unsaved = view.findViewById(R.id.dashboardUnsaved);
+        View saved = view.findViewById(R.id.dashboardSaved);
+
+        if (WidgetsLoader.isUnsaved()) {
+            unsaved.setVisibility(View.VISIBLE);
+            saved.setVisibility(View.GONE);
+
+        } else {
+            unsaved.setVisibility(View.GONE);
+            saved.setVisibility(View.VISIBLE);
+        }
     }
 
     private void removeAll() {
@@ -78,5 +99,10 @@ public class Dashboard extends NavigationFragment {
         });
 
         builder.create().show();
+    }
+
+    @Override
+    public void onResult(Bundle data) {
+        reload();
     }
 }
