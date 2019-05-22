@@ -6,6 +6,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.network.Sync;
 
@@ -39,20 +40,50 @@ public class Ping extends SyncProvider {
 
     @Override
     public void onPostPublish(int statusCode) {
-        if (statusCode != 1) return;
         Log.d("LOGTAG", "PING: HEARTBEAT");
-        if (attempts-- > 1) return;
 
-        Sync.removeSyncProvider(Sync.PROVIDER_PING);
-        Handler handler = weakHandler.get();
+        switch (statusCode) {
+            case 0:
+                finish(R.string.unexpectedErrorSmall);
+                break;
+            case 1:
+                if (attempts-- <= 1) {
+                    finish(R.string.unreachable);
+                }
+                break;
+            case 2:
+                finish(R.string.masterServerRequired);
+                break;
+            case 3:
+                finish(R.string.disconnectedSmall);
+                break;
+            case 4:
+                // TODO: think about it
+                //finish(R.string.encryptionError);
+                break;
 
-        if (handler != null) {
-            handler.sendEmptyMessage(-1);
         }
     }
 
     @Override
     public void onReceive(JSONObject data) {
+        try {
+            if (data.has("success") && data.getBoolean("success")) {
+                finish(R.string.reachable);
+                return;
+            }
+
+            Log.d("LOGTAG", "PING: msg sent");
+
+        } catch (JSONException e) {
+            //e.printStackTrace();
+        }
+
+        finish(R.string.unreachable);
+    }
+
+    public void finish(int status) {
+        Sync.removeSyncProvider(Sync.PROVIDER_PING);
         Handler handler = weakHandler.get();
 
         if (handler == null) {
@@ -61,23 +92,10 @@ public class Ping extends SyncProvider {
 
         Message msg = handler.obtainMessage(-1);
         Bundle msgData = new Bundle();
+        msgData.putInt("status", status);
 
-        try {
-            if (data.has("success") && data.getBoolean("success")) {
-                Sync.removeSyncProvider(Sync.PROVIDER_PING);
-                msgData.putBoolean("success", true);
+        msg.setData(msgData);
+        handler.sendMessage(msg);
 
-            } else {
-                msgData.putBoolean("success", false);
-            }
-
-            Log.d("LOGTAG", "PING: msg sent");
-
-            msg.setData(msgData);
-            handler.sendMessage(msg);
-
-        } catch (JSONException e) {
-            //e.printStackTrace();
-        }
     }
 }

@@ -214,7 +214,6 @@ public class Node extends NavigationFragment {
         });
 
         builder.create().show();
-
     }
 
     public void setNode(com.lastutf445.home2.containers.Node node, int pos) {
@@ -285,20 +284,10 @@ public class Node extends NavigationFragment {
 
             TextView connection = view.findViewById(R.id.nodeConnection);
 
-            if (data != null) {
-                Log.d("LOGTAG", "hello, " + data.getBoolean("success"));
-            }
-
-            if (data == null || !data.containsKey("success") || !data.getBoolean("success", false)) {
-                connection.setText(
-                        DataLoader.getAppResources().getString(R.string.unreachable)
-                );
-
-            } else {
-                connection.setText(
-                        DataLoader.getAppResources().getString(R.string.reachable)
-                );
-            }
+            connection.setText(
+                    data == null ? R.string.unexpectedError :
+                            data.getInt("status", R.string.unexpectedError)
+            );
 
             final View spinner = view.findViewById(R.id.nodeSpinner);
             connection.setClickable(true);

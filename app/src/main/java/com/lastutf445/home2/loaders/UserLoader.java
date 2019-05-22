@@ -124,6 +124,11 @@ public final class UserLoader {
         }
 
         @Override
+        public void onPostPublish(int statusCode) {
+            callback.onPostPublish(statusCode);
+        }
+
+        @Override
         public void onReceive(JSONObject data) {
             if (!data.has("modulus") || !data.has("pubExp")) return;
 
@@ -153,6 +158,7 @@ public final class UserLoader {
         interface Callback {
             void onValid(@NonNull String modulus, @NonNull String pubExp);
             void onInvalid();
+            void onPostPublish(int statusCode);
         }
     }
 
@@ -160,6 +166,7 @@ public final class UserLoader {
 
         interface Callback {
             void onStatusReceived(JSONObject data);
+            void onPostPublish(int statusCode);
         }
 
         private Callback callback;
@@ -174,6 +181,11 @@ public final class UserLoader {
             );
 
             this.callback = callback;
+        }
+
+        @Override
+        public void onPostPublish(int statusCode) {
+            callback.onPostPublish(statusCode);
         }
 
         @Override
@@ -197,12 +209,11 @@ public final class UserLoader {
 
         /**
          * HANDLER RETURN CODES:
-         * 0 - unexpected error
-         * 1 - requesting publicKey
-         * 2 - invalid publicKey
-         * 3 - sending credentials
-         * 4 - auth failed
-         * 5 - ok
+         * 5 - requesting publicKey
+         * 6 - invalid publicKey
+         * 7 - sending credentials
+         * 8 - auth failed
+         * 9 - ok
          */
 
         @Override
@@ -222,14 +233,14 @@ public final class UserLoader {
             Handler handler = weakHandler.get();
             if (handler == null) return;
 
-            handler.sendEmptyMessage(2);
+            handler.sendEmptyMessage(6);
         }
 
         public void sendCredentials() {
             Handler handler = weakHandler.get();
 
             if (handler != null) {
-                handler.sendEmptyMessage(3);
+                handler.sendEmptyMessage(7);
             }
 
             //Log.d("LOGTAG", "lets auth");
@@ -253,6 +264,15 @@ public final class UserLoader {
         }
 
         @Override
+        public void onPostPublish(int statusCode) {
+            Handler handler = weakHandler.get();
+
+            if (handler != null) {
+                handler.sendEmptyMessage(statusCode);
+            }
+        }
+
+        @Override
         public void onStatusReceived(JSONObject data) {
             Handler handler = weakHandler.get();
 
@@ -262,7 +282,7 @@ public final class UserLoader {
                 if (handler != null) {
                     switch (status) {
                         case "unknown_user":
-                            handler.sendEmptyMessage(4);
+                            handler.sendEmptyMessage(8);
                             return;
                         case "unexpected_error":
                             handler.sendEmptyMessage(0);
@@ -284,7 +304,7 @@ public final class UserLoader {
                     DataLoader.save();
 
                     if (handler != null) {
-                        handler.sendEmptyMessage(5);
+                        handler.sendEmptyMessage(9);
                     }
 
                 } else if (handler != null) {
@@ -307,9 +327,7 @@ public final class UserLoader {
 
         /**
          * HANDLER RETURN CODES:
-         * 0 - unexpected error
-         * 1 - processing
-         * 2 - done
+         * 5 - done
          */
 
         public Editor(@NonNull JSONObject data, @NonNull Handler handler, boolean sessionParams) throws JSONException {
@@ -332,12 +350,10 @@ public final class UserLoader {
 
         @Override
         public void onPostPublish(int statusCode) {
-            if (statusCode == 1) {
-                Handler handler = weakHandler.get();
+            Handler handler = weakHandler.get();
 
-                if (handler != null) {
-                    handler.sendEmptyMessage(1);
-                }
+            if (handler != null) {
+                handler.sendEmptyMessage(statusCode);
             }
         }
 
@@ -371,15 +387,13 @@ public final class UserLoader {
                         DataLoader.save();
                     }
 
-                    handler.sendEmptyMessage(2);
+                    handler.sendEmptyMessage(5);
                     return;
                 }
 
             } catch (JSONException e) {
                 //e.printStackTrace();
             }
-
-            handler.sendEmptyMessage(0);
         }
     }
 }

@@ -275,15 +275,31 @@ public class NodesImport extends NavigationFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
+                    finish(msg.getData());
+                    break;
+                case 1:
                     pushData(msg.getData());
                     break;
             }
         }
 
+        private void finish(Bundle data) {
+            int status = data.getInt("status", 0);
+            Sync.removeSyncProvider(Sync.PROVIDER_NODE_IMPORT);
+
+            if (status != 0) {
+                NotificationsLoader.makeToast(
+                        DataLoader.getAppResources().getString(status),
+                        true
+                );
+            }
+
+            unlock();
+        }
+
         private void pushData(Bundle data) {
-            View view = weakView.get();
             ModulesAdapter adapter = weakAdapter.get();
-            if (data == null || view == null) return;
+            if (data == null) return;
 
             try {
                 JSONObject json = new JSONObject(
@@ -311,11 +327,18 @@ public class NodesImport extends NavigationFragment {
                     }
                 }
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                unlock();
 
+            } catch (JSONException e) {
+                //e.printStackTrace();
+            }
+        }
+
+        private void unlock() {
             Sync.removeSyncProvider(Sync.PROVIDER_NODE_IMPORT);
+
+            View view = weakView.get();
+            if (view == null) return;
 
             final View spinner = view.findViewById(R.id.nodesImportSpinner);
 
@@ -331,6 +354,7 @@ public class NodesImport extends NavigationFragment {
                 @Override
                 public void onAnimationRepeat(Animation animation) {}
             });
+
         }
     }
 
@@ -350,17 +374,53 @@ public class NodesImport extends NavigationFragment {
         }
 
         @Override
+        public void onPostPublish(int statusCode) {
+            switch (statusCode) {
+                case 0:
+                    finish(R.string.disconnected);
+                    break;
+                case 1:
+                    // ???
+                    break;
+                case 2:
+                    //finish(R.string.masterServerRequired);
+                    break;
+                case 3:
+                    finish(R.string.disconnected);
+                    break;
+                case 4:
+                    finish(R.string.encryptionError);
+                    break;
+            }
+
+        }
+
+        @Override
         public void onReceive(JSONObject data) {
             Handler handler = weakHandler.get();
             if (handler == null) return;
 
-            Message msg = handler.obtainMessage(0);
+            Message msg = handler.obtainMessage(1);
             Bundle msgData = new Bundle();
 
             msgData.putString("json", data.toString());
             msg.setData(msgData);
 
             handler.sendMessage(msg);
+        }
+
+        public void finish(int status) {
+            Handler handler = weakHandler.get();
+            if (handler == null) return;
+
+            Message msg = handler.obtainMessage(0);
+            Bundle msgData = new Bundle();
+
+            msgData.putInt("status", status);
+            msg.setData(msgData);
+
+            handler.sendMessage(msg);
+
         }
     }
 }

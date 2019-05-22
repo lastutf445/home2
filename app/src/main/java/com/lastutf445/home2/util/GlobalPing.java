@@ -24,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -147,7 +148,13 @@ public class GlobalPing extends Thread {
         killConnection();
 
         try {
-            sock = new Socket(ip, port);
+            sock = new Socket();
+            sock.connect(
+                    new InetSocketAddress(ip, port),
+                    // TODO: move to DataLoader
+                    1000
+            );
+
             sock.setReuseAddress(true);
             sock.setSoTimeout(1000);
 

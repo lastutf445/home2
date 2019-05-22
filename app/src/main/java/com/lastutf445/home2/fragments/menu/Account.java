@@ -1,6 +1,8 @@
 package com.lastutf445.home2.fragments.menu;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +17,7 @@ import com.lastutf445.home2.R;
 import com.lastutf445.home2.fragments.dialog.Processing;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
+import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
@@ -120,16 +123,37 @@ public class Account extends NavigationFragment {
     }
 
     private void logout() {
-        UserLoader.logout();
-
-        NotificationsLoader.makeToast(
-                DataLoader.getAppResources().getString(R.string.success),
-                true
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity()
         );
 
-        toParent.putBoolean("reload", true);
-        getActivity().onBackPressed();
+        Resources res = DataLoader.getAppResources();
+        builder.setTitle(res.getString(R.string.accountLogout));
+        builder.setMessage(res.getString(R.string.accountLogoutMessage));
 
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setPositiveButton(R.string.accountLogout, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                UserLoader.logout();
+
+                NotificationsLoader.makeToast(
+                        DataLoader.getAppResources().getString(R.string.success),
+                        true
+                );
+
+                toParent.putBoolean("reload", true);
+                getActivity().onBackPressed();
+            }
+        });
+
+        builder.create().show();
     }
 
     @Override
@@ -150,45 +174,33 @@ public class Account extends NavigationFragment {
 
         @Override
         public void handleMessage(Message msg) {
-            Processing dialog = weakProcessing.get();
-
             switch (msg.what) {
                 case 0:
-                    unexpectedError(dialog);
+                    finish(R.string.unexpectedError);
                     break;
                 case 1:
-                    processing(dialog);
+                    setTitle(R.string.processing);
                     break;
                 case 2:
-                    done(dialog);
+                case 3:
+                    setTitle(R.string.waitingForAConnection);
+                    break;
+                case 4:
+                    finish(R.string.encryptionError);
+                    break;
+                case 5:
+                    done();
                     break;
             }
         }
 
-        private void unexpectedError(@Nullable Processing dialog) {
-            NotificationsLoader.makeToast(
-                    DataLoader.getAppResources().getString(R.string.unexpectedError),
-                    true
-            );
-
-            closeDialog(dialog);
-        }
-
-        private void processing(Processing dialog) {
-            if (dialog != null) {
-                dialog.setTitle(
-                        DataLoader.getAppResources().getString(R.string.processing)
-                );
-            }
-        }
-
-        private void done(@Nullable Processing dialog) {
+        private void done() {
             NotificationsLoader.makeToast(
                     DataLoader.getAppResources().getString(R.string.success),
                     true
             );
 
-            closeDialog(dialog);
+            closeDialog();
 
             Rename rename = weakRename.get();
 
@@ -197,7 +209,30 @@ public class Account extends NavigationFragment {
             }
         }
 
-        private void closeDialog(@Nullable Processing dialog) {
+        private void finish(int title) {
+            if (title != 0) {
+                NotificationsLoader.makeToast(
+                        DataLoader.getAppResources().getString(title),
+                        true
+                );
+            }
+
+            closeDialog();
+        }
+
+        private void setTitle(int title) {
+            Processing dialog = weakProcessing.get();
+
+            if (dialog != null) {
+                dialog.setTitle(
+                        DataLoader.getAppResources().getString(title)
+                );
+            }
+        }
+
+        private void closeDialog() {
+            Processing dialog = weakProcessing.get();
+
             if (dialog != null) {
                 dialog.getDialog().cancel();
             }

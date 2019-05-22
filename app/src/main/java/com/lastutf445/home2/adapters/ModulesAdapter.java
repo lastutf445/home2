@@ -51,14 +51,7 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
 
         public void bind(@NonNull Module module) {
             if (serials) {
-                serial.setText(
-                        String.format(
-                                Locale.getDefault(),
-                                "%s %d",
-                                DataLoader.getAppResources().getString(R.string.serial),
-                                module.getSerial()
-                        )
-                );
+                serial.setText(String.valueOf(module.getSerial()));
 
                 if (ModulesLoader.getModule(module.getSerial()) != null) {
                     serial.setTextColor(DataLoader.getAppResources().getColor(R.color.colorPrimary));

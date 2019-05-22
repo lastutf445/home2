@@ -30,7 +30,9 @@ import java.util.ArrayList;
 public class CreateWidget extends NavigationFragment {
 
     private LayoutInflater inflater;
+    private RadioGroup radioGroup;
     private LinearLayout content;
+    private int status = -1;
 
     @Nullable
     @Override
@@ -44,14 +46,11 @@ public class CreateWidget extends NavigationFragment {
     protected void init() {
         inflater = getLayoutInflater();
         content = view.findViewById(R.id.createWidgetInclude);
+        radioGroup = view.findViewById(R.id.createWidgetRadios);
 
-        content.addView(getTitleView());
-        content.addView(getModuleView());
+        reload();
 
-        content.getChildAt(0).setVisibility(View.GONE);
-        content.getChildAt(1).setVisibility(View.GONE);
-
-        ((RadioGroup) view.findViewById(R.id.createWidgetRadios)).setOnCheckedChangeListener(
+        radioGroup.setOnCheckedChangeListener(
             new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -59,15 +58,32 @@ public class CreateWidget extends NavigationFragment {
                         case R.id.createWidgetRadioTitle:
                             content.getChildAt(1).setVisibility(View.GONE);
                             content.getChildAt(0).setVisibility(View.VISIBLE);
+                            status = 0;
                             break;
                         case R.id.createWidgetRadioModule:
                             content.getChildAt(0).setVisibility(View.GONE);
                             content.getChildAt(1).setVisibility(View.VISIBLE);
+                            status = 1;
                             break;
                     }
                 }
             }
         );
+    }
+
+    @Override
+    protected void reload() {
+        content.removeAllViews();
+        content.addView(getTitleView());
+        content.addView(getModuleView());
+
+        if (status != 0) {
+            content.getChildAt(0).setVisibility(View.GONE);
+        }
+
+        if (status != 1) {
+            content.getChildAt(1).setVisibility(View.GONE);
+        }
     }
 
     private View getTitleView() {
@@ -88,7 +104,8 @@ public class CreateWidget extends NavigationFragment {
                             NotificationsLoader.makeToast("Unexpected error", true);
                         } else {
                             NotificationsLoader.makeToast("Created", true);
-                            getActivity().onBackPressed();
+                            //getActivity().onBackPressed();
+                            reload();
                         }
 
                     } catch (JSONException e) {
@@ -96,7 +113,7 @@ public class CreateWidget extends NavigationFragment {
                         NotificationsLoader.makeToast("Unexpected error", true);
                     }
                 } else {
-                    NotificationsLoader.makeToast("Title can't be empty", true);
+                    NotificationsLoader.makeToast("Title shouldn't be empty", true);
                 }
             }
         });
@@ -137,7 +154,8 @@ public class CreateWidget extends NavigationFragment {
 
                         } else {
                             NotificationsLoader.makeToast("Created", true);
-                            getActivity().onBackPressed();
+                            //getActivity().onBackPressed();
+                            reload();
                         }
 
                     } catch (NumberFormatException e) {

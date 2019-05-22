@@ -74,6 +74,7 @@ public class ModulesLoader {
 
     public static boolean addModule(@NonNull Module module, boolean override) {
         if (modules.get(module.getSerial()) != null && !override) return false;
+        module.set("lastUpdated", System.currentTimeMillis());
 
         SQLiteDatabase db = DataLoader.getDb();
         ContentValues cv = new ContentValues();
@@ -99,6 +100,8 @@ public class ModulesLoader {
     }
 
     public static boolean applyModule(@NonNull Module module) {
+        module.set("lastUpdated", System.currentTimeMillis());
+
         SQLiteDatabase db = DataLoader.getDb();
         ContentValues cv = new ContentValues();
 

@@ -78,18 +78,20 @@ public class NodesDiscovery extends NavigationFragment {
                     public void onRefresh() {
                         Sync.addSyncProvider(discoverer);
 
-                        SimpleAnimator.fadeOut(noContent, 200, new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {}
+                        if (noContent.getVisibility() != View.GONE) {
+                            SimpleAnimator.fadeOut(noContent, 200, new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {}
 
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                noContent.setVisibility(View.GONE);
-                            }
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    noContent.setVisibility(View.GONE);
+                                }
 
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {}
-                        });
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {}
+                            });
+                        }
 
                         adapter.deleteAll();
 
@@ -165,7 +167,7 @@ public class NodesDiscovery extends NavigationFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    stopRefreshing();
+                    stopRefreshing(msg.getData());
                     break;
                 case 1:
                     pushNode(msg.getData());
@@ -173,7 +175,7 @@ public class NodesDiscovery extends NavigationFragment {
             }
         }
 
-        private void stopRefreshing() {
+        private void stopRefreshing(@Nullable Bundle data) {
             NodesAdapter adapter = weakAdapter.get();
             View view = weakView.get();
             if (view == null) return;
@@ -183,9 +185,20 @@ public class NodesDiscovery extends NavigationFragment {
             if (adapter != null && adapter.getItemCount() == 0) {
                 SimpleAnimator.fadeIn(view.findViewById(R.id.nodesDiscoveryNoContent), 200);
             }
+
+            if (data != null) {
+                int status = data.getInt("status", 0);
+
+                if (status != 0) {
+                    NotificationsLoader.makeToast(
+                            DataLoader.getAppResources().getString(status),
+                            true
+                    );
+                }
+            }
         }
 
-        private void pushNode(Bundle data) {
+        private synchronized void pushNode(Bundle data) {
             NodesAdapter adapter = weakAdapter.get();
             if (adapter == null) return;
 
@@ -210,18 +223,21 @@ public class NodesDiscovery extends NavigationFragment {
 
                     if (view != null) {
                         final View noContent = view.findViewById(R.id.nodesDiscoveryNoContent);
-                        SimpleAnimator.fadeOut(noContent, 200, new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {}
 
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                noContent.setVisibility(View.GONE);
-                            }
+                        if (noContent.getVisibility() != View.GONE) {
+                            SimpleAnimator.fadeOut(noContent, 200, new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {}
 
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {}
-                        });
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    noContent.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {}
+                            });
+                        }
                     }
                 }
 
@@ -233,7 +249,7 @@ public class NodesDiscovery extends NavigationFragment {
     }
 
     private static class Discoverer extends SyncProvider {
-        private Handler handler;
+        private WeakReference<Handler> weakHandler;
         private int maxAttempts;
         private int attempts;
 
@@ -246,19 +262,40 @@ public class NodesDiscovery extends NavigationFragment {
                     DataLoader.getInt("SyncDiscoveryPort", Sync.DEFAULT_PORT)
             );
 
+            weakHandler = new WeakReference<>(handler);
             maxAttempts = DataLoader.getInt("SyncDiscoveryAttempts", 3);
             attempts = maxAttempts;
-            this.handler = handler;
         }
 
         @Override
         public void onPostPublish(int statusCode) {
-            if (attempts-- == 1) stop();
+            switch (statusCode) {
+                case 0:
+                    finish(R.string.disconnected);
+                    break;
+                case 1:
+                    if (attempts-- <= 1) {
+                        finish(0);
+                    }
+                    break;
+                case 2:
+                    //finish(R.string.masterServerRequired);
+                    break;
+                case 3:
+                    finish(R.string.disconnected);
+                    break;
+                case 4:
+                    finish(R.string.encryptionError);
+                    break;
+            }
         }
 
         @Override
         public void onReceive(JSONObject data) {
             Log.d("LOGTAG", data.toString());
+
+            Handler handler = weakHandler.get();
+            if (handler == null) return;
 
             try {
                 Message msg = handler.obtainMessage(1);
@@ -278,9 +315,18 @@ public class NodesDiscovery extends NavigationFragment {
             }
         }
 
-        private void stop() {
-            handler.sendEmptyMessage(0);
-            Sync.removeSyncProvider(source);
+        private void finish(int status) {
+            Sync.removeSyncProvider(Sync.PROVIDER_DISCOVERER);
+            Handler handler = weakHandler.get();
+            if (handler == null) return;
+
+            Message msg = handler.obtainMessage(0);
+            Bundle msgData = new Bundle();
+            msgData.putInt("status", status);
+
+            msg.setData(msgData);
+            handler.sendMessage(msg);
+
             attempts = maxAttempts;
         }
     }

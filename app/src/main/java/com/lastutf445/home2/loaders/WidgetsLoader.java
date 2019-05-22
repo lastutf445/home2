@@ -92,13 +92,16 @@ public class WidgetsLoader {
         load();
         render();
         updateAll();
-        unsaved = false;
     }
 
     public static void load() {
         SQLiteDatabase db = DataLoader.getDb();
         Cursor cursor = db.rawQuery("SELECT * FROM dashboard", null);
         cursor.moveToFirst();
+
+        headId = 0;
+        headSerial = 0;
+        unsaved = false;
 
         serials.clear();
         widgets.clear();
@@ -478,7 +481,6 @@ public class WidgetsLoader {
 
                 serials.put(w1.getSerial(), w1.getId());
                 serials.put(w2.getSerial(), w2.getId());
-
                 widgets.put(w1.getId(), w1);
                 widgets.put(w2.getId(), w2);
             }
@@ -513,6 +515,7 @@ public class WidgetsLoader {
 
                 widgets.remove(widget.getId());
                 serials.delete(widget.getSerial());
+                unsaved = true;
 
                 Module module = ModulesLoader.getModule(widget.getSerial());
 
@@ -530,11 +533,22 @@ public class WidgetsLoader {
         synchronized (widgets) {
             synchronized (serials) {
                 content.removeAllViews();
-                widgets.clear();
-                serials.clear();
-
                 SQLiteDatabase db = DataLoader.getDb();
                 db.delete("dashboard", null, null);
+
+                for (int i = 0; i < widgets.size(); ++i) {
+                    Widget widget = widgets.valueAt(i);
+                    if (widget == null) continue;
+
+                    Module module = ModulesLoader.getModule(widget.getSerial());
+
+                    if (module != null) {
+                        free.put(module.getSerial(), module);
+                    }
+                }
+
+                widgets.clear();
+                serials.clear();
 
                 unsaved = false;
                 headSerial = 0;
@@ -590,17 +604,12 @@ public class WidgetsLoader {
 
                 cv.put("type", widget.getType());
                 cv.put("options", widget.getOps().toString());
-
-                //Log.d("LOGTAG", "save dashboardBlock serial " + widget.getSerial());
                 db.insertOrThrow("dashboard", null, cv);
             }
 
             db.setTransactionSuccessful();
             db.endTransaction();
-
-            unsaved = false;
-            headSerial = serial;
-            headId = 0;
+            load();
 
             return true;
 
@@ -749,19 +758,23 @@ public class WidgetsLoader {
             return false;
         }
 
-        public void lastUpdated(Module module) {
+        public void lastUpdated(@Nullable Module module) {
             View bottomSheet = weakBottomSheetView.get();
 
-            if (bottomSheet != null && module != null) {
-                long lastUpdated = module.getLong("lastUpdated", 0);
+            if (bottomSheet != null) {
+                TextView textView = bottomSheet.findViewById(R.id.bottomSheetLastUpdate);
                 String formatted = DataLoader.getAppResources().getString(R.string.undefined);
 
-                if (lastUpdated != 0) {
-                    Date date = new Date(lastUpdated);
-                    formatted = new SimpleDateFormat("HH:mm:ss dd.mm.yyyy", Locale.ENGLISH).format(date);
+                if (module != null) {
+                    long lastUpdated = module.getLong("lastUpdated", 0);
+
+                    if (lastUpdated != 0) {
+                        Date date = new Date(lastUpdated);
+                        formatted = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy", Locale.ENGLISH).format(date);
+                    }
                 }
 
-                ((TextView) bottomSheet.findViewById(R.id.bottomSheetLastUpdate)).setText(
+                textView.setText(
                         String.format(Locale.ENGLISH, "%s %s",
                                 DataLoader.getAppResources().getString(R.string.lastUpdated),
                                 formatted
@@ -775,21 +788,21 @@ public class WidgetsLoader {
     private static class BottomSheetClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Module module = ModulesLoader.getModule(bottomSheetWidgetSerial);
-            if (module == null) return;
-
             switch (v.getId()) {
                 case R.id.bottomSheetConfigure:
-                    openSpecial(module);
+                    openSpecial();
                     break;
 
                 case R.id.bottomSheetDelete:
-                    deleteWidget(module);
+                    deleteWidget();
                     break;
             }
         }
 
-        private void openSpecial(@NonNull Module module) {
+        private void openSpecial() {
+            Module module = ModulesLoader.getModule(bottomSheetWidgetSerial);
+            if (module == null) return;
+
             if (ModulesLoader.hasSpecial(module)) {
                 if (ModulesLoader.callSpecial(2, module, FragmentsLoader.getPrimaryNavigationFragment())) {
                     BottomSheetDialog dialog = weakBottomSheetDialog.get();
@@ -798,7 +811,7 @@ public class WidgetsLoader {
             }
         }
 
-        private void deleteWidget(@NonNull final Module module) {
+        private void deleteWidget() {
             Activity activity = MainActivity.getInstance();
 
             if (activity == null) {
@@ -812,7 +825,7 @@ public class WidgetsLoader {
 
             Resources res = DataLoader.getAppResources();
             builder.setTitle(res.getString(R.string.widgetRemoveTitle));
-            builder.setMessage(res.getString(R.string.widgetRemoveMessagesAndSave));
+            builder.setMessage(res.getString(R.string.widgetRemoveMessages));
 
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
@@ -824,19 +837,19 @@ public class WidgetsLoader {
             builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    deleteWidgetCallback(module);
+                    deleteWidgetCallback();
                 }
             });
 
             builder.create().show();
         }
 
-        private void deleteWidgetCallback(@NonNull Module module) {
+        private void deleteWidgetCallback() {
             synchronized (serials) {
                 synchronized (widgets) {
-                    int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
+                    int id = serials.get(bottomSheetWidgetSerial, Integer.MAX_VALUE);
 
-                    if (id == Integer.MAX_VALUE || !callWidgetsAdapterRemover(id)) {
+                    if (!callWidgetsAdapterRemover(id)) {
                         NotificationsLoader.makeToast("Unexpected error", true);
 
                     } else {

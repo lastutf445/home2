@@ -122,77 +122,40 @@ public class Auth extends NavigationFragment {
 
         @Override
         public void handleMessage(Message msg) {
-            Processing dialog = weakProcessing.get();
-
             switch (msg.what) {
+                case 0:
+                    finish(R.string.unexpectedError);
+                    break;
                 case 1:
-                    requestingPubKey(dialog);
+                    setTitle(R.string.processing);
                     break;
                 case 2:
-                    invalidPubKey(dialog);
-                    break;
                 case 3:
-                    sendingCredentials(dialog);
+                    setTitle(R.string.waitingForAConnection);
                     break;
                 case 4:
-                    authFailed(dialog);
+                    finish(R.string.encryptionError);
                     break;
                 case 5:
-                    ok(dialog);
+                    setTitle(R.string.authRequestingPubKey);
                     break;
-                default:
-                    unexpectedError(dialog);
+                case 6:
+                    finish(R.string.authInvalidPubKey);
+                    break;
+                case 7:
+                    setTitle(R.string.authSendingCredentials);
+                    break;
+                case 8:
+                    finish(R.string.authInvalidCredentials);
+                    break;
+                case 9:
+                    ok();
+                    break;
             }
         }
 
-        private void unexpectedError(@Nullable Processing dialog) {
-            NotificationsLoader.makeToast(
-                    DataLoader.getAppResources().getString(R.string.unexpectedError),
-                    true
-            );
-
-            closeDialog(dialog);
-        }
-
-        private void requestingPubKey(@Nullable Processing dialog) {
-            if (dialog != null) {
-                dialog.setTitle(
-                        DataLoader.getAppResources().getString(R.string.authRequestingPubKey)
-                );
-            }
-        }
-
-        private void invalidPubKey(@Nullable Processing dialog) {
-            NotificationsLoader.makeToast(
-                    DataLoader.getAppResources().getString(R.string.authInvalidPubKey),
-                    true
-            );
-
-            closeDialog(dialog);
-        }
-
-        private void sendingCredentials(@Nullable Processing dialog) {
-            if (dialog != null) {
-                dialog.setTitle(
-                        DataLoader.getAppResources().getString(R.string.authSendingCredentials)
-                );
-            }
-        }
-
-        private void authFailed(@Nullable Processing dialog) {
-            NotificationsLoader.makeToast(
-                    DataLoader.getAppResources().getString(R.string.authInvalidCredentials),
-                    true
-            );
-
-            closeDialog(dialog);
-        }
-
-        private void ok(@Nullable Processing dialog) {
-            NotificationsLoader.makeToast(
-                    DataLoader.getAppResources().getString(R.string.success),
-                    true
-            );
+        private void ok() {
+            finish(R.string.success);
 
             Bundle toParent = weakToParent.get();
             Activity activity = weakActivity.get();
@@ -204,11 +167,32 @@ public class Auth extends NavigationFragment {
             if (activity != null) {
                 activity.onBackPressed();
             }
-
-            closeDialog(dialog);
         }
 
-        private void closeDialog(@Nullable Processing dialog) {
+        private void finish(int title) {
+            if (title != 0) {
+                NotificationsLoader.makeToast(
+                        DataLoader.getAppResources().getString(title),
+                        true
+                );
+            }
+
+            closeDialog();
+        }
+
+        private void setTitle(int title) {
+            Processing dialog = weakProcessing.get();
+
+            if (dialog != null) {
+                dialog.setTitle(
+                        DataLoader.getAppResources().getString(title)
+                );
+            }
+        }
+
+        private void closeDialog() {
+            Processing dialog = weakProcessing.get();
+
             if (dialog != null) {
                 dialog.getDialog().cancel();
             }

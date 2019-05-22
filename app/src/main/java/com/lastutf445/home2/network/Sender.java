@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -51,17 +52,9 @@ public class Sender {
     /** PROVIDER RETURN CODES
      *  0 - Unknown exception
      *  1 - Sent successfully
-     *  2 - External address is undefined
+     *  2 - MasterServer required
      *  3 - No Internet connection
      *  4 - Encryption error
-     *  5 - MasterServer required
-     */
-
-    /** SUBSCRIBER RETURN CODES
-     *  -1 - Disconnected
-     *  -2 - Home network
-     *  -3 - Master Server
-     *  -4 - Idle
      */
 
     private static Runnable task = new Runnable() {
@@ -110,7 +103,7 @@ public class Sender {
 
                     if (current.getUseMasterConnectionOnly() && !isMasterConnectionUsed()) {
                         Log.d("LOGTAG", "requires master-connection for " + current.getQuery().toString());
-                        current.onPostPublish(5);
+                        current.onPostPublish(Sync.getNetworkState() == 0 ? 3 : 2);
                         continue;
                     }
 
@@ -154,21 +147,29 @@ public class Sender {
     };
 
     private synchronized static int mSend(SyncProvider provider, long time) {
-        if (!makeConnection(
+        int status = makeConnection(
                 DataLoader.getString("MasterServerAddress", "false"),
                 DataLoader.getInt("MasterServerPort", Sync.DEFAULT_PORT),
                 time
-        )) return 0;
+        );
+
+        if (status != 1) {
+            return (status != 2 && provider.getUseMasterConnectionOnly() ? 2 : 0);
+        }
 
         return tSend(provider);
     }
 
     private synchronized static int eSend(SyncProvider provider, long time) {
-        if (!makeConnection(
+        int status = makeConnection(
                 DataLoader.getString("ExternalAddress", "false"),
                 DataLoader.getInt("ExternalPort", Sync.DEFAULT_PORT),
                 time
-        )) return 0;
+        );
+
+        if (status != 1) {
+            return (status != 2 && provider.getUseMasterConnectionOnly() ? 2 : 0);
+        }
 
         return tSend(provider);
     }
@@ -261,14 +262,19 @@ public class Sender {
         }
     }
 
-    public synchronized static boolean makeConnection(String ip, int port, long time) {
-        if (tSocket != null && tSocket.isConnected() && tSocket.getInetAddress().getHostAddress().equals(ip) && tSocket.getPort() == port && time < tAlive) return true;
+    public synchronized static int makeConnection(String ip, int port, long time) {
+        if (tSocket != null && tSocket.isConnected() && tSocket.getInetAddress().getHostAddress().equals(ip) && tSocket.getPort() == port && time < tAlive) return 1;
         Log.d("LOGTAG", "makeConnection triggered");
         killConnection();
-        publish(-4);
 
         try {
-            tSocket = new Socket(ip, port);
+            tSocket = new Socket();
+            tSocket.connect(
+                    new InetSocketAddress(ip, port),
+                    // TODO: move to DataLoader
+                    1000
+            );
+
             tSocket.setReuseAddress(true);
             tSocket.setSoTimeout(1000);
 
@@ -283,18 +289,18 @@ public class Sender {
             tAlive = time + 8000;
             connectReceiver();
             publish(-3);
-            return true;
+            return 1;
 
         } catch (UnknownHostException e) {
             //e.printStackTrace();
             Log.d("LOGTAG", "Unable to resolve host");
+            return 2;
 
         } catch (IOException e) {
             //e.printStackTrace();
             Log.d("LOGTAG", "Unable to create socket");
+            return 0;
         }
-
-        return false;
     }
 
     public synchronized static void killConnection() {
@@ -347,9 +353,15 @@ public class Sender {
     }
 
     private static void publish(int code) {
-        //Log.d("LOGTAG", "publish: " + code);
-        if (subscriber == null) return;
 
+        /** SUBSCRIBER RETURN CODES
+         *  -1 - Disconnected
+         *  -2 - Home network
+         *  -3 - Master Server
+         *  -4 - Idle
+         */
+
+        if (subscriber == null) return;
         Handler handler = subscriber.get();
 
         if (handler != null) {

@@ -30,8 +30,10 @@
     <string name="accountPrivacy">Privacy</string>
     <string name="accountLogout">Logout</string>
 
+    <string name="accountLogoutMessage">Private data will be deleted from the app</string>
+
     <string name="accountUsernameTitle">Account name</string>
-    <string name="accountUsernameHint">Type your new name</string>
+    <string name="accountUsernameHint">Type your name</string>
 
     <string name="createWidget">Create a new widget</string>
     <string name="moveWidgets">Move elements</string>
@@ -41,21 +43,20 @@
     <string name="createWidgetRadioTitle">Title</string>
     <string name="createWidgetRadioModule">Module</string>
 
-    <string name="createTitleTitle">Type title of widget</string>
+    <string name="createTitleTitle">Type title:</string>
     <string name="createTitleExample">My great title</string>
 
-    <string name="createModuleTitle">Choose module</string>
+    <string name="createModuleTitle">Choose a module:</string>
     <string name="createModuleList">Open modules list</string>
 
     <string name="widgetsTitle">Widgets</string>
     <string name="widgetsSubtitle">You can see changes in live mode\nIt won\'t be saved automatically</string>
 
     <string name="widgetRemoveTitle">Remove widget</string>
-    <string name="widgetRemoveMessages">Are you sure to remove the widget?</string>
-    <string name="widgetRemoveMessagesAndSave">Are you sure to remove the widget and save the state?</string>
+    <string name="widgetRemoveMessages">You can reverse this operation later</string>
 
     <string name="widgetsRemoveTitle">Remove all widgets</string>
-    <string name="widgetsRemoveMessages">Are you sure to remove all widgets?</string>
+    <string name="widgetsRemoveMessages">State will be saved immediately</string>
 
     <string name="savedMode">All changes saved</string>
     <string name="unsavedMode">Unsaved changes detected</string>
@@ -67,10 +68,10 @@
     <string name="moduleSync">Sync state</string>
 
     <string name="moduleTitle">Module title</string>
-    <string name="moduleHint">Type its new title</string>
+    <string name="moduleHint">Type a new title</string>
 
-    <string name="modulesConfigDialogTitle">Deleting module</string>
-    <string name="modulesConfigDialogMessage">Are you sure to delete the module?</string>
+    <string name="modulesConfigDialogTitle">Delete module</string>
+    <string name="modulesConfigDialogMessage">Dependencies will be removed</string>
 
     <string name="nodesDiscovery">Node discovery</string>
     <string name="nodesImportOverride">Override identical serials</string>
@@ -78,10 +79,10 @@
     <string name="nodesImportAddNode">Add node only</string>
 
     <string name="nodesImportAddModuleTitle">Add module</string>
-    <string name="nodesImportAddModuleMessage">Are you sure to add module to app?</string>
+    <string name="nodesImportAddModuleMessage">It will be stored in the app</string>
 
     <string name="nodesImportAddModuleOverrideTitle">Override module</string>
-    <string name="nodesImportAddModuleOverrideMessage">Are you sure to override linked module?</string>
+    <string name="nodesImportAddModuleOverrideMessage">It will rewrite all related data</string>
 
     <string name="nodeSyncing">Syncing now:</string>
     <string name="nodeEditTitle">Edit node title</string>
@@ -90,13 +91,13 @@
     <string name="nodeDisableSync">Disable sync</string>
 
     <string name="nodeTitle">Node title</string>
-    <string name="nodeHint">Type its new title</string>
+    <string name="nodeHint">Type a new title</string>
 
     <string name="nodeSyncTitle">Disable sync</string>
-    <string name="nodeSyncMessage">Are you sure to turn sync off?</string>
+    <string name="nodeSyncMessage">Linked modules won\'t be synchronized</string>
 
     <string name="nodeDeleteTitle">Delete node</string>
-    <string name="nodeDeleteMessage">Are you sure to delete the node?</string>
+    <string name="nodeDeleteMessage">Linked modules won\'t be able to sync</string>
 
     <string name="syncThreads">Sync threads</string>
     <string name="syncOther">Other options</string>
@@ -110,7 +111,7 @@
     <string name="syncBehavior">Behavior</string>
     <string name="syncInterval">Interval between sync ticks</string>
 
-    <string name="syncMasterServerDesc">This technique let you define an address to \"core\" of your home network to transfer each packet through it. Application of the method is only limited by your fantasy.</string>
+    <string name="syncMasterServerDesc">This technique let you define an address to \"core\" of your home network to transfer each packet through it. Application of the method is only limited by your imagination.</string>
 
     <string name="syncExternalAddress">External address</string>
     <string name="syncExternalAddressDesc">In case of being outside your home network, the application will use this address to access Master Server.</string>
@@ -143,7 +144,7 @@
     <string name="syncNotificationsInterval">Sync notifications interval</string>
 
     <string name="loadDefaults">Load defaults</string>
-    <string name="loadDefaultsMessage">Are you sure to load defaults? Values won\'t be saved automatically.</string>
+    <string name="loadDefaultsMessage">Values won\'t be saved automatically</string>
 
     <string name="aboutSubtitle">Make your home intelligent</string>
     <string name="aboutDeveloped">Developing by:</string>
@@ -151,7 +152,7 @@
     <string name="aboutVersion">Version:</string>
     <string name="aboutAppVersion">Developer version 0.9</string>
     <string name="aboutThanksTo">Thanks to:</string>
-    <string name="aboutThanksList">Anton Denikin\nNikita Sviridov</string>
+    <string name="aboutThanksList">Anton Denikin\nNikita Sviridov\nElena Dogman</string>
 
     <string name="add">Add</string>
     <string name="load">Load</string>
@@ -169,10 +170,10 @@
     <string name="specialModule">Module settings</string>
     <string name="specialClient">Client settings</string>
 
-    <string name="specialLightRGBIsLit">Light is on</string>
-    <string name="specialLightRGBPickColor">Pick a color</string>
+    <string name="specialLightRGBIsLit">Light ON</string>
+    <string name="specialLightRGBPickColor">Choose color</string>
 
-    <string name="specialSocketIsOn">Socket is on</string>
+    <string name="specialSocketIsOn">Socket ON</string>
 
     <string name="notTested">not tested</string>
     <string name="notAvailable">Not available</string>
@@ -187,9 +188,14 @@
     <string name="reachable">reachable</string>
     <string name="unreachable">unreachable</string>
     <string name="pending">pending&#8230;</string>
+    <string name="disconnectedSmall">disconnected</string>
+    <string name="unexpectedErrorSmall">unexpected error</string>
+    <string name="encryptionErrorSmall">encryption error</string>
 
     <string name="success">Success</string>
     <string name="unexpectedError">Unexpected error</string>
+    <string name="encryptionError">Encryption error</string>
+    <string name="masterServerRequired">Master Server required</string>
 
     <string name="processing">Processing&#8230;</string>
     <string name="waitingForAConnection">Waiting for a connection&#8230;</string>
@@ -201,13 +207,14 @@
     <string name="homeNetwork">Home network</string>
     <string name="idle">Idle</string>
 
-    <string name="node">Node:</string>
+    <string name="node">Node id:</string>
     <string name="status">Status:</string>
-    <string name="serial">Serial:</string>
+    <string name="serial">Serial number:</string>
     <string name="summary">Summary:</string>
     <string name="connection">Connection:</string>
     <string name="IPAddress2">IP address:</string>
     <string name="lastUpdated">Last updated:</string>
+    <string name="isSyncing">Syncing&#8230;</string>
 
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>

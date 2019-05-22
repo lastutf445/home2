@@ -297,16 +297,10 @@ public class Module extends NavigationFragment {
 
             TextView connection = view.findViewById(R.id.moduleConnection);
 
-            if (data == null || !data.containsKey("success") || !data.getBoolean("success", false)) {
-                connection.setText(
-                        DataLoader.getAppResources().getString(R.string.unreachable)
-                );
-
-            } else {
-                connection.setText(
-                        DataLoader.getAppResources().getString(R.string.reachable)
-                );
-            }
+            connection.setText(
+                    data == null ? R.string.unexpectedError :
+                            data.getInt("status", R.string.unexpectedError)
+            );
 
             final View spinner = view.findViewById(R.id.moduleSpinner);
             connection.setClickable(true);

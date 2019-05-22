@@ -65,7 +65,10 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
                 }
             } else if (drag) {
                 //Log.d("LOGTAG", "drop to = " + to);
-                if (from != to) WidgetsLoader.swapViews(from, to);
+                if (from != to) {
+                    WidgetsLoader.swapViews(from, to);
+                }
+
                 drag = false;
             }
         }
