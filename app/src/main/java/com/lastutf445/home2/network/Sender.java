@@ -321,7 +321,7 @@ public class Sender {
         Sender.tAlive = tAlive;
     }
 
-    public synchronized static void connectReceiver() {
+    public static void connectReceiver() {
         Receiver.settIn(tIn);
     }
 
@@ -330,7 +330,7 @@ public class Sender {
             return false;
         }
 
-        else if (Sync.getNetworkBSSID().equals(DataLoader.getString("SyncHomeNetwork", "false"))
+        else if (DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID())
                 && DataLoader.getBoolean("MasterServer", false)) {
             return true;
         }
