@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Module;
+import com.lastutf445.home2.containers.Node;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 
@@ -27,6 +28,7 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
     private SparseArray<Module> data = new SparseArray<>();
     private View.OnClickListener listener;
     private LayoutInflater inflater;
+    private Node node;
 
     public ModulesAdapter(LayoutInflater inflater, View.OnClickListener listener) {
         this.inflater = inflater;
@@ -52,9 +54,14 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
         public void bind(@NonNull Module module) {
             if (serials) {
                 serial.setText(String.valueOf(module.getSerial()));
+                Module oldModule = ModulesLoader.getModule(module.getSerial());
 
-                if (ModulesLoader.getModule(module.getSerial()) != null) {
-                    serial.setTextColor(DataLoader.getAppResources().getColor(R.color.colorPrimary));
+                if (oldModule != null) {
+                    if (node != null && node.getSerial() == oldModule.getNode()) {
+                        serial.setTextColor(DataLoader.getAppResources().getColor(R.color.colorPrimary));
+                    } else {
+                        serial.setTextColor(DataLoader.getAppResources().getColor(R.color.colorAccent));
+                    }
                 }
             }
 
@@ -67,6 +74,11 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
         this.data = data;
         this.serials = serials;
         notifyDataSetChanged();
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+        notifyItemRangeChanged(0, data.size());
     }
 
     public void setForceDelete(boolean forceDelete) {

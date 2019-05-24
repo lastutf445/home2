@@ -164,7 +164,7 @@ public class Module extends NavigationFragment {
         }
 
         ((TextView) view.findViewById(R.id.moduleConnection)).setText(
-                DataLoader.getAppResources().getString(R.string.unknownAddress)
+                DataLoader.getAppResources().getString(R.string.unknownAddressSmall)
         );
     }
 

@@ -116,7 +116,10 @@ public class NodesImport extends NavigationFragment {
         view.findViewById(R.id.nodesImportOverride).setOnClickListener(d);
         view.findViewById(R.id.nodesImportAddNode).setOnClickListener(d);
         view.findViewById(R.id.nodesImportMerge).setOnClickListener(d);
+
+        adapter.setNode(node);
         adapter.setData(new SparseArray<Module>(), true);
+
         updater.setAdapter(adapter);
         content.setAdapter(adapter);
         reload();

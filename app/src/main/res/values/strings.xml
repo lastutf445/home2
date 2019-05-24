@@ -181,6 +181,7 @@
     <string name="noContent">There\'s nothing to show</string>
     <string name="missedField">Please, check for a missed field</string>
     <string name="pullToRefresh">Pull down to refresh</string>
+    <string name="lockedFeature">This feature isn\'t  available in this version. Watch for updates.</string>
 
     <string name="IPAddress">IP address</string>
     <string name="port">Port</string>
@@ -227,6 +228,7 @@
     <string name="unknownType">Unknown type</string>
     <string name="unknownError">Unknown error</string>
     <string name="unknownAddress">Unknown address</string>
+    <string name="unknownAddressSmall">unknown address</string>
 
     <string name="defaultTitleTemperature">Temperature</string>
     <string name="defaultTitleHumidity">Humidity</string>

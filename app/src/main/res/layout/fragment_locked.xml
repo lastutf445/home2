@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView51"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawableStart="@drawable/lock"
+        android:drawablePadding="24dp"
+        android:drawableTint="@color/colorPrimary"
+        android:lineSpacingExtra="8sp"
+        android:paddingStart="48dp"
+        android:paddingEnd="48dp"
+        android:text="@string/lockedFeature"
+        android:textColor="#333" />
+</FrameLayout>

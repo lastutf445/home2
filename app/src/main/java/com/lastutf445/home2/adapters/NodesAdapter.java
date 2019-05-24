@@ -18,6 +18,7 @@ public class NodesAdapter extends RecyclerView.Adapter<NodesAdapter.ViewHolder> 
     private SparseArray<Node> data = new SparseArray<>();
     private View.OnClickListener listener;
     private LayoutInflater inflater;
+    private boolean forceDelete;
 
     public NodesAdapter(LayoutInflater inflater, View.OnClickListener listener) {
         this.inflater = inflater;
@@ -48,6 +49,10 @@ public class NodesAdapter extends RecyclerView.Adapter<NodesAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public void setForceDelete(boolean forceDelete) {
+        this.forceDelete = forceDelete;
+    }
+
     public void pushData(@NonNull Node node) {
         if (data.get(node.getSerial()) != null) return;
         data.put(node.getSerial(), node);
@@ -56,7 +61,7 @@ public class NodesAdapter extends RecyclerView.Adapter<NodesAdapter.ViewHolder> 
 
     public void delete(int pos) {
         if (pos < 0 || pos >= data.size()) return;
-        data.removeAt(pos);
+        if (forceDelete) data.removeAt(pos);
         notifyItemRemoved(pos);
     }
 

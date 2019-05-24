@@ -20,8 +20,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="@string/createTitleExample" />
+        android:hint="@string/createTitleExample"
+        android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/createTitleApply"

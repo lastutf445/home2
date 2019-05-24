@@ -86,7 +86,7 @@ public abstract class Special extends NavigationFragment {
             Node node = NodesLoader.getNode(module.getNode());
 
             if (node == null) {
-                NotificationsLoader.makeToast("Node is null", true);
+                NotificationsLoader.makeToast("Node is lost, aborted", true);
                 return;
             }
 

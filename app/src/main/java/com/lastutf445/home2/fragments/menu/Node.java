@@ -128,7 +128,7 @@ public class Node extends NavigationFragment {
         }
 
         ((TextView) view.findViewById(R.id.nodeConnection)).setText(
-                DataLoader.getAppResources().getString(R.string.unknownAddress)
+                DataLoader.getAppResources().getString(R.string.unknownAddressSmall)
         );
     }
 
