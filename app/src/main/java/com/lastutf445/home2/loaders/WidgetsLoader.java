@@ -623,6 +623,7 @@ public class WidgetsLoader {
         int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
 
         if (!linked) {
+            callBottomSheetConnector(module, false);
             free.remove(module.getSerial());
             update(id);
             return;
@@ -656,6 +657,8 @@ public class WidgetsLoader {
         if (id != Integer.MAX_VALUE) {
             createUpdateEvent(id);
         }
+
+        callBottomSheetConnector(module, true);
     }
 
     public static void onModuleStateUpdated(@NonNull Module module) {
@@ -665,12 +668,18 @@ public class WidgetsLoader {
             createUpdateEvent(id);
         }
 
+        callBottomSheetConnector(module, true);
+    }
+
+    public static void callBottomSheetConnector(@NonNull Module module, boolean linked) {
         if (bottomSheetConnect1 != null && module.getSerial() == bottomSheetConnect1.getSerial()) {
-            bottomSheetConnect1.onModuleStateUpdated();
+            if (linked) bottomSheetConnect1.onModuleStateUpdated();
+            else bottomSheetConnect1.onModuleRemoved();
         }
 
         if (bottomSheetConnect2 != null && module.getSerial() == bottomSheetConnect2.getSerial()) {
-            bottomSheetConnect2.onModuleStateUpdated();
+            if (linked) bottomSheetConnect2.onModuleStateUpdated();
+            else bottomSheetConnect2.onModuleRemoved();
         }
     }
 

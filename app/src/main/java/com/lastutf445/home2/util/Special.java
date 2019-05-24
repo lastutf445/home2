@@ -15,6 +15,8 @@ import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.containers.Node;
 import com.lastutf445.home2.fragments.dialog.Processing;
+import com.lastutf445.home2.loaders.FragmentsLoader;
+import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
@@ -33,11 +35,13 @@ public abstract class Special extends NavigationFragment {
     protected Render render;
     protected Module module;
     protected Updater updater;
+    protected String type;
 
     private int connectorId = 0;
     private Connector connector;
 
     public final void setModule(@NonNull Module module) {
+        type = module.getType();
         this.module = module;
     }
 
@@ -191,8 +195,19 @@ public abstract class Special extends NavigationFragment {
     public class Connector {
         public void onModuleStateUpdated() {
             if (updater != null) {
+                Module newModule = ModulesLoader.getModule(module.getSerial());
+
+                if (newModule == null || !newModule.getType().equals(module.getType())) {
+                    FragmentsLoader.pop(Special.this.getParent());
+                    return;
+                }
+
                 updater.sendEmptyMessage(2);
             }
+        }
+
+        public void onModuleRemoved() {
+            FragmentsLoader.pop(Special.this.getParent());
         }
 
         public int getSerial() {

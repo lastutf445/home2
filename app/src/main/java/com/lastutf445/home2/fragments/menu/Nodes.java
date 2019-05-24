@@ -79,13 +79,15 @@ public class Nodes extends NavigationFragment {
     public void onResult(Bundle data) {
         if (data.containsKey("deleted")) {
             delete(data.getInt("deleted"));
-        }
-        if (data.containsKey("updated")) {
-            update(data.getInt("updated"));
-            //update(data.getInt("updated"));
-        }
-        if (data.containsKey("reload")) {
-            reload();
+
+        } else {
+            if (data.containsKey("updated")) {
+                update(data.getInt("updated"));
+                //update(data.getInt("updated"));
+            }
+            if (data.containsKey("reload")) {
+                reload();
+            }
         }
     }
 }

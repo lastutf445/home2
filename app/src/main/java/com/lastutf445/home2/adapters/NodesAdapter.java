@@ -60,7 +60,7 @@ public class NodesAdapter extends RecyclerView.Adapter<NodesAdapter.ViewHolder> 
     }
 
     public void delete(int pos) {
-        if (pos < 0 || pos >= data.size()) return;
+        if (pos < 0 || pos > data.size()) return;
         if (forceDelete) data.removeAt(pos);
         notifyItemRemoved(pos);
     }
