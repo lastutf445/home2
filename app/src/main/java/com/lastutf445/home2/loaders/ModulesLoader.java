@@ -74,6 +74,13 @@ public class ModulesLoader {
 
     public static boolean addModule(@NonNull Module module, boolean override) {
         if (modules.get(module.getSerial()) != null && !override) return false;
+
+        Module oldModule = modules.get(module.getSerial());
+
+        if (oldModule != null) {
+            NodesLoader.onModuleLinkChanged(oldModule, false);
+        }
+
         module.set("lastUpdated", System.currentTimeMillis());
 
         SQLiteDatabase db = DataLoader.getDb();

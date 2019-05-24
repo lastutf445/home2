@@ -193,7 +193,7 @@ public class Auth extends NavigationFragment {
         private void closeDialog() {
             Processing dialog = weakProcessing.get();
 
-            if (dialog != null) {
+            if (dialog != null && dialog.getDialog() != null) {
                 dialog.getDialog().cancel();
             }
         }
