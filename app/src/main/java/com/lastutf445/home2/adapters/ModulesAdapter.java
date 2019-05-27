@@ -1,5 +1,6 @@
 package com.lastutf445.home2.adapters;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -15,8 +16,6 @@ import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
-
-import java.util.Locale;
 
 import static android.view.View.GONE;
 
@@ -55,6 +54,8 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
 
                 if (oldModule != null) {
                     serial.setTextColor(DataLoader.getAppResources().getColor(R.color.colorPrimary));
+                } else {
+                    serial.setTextColor(Color.parseColor("#999999"));
                 }
             }
 

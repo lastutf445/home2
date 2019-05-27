@@ -12,10 +12,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.CheckBox;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.adapters.ModulesAdapter;
@@ -53,7 +55,13 @@ public class ModulesDiscovery extends NavigationFragment {
     protected void init() {
         updater = new Updater(view);
         content = view.findViewById(R.id.modulesDiscoveryContent);
-        content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()));
+        content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
+
         noContent = view.findViewById(R.id.modulesDiscoveryNoContent);
         hint = view.findViewById(R.id.modulesDiscoveryHint);
 
@@ -74,6 +82,9 @@ public class ModulesDiscovery extends NavigationFragment {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
+                        adapter.deleteAll();
+                        discoverer.setup();
+
                         Sync.addSyncProvider(discoverer);
 
                         if (noContent.getVisibility() != View.GONE) {
@@ -90,8 +101,6 @@ public class ModulesDiscovery extends NavigationFragment {
                                 public void onAnimationRepeat(Animation animation) {}
                             });
                         }
-
-                        adapter.deleteAll();
 
                         if (hint.getVisibility() != View.GONE) {
                             SimpleAnimator.fadeOut(hint, 200, new Animation.AnimationListener() {
@@ -126,6 +135,24 @@ public class ModulesDiscovery extends NavigationFragment {
             }
         };
 
+        View.OnClickListener e = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.modulesDiscoveryOverride:
+                        CheckBox checkBox = (CheckBox) ((ViewGroup) v).getChildAt(0);
+                        checkBox.setChecked(checkBox.isChecked());
+                        break;
+                    case R.id.modulesDiscoveryMerge:
+                        merge();
+                        break;
+                }
+            }
+        };
+
+        view.findViewById(R.id.modulesDiscoveryOverride).setOnClickListener(e);
+        view.findViewById(R.id.modulesDiscoveryMerge).setOnClickListener(e);
+
         adapter = new ModulesAdapter(
                 getLayoutInflater(),
                 d
@@ -141,17 +168,16 @@ public class ModulesDiscovery extends NavigationFragment {
                 getActivity()
         );
 
-        Resources res = DataLoader.getAppResources();
         boolean match = false;
 
         if (ModulesLoader.getModule(module.getSerial()) != null) {
-            builder.setMessage(res.getString(R.string.modulesAddModuleOverrideMessage));
-            builder.setTitle(res.getString(R.string.modulesAddModuleOverrideTitle));
+            builder.setMessage(R.string.modulesAddModuleOverrideMessage);
+            builder.setTitle(R.string.modulesAddModuleOverrideTitle);
             match = true;
 
         } else {
-            builder.setMessage(res.getString(R.string.modulesAddModuleMessage));
-            builder.setTitle(res.getString(R.string.modulesAddModuleTitle));
+            builder.setMessage(R.string.modulesAddModuleMessage);
+            builder.setTitle(R.string.modulesAddModuleTitle);
         }
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -169,7 +195,7 @@ public class ModulesDiscovery extends NavigationFragment {
 
                 } else {
                     NotificationsLoader.makeToast("Added", true);
-                    toParent.putInt("reload", pos);
+                    toParent.putBoolean("reload", true);
                     adapter.update(pos);
                 }
             }
@@ -180,39 +206,39 @@ public class ModulesDiscovery extends NavigationFragment {
 
     private void merge() {
         // TODO: PROCESSING MODAL WINDOW, CODE WRAPPED INTO A NEW THREAD
-/*
-        try {
-            if (NodesLoader.getNode(node.getSerial()) == null) {
-                Node original = new Node(node, true);
-                NodesLoader.addNode(original, false);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity()
+        );
+
+        builder.setTitle(R.string.modulesMergeTitle);
+        builder.setMessage(R.string.modulesMergeMessage);
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
             }
+        });
 
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
+        builder.setPositiveButton(R.string.merge, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                boolean override = ((CheckBox) view.findViewById(R.id.modulesDiscoveryOverrideCheckbox)).isChecked();
+                SparseArray<Module> modules = adapter.getData();
+                int added = 0;
 
-        if (NodesLoader.getNode(node.getSerial()) == null) {
-            NotificationsLoader.makeToast("Unexpected error", true);
-            return;
-        }
+                for (int i = 0; i < modules.size(); ++i) {
+                    if (ModulesLoader.addModule(modules.valueAt(i), override)) ++added;
+                }
 
-        boolean override = ((CheckBox) view.findViewById(R.id.nodesImportOverrideCheckBox)).isChecked();
-        SparseArray<Module> modules = adapter.getData();
-        int added = 0;
+                NotificationsLoader.makeToast("Added " + added + " modules", true);
+                toParent.putBoolean("reload", true);
+                getActivity().onBackPressed();
+            }
+        });
 
-        for (int i = 0; i < modules.size(); ++i) {
-            if (ModulesLoader.addModule(modules.valueAt(i), override)) ++added;
-        }
-
-        NotificationsLoader.makeToast("Added " + added + " modules", true);
-        toParent.putInt("updated", pos);
-        getActivity().onBackPressed();*/
-    }
-
-    @Override
-    public void onDestroy() {
-        Sync.removeSyncProvider(Sync.PROVIDER_DISCOVERER);
-        super.onDestroy();
+        builder.create().show();
     }
 
     @Override
@@ -317,8 +343,8 @@ public class ModulesDiscovery extends NavigationFragment {
 
     private static class Discoverer extends SyncProvider {
         private WeakReference<Handler> weakHandler;
-        private int maxAttempts;
-        private int attempts;
+        private int attempts = 0;
+        private boolean waiting;
 
         Discoverer(@NonNull Handler handler) throws JSONException {
             super(
@@ -330,8 +356,26 @@ public class ModulesDiscovery extends NavigationFragment {
             );
 
             weakHandler = new WeakReference<>(handler);
-            maxAttempts = DataLoader.getInt("SyncDiscoveryAttempts", 3);
-            attempts = maxAttempts;
+        }
+
+        public void setup() {
+            attempts = DataLoader.getInt("SyncDiscoveryAttempts", 3);
+            waiting = false;
+        }
+
+        @Override
+        public boolean isWaiting() {
+            if (waiting) {
+                if (attempts-- <= 1) {
+                    finish(0);
+                }
+
+                return true;
+
+            } else {
+                waiting = true;
+                return false;
+            }
         }
 
         @Override
@@ -344,6 +388,8 @@ public class ModulesDiscovery extends NavigationFragment {
                     if (attempts-- <= 1) {
                         finish(0);
                     }
+
+                    waiting = true;
                     break;
                 case 2:
                     //finish(R.string.masterServerRequired);
@@ -359,7 +405,7 @@ public class ModulesDiscovery extends NavigationFragment {
 
         @Override
         public void onReceive(JSONObject data) {
-            Log.d("LOGTAG", data.toString());
+            //Log.d("LOGTAG", data.toString());
 
             Handler handler = weakHandler.get();
             if (handler == null) return;
@@ -398,8 +444,6 @@ public class ModulesDiscovery extends NavigationFragment {
 
             msg.setData(msgData);
             handler.sendMessage(msg);
-
-            attempts = maxAttempts;
         }
     }
 }

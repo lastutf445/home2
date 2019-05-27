@@ -166,7 +166,7 @@ public class Module extends NavigationFragment {
     }
 
     private void configureSpecial() {
-        ModulesLoader.callSpecial(1, module, this);
+        ModulesLoader.configure(1, module, this);
     }
 
     private void switchSync() {

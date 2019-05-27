@@ -131,6 +131,7 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/moduleConfigure"
+            style="@style/StyledTransparentButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/moduleEditTitle">
@@ -151,6 +152,7 @@
                 style="@style/StyledButtonIcon"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@null"
                 android:clickable="false"
                 android:text="@string/moduleConfigure"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -187,6 +189,8 @@
                 style="@style/StyledSwitch"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@null"
+                android:clickable="false"
                 android:text="@string/moduleSync"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/moduleSyncIcon"

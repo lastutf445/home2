@@ -232,6 +232,8 @@ public class Sender {
     }
 
     private synchronized static int uSend(SyncProvider provider) {
+        if (provider.isWaiting()) return -1;
+
         if (uSocket == null) {
             try {
                 uSocket = new DatagramSocket();
@@ -250,7 +252,9 @@ public class Sender {
         publish(-2);
 
         try {
-            query.put("port", DataLoader.getInt("SyncClientPort", Sync.DEFAULT_PORT));
+            JSONObject data = query.getJSONObject("data");
+            data.put("port", DataLoader.getInt("SyncClientPort", Sync.DEFAULT_PORT));
+            query.put("data", data);
 
         } catch (JSONException e) {
             //e.printStackTrace();
@@ -293,7 +297,7 @@ public class Sender {
             );
 
             tIn = new BufferedReader(new InputStreamReader(tSocket.getInputStream()));
-            tAlive = time + 8000;
+            tAlive = time + 5000;
             connectReceiver();
             publish(-3);
             return 1;

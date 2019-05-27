@@ -293,22 +293,37 @@ public class WidgetsLoader {
 
     private static void updateTemperature(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
+        String value = null;
+
+        try {
+            value = String.valueOf(module.getVals().getInt("temp"));
+        } catch (JSONException e) {
+            //e.printStackTrace();
+        }
+
         updateSimpleWidget(
                 widget.getView(),
                 module.getTitle(),
                 "%s °C",
-                module.has("value") ? String.valueOf(module.getInt("value", -1)) : null
+                value
         );
     }
 
     private static void updateHumidity(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
+        String value = null;
+
+        try {
+            value = String.valueOf(module.getVals().getInt("humidity"));
+        } catch (JSONException e) {
+            //e.printStackTrace();
+        }
 
         updateSimpleWidget(
                 widget.getView(),
                 module.getTitle(),
                 "%s %%",
-                module.has("value") ? String.valueOf(module.getInt("value", -1)) : null
+                value
         );
     }
 
@@ -337,6 +352,13 @@ public class WidgetsLoader {
 
     private static void updateSocket(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
+        boolean current = false;
+
+        try {
+            current = module.getVals().getBoolean("current");
+        } catch (JSONException e) {
+            //e.printStackTrace();
+        }
 
         updateSimpleWidget(
                 widget.getView(),
@@ -348,7 +370,7 @@ public class WidgetsLoader {
         try {
             int color = Color.parseColor("#aaaaaa");
 
-            if (module.getBoolean("value", false)) {
+            if (module.getBoolean("enabled", false) && current) {
                 color = DataLoader.getAppResources().getColor(R.color.colorPrimary);
             }
 
@@ -729,7 +751,7 @@ public class WidgetsLoader {
                 Module module = ModulesLoader.getModule(bottomSheetWidgetSerial);
                 lastUpdated(module);
 
-                if (module != null && ModulesLoader.hasSpecial(module)) {
+                if (module != null) {
                     bottomSheet.findViewById(R.id.bottomSheetConfigure).setClickable(true);
 
                     ((Button) bottomSheet.findViewById(R.id.bottomSheetConfigureButton)).setTextColor(
@@ -792,7 +814,7 @@ public class WidgetsLoader {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.bottomSheetConfigure:
-                    openSpecial();
+                    configure();
                     break;
 
                 case R.id.bottomSheetDelete:
@@ -801,15 +823,13 @@ public class WidgetsLoader {
             }
         }
 
-        private void openSpecial() {
+        private void configure() {
             Module module = ModulesLoader.getModule(bottomSheetWidgetSerial);
             if (module == null) return;
 
-            if (ModulesLoader.hasSpecial(module)) {
-                if (ModulesLoader.callSpecial(2, module, FragmentsLoader.getPrimaryNavigationFragment())) {
-                    BottomSheetDialog dialog = weakBottomSheetDialog.get();
-                    if (dialog != null) dialog.cancel();
-                }
+            if (ModulesLoader.configure(2, module, FragmentsLoader.getPrimaryNavigationFragment())) {
+                BottomSheetDialog dialog = weakBottomSheetDialog.get();
+                if (dialog != null) dialog.cancel();
             }
         }
 

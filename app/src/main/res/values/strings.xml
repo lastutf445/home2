@@ -82,6 +82,9 @@
     <string name="modulesAddModuleOverrideTitle">Override module</string>
     <string name="modulesAddModuleOverrideMessage">It will rewrite all related data</string>
 
+    <string name="modulesMergeTitle">Add all modules</string>
+    <string name="modulesMergeMessage">Your modules list will be merged by this</string>
+
     <string name="syncThreads">Sync threads</string>
     <string name="syncOther">Other options</string>
     <string name="syncAdvanced">Advanced</string>
@@ -139,6 +142,7 @@
 
     <string name="add">Add</string>
     <string name="load">Load</string>
+    <string name="merge">Merge</string>
     <string name="apply">Apply</string>
     <string name="delete">Delete</string>
     <string name="enable">Enable</string>

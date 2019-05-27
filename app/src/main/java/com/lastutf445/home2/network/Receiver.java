@@ -29,7 +29,6 @@ public class Receiver {
     private static BufferedReader tIn;
     private static Thread thread;
 
-
     private static Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -61,7 +60,7 @@ public class Receiver {
             onReceived(s.trim());
 
         } catch (Exception e) {
-            //Log.d("LOGTAG-ERROR", e.getMessage());
+            //Log.d("RECEIVER", e.getMessage());
             sleep();
         }
     }
@@ -72,7 +71,7 @@ public class Receiver {
             return;
         }
 
-        byte[] buf = new byte[2048];
+        byte[] buf = new byte[1024];
         DatagramPacket p = new DatagramPacket(buf, buf.length);
 
         try {
@@ -82,15 +81,14 @@ public class Receiver {
             onReceived(new String(buf).trim());
 
         } catch (IOException e) {
-            //e.printStackTrace();
+            //Log.d("RECEIVER", e.getMessage());
+            sleep();
         }
-
-        sleep();
     }
 
     private static void sleep() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(100);
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -98,10 +96,10 @@ public class Receiver {
     }
 
     private static void onReceived(final String result) {
-        Sender.setTAlive(System.currentTimeMillis() + 8000);
+        Sender.setTAlive(System.currentTimeMillis() + 5000);
         //Log.d("LOGTAG","result: " + result);
 
-        if (result.equals("alive")) {
+        if (result.equals("z")) {
             return;
         }
 
@@ -171,7 +169,7 @@ public class Receiver {
 
         thread = new Thread(task);
         thread.setName("Receiver");
-        thread.setPriority(3);
+        thread.setPriority(4);
         thread.start();
     }
 

@@ -189,19 +189,11 @@ public class ModulesLoader {
         }
     }
 
-    public static boolean hasSpecial(@NonNull Module module) {
-        switch (module.getType()) {
-            case "lightrgb":
-            case "socket":
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public static boolean callSpecial(int id, @NonNull Module module, @Nullable NavigationFragment base) {
+    public static boolean configure(int id, @NonNull Module module, @Nullable NavigationFragment base) {
         if (id != 1 && id != 2 || base == null) return false;
         Configure child = null;
+
+        // todo: some work
 
         switch (module.getType()) {
             case "lightrgb":

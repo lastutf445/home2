@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,42 +18,90 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/modulesDiscoveryContent"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:listitem="@layout/modules_item">
-
-            </android.support.v7.widget.RecyclerView>
-
-            <TextView
-                android:id="@+id/modulesDiscoveryHint"
-                style="@style/StyledNoContent"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:drawableTop="@drawable/search"
-                android:drawablePadding="24dp"
-                android:drawableTint="#666"
-                android:fontFamily="monospace"
-                android:gravity="center"
-                android:text="@string/pullToRefresh"
-                android:textAllCaps="true" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/modulesDiscoveryNoContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/noContent"
-                android:visibility="gone" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
 
-        </FrameLayout>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/modulesDiscoveryContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:listitem="@layout/modules_item">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                    <TextView
+                        android:id="@+id/modulesDiscoveryHint"
+                        style="@style/StyledNoContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pullToRefresh"
+                        android:textAllCaps="false" />
+
+                    <TextView
+                        android:id="@+id/modulesDiscoveryNoContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/noContent"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:id="@+id/modulesDiscoveryButtons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/modulesDiscoveryOverride"
+                        style="@style/StyledTransparentButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/modulesDiscoveryOverrideCheckbox"
+                            style="@style/StyledCheckbox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:clickable="false"
+                            android:drawableStart="@drawable/format_paint"
+                            android:drawablePadding="24dp"
+                            android:drawableTint="#333"
+                            android:text="@string/modulesOverride" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/modulesDiscoveryMerge"
+                        style="@style/StyledButtonIcon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/add_circle_outline"
+                        android:text="@string/modulesMerge" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
 </LinearLayout>

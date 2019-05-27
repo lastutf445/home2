@@ -52,6 +52,7 @@
             style="@style/StyledButtonIcon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@null"
             android:clickable="false"
             android:text="@string/moduleConfigure"
             app:layout_constraintBottom_toBottomOf="parent"
