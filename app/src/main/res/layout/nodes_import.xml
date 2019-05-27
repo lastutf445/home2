@@ -21,7 +21,6 @@
                 style="@style/StyledTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/unknownNode"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -66,8 +65,7 @@
                 android:layout_weight="1"
                 android:drawableStart="@drawable/format_paint"
                 android:drawablePadding="24dp"
-                android:drawableTint="#333"
-                android:text="@string/nodesImportOverride" />
+                android:drawableTint="#333" />
         </LinearLayout>
 
         <Button
@@ -75,8 +73,7 @@
             style="@style/StyledButtonIcon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/add_circle_outline"
-            android:text="@string/nodesImportMerge" />
+            android:drawableStart="@drawable/add_circle_outline" />
 
         <Button
             android:id="@+id/nodesImportAddNode"
@@ -84,7 +81,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:drawableStart="@drawable/add"
-            android:text="@string/nodesImportAddNode" />
+            android:drawableStart="@drawable/add" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -1,28 +1,27 @@
 package com.lastutf445.home2.fragments.menu;
 
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.InterpolatorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.Interpolator;
-import android.view.animation.TranslateAnimation;
 
 import com.lastutf445.home2.R;
-import com.lastutf445.home2.adapters.NodesAdapter;
-import com.lastutf445.home2.containers.Node;
+import com.lastutf445.home2.adapters.ModulesAdapter;
+import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.loaders.DataLoader;
-import com.lastutf445.home2.loaders.FragmentsLoader;
+import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
@@ -34,19 +33,18 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
-public class NodesDiscovery extends NavigationFragment {
+public class ModulesDiscovery extends NavigationFragment {
 
     private View hint, noContent;
     private Discoverer discoverer;
-
-    private NodesAdapter adapter;
+    private ModulesAdapter adapter;
     private RecyclerView content;
     private Updater updater;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.nodes_discovery, container, false);
+        view = inflater.inflate(R.layout.modules_discovery, container, false);
         init();
         return view;
     }
@@ -54,10 +52,10 @@ public class NodesDiscovery extends NavigationFragment {
     @Override
     protected void init() {
         updater = new Updater(view);
-        content = view.findViewById(R.id.nodesDiscoveryContent);
+        content = view.findViewById(R.id.modulesDiscoveryContent);
         content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()));
-        noContent = view.findViewById(R.id.nodesDiscoveryNoContent);
-        hint = view.findViewById(R.id.nodesDiscoveryHint);
+        noContent = view.findViewById(R.id.modulesDiscoveryNoContent);
+        hint = view.findViewById(R.id.modulesDiscoveryHint);
 
         try {
             discoverer = new Discoverer(updater);
@@ -69,7 +67,7 @@ public class NodesDiscovery extends NavigationFragment {
             getActivity().onBackPressed();
         }
 
-        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.nodesDiscoverySwipeRefreshLayout);
+        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.modulesDiscoverySwipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
 
         swipeRefreshLayout.setOnRefreshListener(
@@ -113,28 +111,102 @@ public class NodesDiscovery extends NavigationFragment {
                 }
         );
 
-        View.OnClickListener c = new View.OnClickListener() {
+        View.OnClickListener d = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int pos = content.getChildLayoutPosition(v);
-                Node node = adapter.getNode(pos);
+                Module module = adapter.getModule(pos);
 
-                if (node != null) {
-                    NodesImport nodesImport = new NodesImport();
-                    nodesImport.setNode(node, pos);
-                    FragmentsLoader.addChild(nodesImport, NodesDiscovery.this);
+                if (module == null) {
+                    NotificationsLoader.makeToast("Unexpected error", true);
+                    return;
                 }
 
+                addModule(module, pos);
             }
         };
 
-        adapter = new NodesAdapter(
+        adapter = new ModulesAdapter(
                 getLayoutInflater(),
-                c
+                d
         );
 
+        adapter.setShowSerials(true);
         updater.setAdapter(adapter);
         content.setAdapter(adapter);
+    }
+
+    private void addModule(final @NonNull Module module, final int pos) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity()
+        );
+
+        Resources res = DataLoader.getAppResources();
+        boolean match = false;
+
+        if (ModulesLoader.getModule(module.getSerial()) != null) {
+            builder.setMessage(res.getString(R.string.modulesAddModuleOverrideMessage));
+            builder.setTitle(res.getString(R.string.modulesAddModuleOverrideTitle));
+            match = true;
+
+        } else {
+            builder.setMessage(res.getString(R.string.modulesAddModuleMessage));
+            builder.setTitle(res.getString(R.string.modulesAddModuleTitle));
+        }
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setPositiveButton(match ? R.string.override : R.string.add, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (!ModulesLoader.addModule(module, true)) {
+                    NotificationsLoader.makeToast("Unexpected error", true);
+
+                } else {
+                    NotificationsLoader.makeToast("Added", true);
+                    toParent.putInt("reload", pos);
+                    adapter.update(pos);
+                }
+            }
+        });
+
+        builder.create().show();
+    }
+
+    private void merge() {
+        // TODO: PROCESSING MODAL WINDOW, CODE WRAPPED INTO A NEW THREAD
+/*
+        try {
+            if (NodesLoader.getNode(node.getSerial()) == null) {
+                Node original = new Node(node, true);
+                NodesLoader.addNode(original, false);
+            }
+
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+
+        if (NodesLoader.getNode(node.getSerial()) == null) {
+            NotificationsLoader.makeToast("Unexpected error", true);
+            return;
+        }
+
+        boolean override = ((CheckBox) view.findViewById(R.id.nodesImportOverrideCheckBox)).isChecked();
+        SparseArray<Module> modules = adapter.getData();
+        int added = 0;
+
+        for (int i = 0; i < modules.size(); ++i) {
+            if (ModulesLoader.addModule(modules.valueAt(i), override)) ++added;
+        }
+
+        NotificationsLoader.makeToast("Added " + added + " modules", true);
+        toParent.putInt("updated", pos);
+        getActivity().onBackPressed();*/
     }
 
     @Override
@@ -152,14 +224,14 @@ public class NodesDiscovery extends NavigationFragment {
     }
 
     private static class Updater extends Handler {
-        private WeakReference<NodesAdapter> weakAdapter;
+        private WeakReference<ModulesAdapter> weakAdapter;
         private WeakReference<View> weakView;
 
         Updater(@NonNull View view) {
             weakView = new WeakReference<>(view);
         }
 
-        public void setAdapter(@NonNull NodesAdapter adapter) {
+        public void setAdapter(@NonNull ModulesAdapter adapter) {
             this.weakAdapter = new WeakReference<>(adapter);
         }
 
@@ -170,20 +242,20 @@ public class NodesDiscovery extends NavigationFragment {
                     stopRefreshing(msg.getData());
                     break;
                 case 1:
-                    pushNode(msg.getData());
+                    pushModule(msg.getData());
                     break;
             }
         }
 
         private void stopRefreshing(@Nullable Bundle data) {
-            NodesAdapter adapter = weakAdapter.get();
+            ModulesAdapter adapter = weakAdapter.get();
             View view = weakView.get();
             if (view == null) return;
 
-            ((SwipeRefreshLayout) view.findViewById(R.id.nodesDiscoverySwipeRefreshLayout)).setRefreshing(false);
+            ((SwipeRefreshLayout) view.findViewById(R.id.modulesDiscoverySwipeRefreshLayout)).setRefreshing(false);
 
             if (adapter != null && adapter.getItemCount() == 0) {
-                SimpleAnimator.fadeIn(view.findViewById(R.id.nodesDiscoveryNoContent), 200);
+                SimpleAnimator.fadeIn(view.findViewById(R.id.modulesDiscoveryNoContent), 200);
             }
 
             if (data != null) {
@@ -198,31 +270,27 @@ public class NodesDiscovery extends NavigationFragment {
             }
         }
 
-        private synchronized void pushNode(Bundle data) {
-            NodesAdapter adapter = weakAdapter.get();
+        private synchronized void pushModule(Bundle data) {
+            ModulesAdapter adapter = weakAdapter.get();
             if (adapter == null) return;
 
             try {
-                int id = data.getInt("serial");
+                int serial = data.getInt("serial");
+                String type = data.getString("type");
                 String ip = data.getString("ip");
                 int port = data.getInt("port");
-                String title = data.getString("title");
-                final int modules = data.getInt("modules");
+                String title = data.getString("title", null);
+                JSONObject ops = new JSONObject(data.getString("ops"));
+                JSONObject values = new JSONObject(data.getString("values"));
 
-                Node node = new Node(id, ip, port, title) {
-                    @Override
-                    public int getModulesCount() {
-                        return modules;
-                    }
-                };
-
-                adapter.pushData(node);
+                Module module = new Module(serial, type, ip, port, title, ops, values, false);
+                adapter.pushData(module);
 
                 if (adapter.getItemCount() == 1) {
                     View view = weakView.get();
 
                     if (view != null) {
-                        final View noContent = view.findViewById(R.id.nodesDiscoveryNoContent);
+                        final View noContent = view.findViewById(R.id.modulesDiscoveryNoContent);
 
                         if (noContent.getVisibility() != View.GONE) {
                             SimpleAnimator.fadeOut(noContent, 200, new Animation.AnimationListener() {
@@ -242,8 +310,7 @@ public class NodesDiscovery extends NavigationFragment {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
-
+                //e.printStackTrace();
             }
         }
     }
@@ -302,16 +369,21 @@ public class NodesDiscovery extends NavigationFragment {
                 Bundle msgData = new Bundle();
 
                 msgData.putInt("serial", data.getInt("serial"));
+                msgData.putString("type", data.getString("type"));
                 msgData.putString("ip", data.getString("ip"));
                 msgData.putInt("port", data.getInt("port"));
-                msgData.putString("title", data.getString("title"));
-                msgData.putInt("modules", data.getInt("modules"));
+                msgData.putString("ops", data.getJSONObject("ops").toString());
+                msgData.putString("values", data.getJSONObject("values").toString());
+
+                if (data.has("title")) {
+                    msgData.putString("title", data.getString("title"));
+                }
 
                 msg.setData(msgData);
                 handler.sendMessage(msg);
 
             } catch (JSONException e) {
-                //e.printStackTrace();
+                e.printStackTrace();
             }
         }
 

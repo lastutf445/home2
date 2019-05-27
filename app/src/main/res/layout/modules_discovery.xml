@@ -10,10 +10,10 @@
         style="@style/StyledTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/nodesDiscovery" />
+        android:text="@string/modulesDiscovery" />
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/nodesDiscoverySwipeRefreshLayout"
+        android:id="@+id/modulesDiscoverySwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -22,15 +22,15 @@
             android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/nodesDiscoveryContent"
+                android:id="@+id/modulesDiscoveryContent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/nodes_item">
+                tools:listitem="@layout/modules_item">
 
             </android.support.v7.widget.RecyclerView>
 
             <TextView
-                android:id="@+id/nodesDiscoveryHint"
+                android:id="@+id/modulesDiscoveryHint"
                 style="@style/StyledNoContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
                 android:textAllCaps="true" />
 
             <TextView
-                android:id="@+id/nodesDiscoveryNoContent"
+                android:id="@+id/modulesDiscoveryNoContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

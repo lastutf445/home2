@@ -23,7 +23,7 @@ public class Modules extends NavigationFragment {
     private boolean returnSerial = false;
     private ModulesAdapter adapter;
     private RecyclerView content;
-    private boolean forceDelete;
+    private boolean hasAddButton;
 
     @Nullable
     @Override
@@ -60,8 +60,17 @@ public class Modules extends NavigationFragment {
             }
         };
 
+        View.OnClickListener e = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentsLoader.addChild(new ModulesDiscovery(), Modules.this);
+            }
+        };
+
+        if (!hasAddButton) view.findViewById(R.id.modulesDiscovery).setVisibility(View.GONE);
+        view.findViewById(R.id.modulesDiscovery).setOnClickListener(e);
+
         adapter = new ModulesAdapter(getLayoutInflater(), returnSerial ? d : c);
-        adapter.setForceDelete(forceDelete);
         content.setAdapter(adapter);
 
         reload();
@@ -69,12 +78,8 @@ public class Modules extends NavigationFragment {
 
     @Override
     protected void reload() {
-        adapter.setData(modules, false);
+        adapter.setData(modules);
         view.findViewById(R.id.modulesNoContent).setVisibility(adapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
-    }
-
-    public void setForceDelete(boolean forceDelete) {
-        this.forceDelete = forceDelete;
     }
 
     private void delete(int pos) {
@@ -91,17 +96,21 @@ public class Modules extends NavigationFragment {
         this.modules = modules;
     }
 
+    public void enableAddButton() {
+        hasAddButton = true;
+    }
+
     @Override
     public void onResult(Bundle data) {
         if (data.containsKey("deleted")) {
             delete(data.getInt("deleted"));
             toParent.putInt("deleted", data.getInt("deleted"));
         }
+        if (data.containsKey("reload")) {
+            reload();
+        }
         if (data.containsKey("updated")) {
             update(data.getInt("updated"));
-        }
-        if (data.containsKey("syncStateChanged")) {
-            toParent.putBoolean("syncStateChanged", true);
         }
     }
 }

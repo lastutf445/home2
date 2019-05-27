@@ -60,14 +60,6 @@
             android:text="@string/modules" />
 
         <Button
-            android:id="@+id/menuNodes"
-            style="@style/StyledButtonIcon"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/search"
-            android:text="@string/nodes" />
-
-        <Button
             android:id="@+id/menuSync"
             style="@style/StyledButtonIcon"
             android:layout_width="match_parent"

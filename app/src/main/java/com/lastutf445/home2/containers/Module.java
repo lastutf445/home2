@@ -2,6 +2,7 @@ package com.lastutf445.home2.containers;
 
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -10,7 +11,6 @@ import android.util.SparseArray;
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
-import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
 import com.lastutf445.home2.util.JSONPayload;
@@ -18,22 +18,30 @@ import com.lastutf445.home2.util.JSONPayload;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOError;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashSet;
 import java.util.Iterator;
 
 public class Module extends JSONPayload {
 
-    private int serial, node;
+    private int serial;
     private boolean syncing;
     private String type, title;
+    private JSONObject values;
+    private InetAddress ip;
+    private int port;
 
-    public Module(int serial, String type, int node, String title, String options, int syncing) throws JSONException {
+    public Module(int serial, String type, String ip, int port, String title, @NonNull JSONObject ops, @NonNull JSONObject values, boolean syncing) throws IOException {
         this.serial = serial;
         this.type = type;
-        this.node = node;
+        this.ip = InetAddress.getByName(ip);
+        this.port = port;
         this.title = title;
-        this.syncing = syncing > 0;
-        this.ops = new JSONObject(options);
+        this.syncing = syncing;
+        this.ops = ops;
+        this.values = values;
     }
 
     public int getSerial() {
@@ -43,6 +51,14 @@ public class Module extends JSONPayload {
     @NonNull
     public String getType() {
         return type == null ? DataLoader.getAppResources().getString(R.string.unknownType) : type;
+    }
+
+    public InetAddress getIp() {
+        return ip;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     @NonNull
@@ -64,10 +80,6 @@ public class Module extends JSONPayload {
             default:
                 return unknownType;
         }
-    }
-
-    public int getNode() {
-        return node;
     }
 
     public String getTitle() {
@@ -111,13 +123,17 @@ public class Module extends JSONPayload {
 
     }
 
+    public JSONObject getVals() {
+        return values;
+    }
+
     public boolean getSyncing() {
         return syncing;
     }
 
     public void setSyncing(boolean syncing) {
         this.syncing = syncing;
-        NodesLoader.onModuleSyncingChanged(this);
+        ModulesLoader.onModuleSyncingChanged(this, syncing);
         save();
     }
 
@@ -127,7 +143,7 @@ public class Module extends JSONPayload {
         save();
     }
 
-    public void mergeStates(String type, JSONObject ops) {
+    public void mergeStates(@Nullable String type, @Nullable JSONObject ops) {
         if(type == null || ops == null) return;
         boolean wiped = false;
 
@@ -136,6 +152,7 @@ public class Module extends JSONPayload {
         }
 
         if (!this.type.equals(type)) {
+            // TODO: notify about it
             Log.d("LOGTAG", "validation error on serial: " + serial);
             return;
         }
@@ -158,6 +175,7 @@ public class Module extends JSONPayload {
         }
 
         if (!pass && !wiped) {
+            // TODO: notify about it
             Log.d("LOGTAG", "validation error on serial: " + serial);
             return;
         }
@@ -214,7 +232,7 @@ public class Module extends JSONPayload {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            ModulesLoader.applyModule(module);
+            ModulesLoader.saveState(module);
             return null;
         }
     }

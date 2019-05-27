@@ -1,23 +1,16 @@
 package com.lastutf445.home2.util;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Switch;
-import android.widget.TextView;
 
-import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Module;
-import com.lastutf445.home2.containers.Node;
 import com.lastutf445.home2.fragments.dialog.Processing;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
-import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
 import com.lastutf445.home2.network.Sync;
@@ -26,11 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-public abstract class Special extends NavigationFragment {
+public abstract class Configure extends NavigationFragment {
 
     protected Render render;
     protected Module module;
@@ -85,7 +75,7 @@ public abstract class Special extends NavigationFragment {
                 Sync.removeSyncProvider(Sync.PROVIDER_MODULE_EDIT_REQUEST);
             }
         });
-
+/*
         try {
             Node node = NodesLoader.getNode(module.getNode());
 
@@ -104,7 +94,7 @@ public abstract class Special extends NavigationFragment {
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     protected static class Updater extends Handler {
@@ -198,7 +188,7 @@ public abstract class Special extends NavigationFragment {
                 Module newModule = ModulesLoader.getModule(module.getSerial());
 
                 if (newModule == null || !newModule.getType().equals(module.getType())) {
-                    FragmentsLoader.pop(Special.this.getParent());
+                    FragmentsLoader.pop(Configure.this.getParent());
                     return;
                 }
 
@@ -207,7 +197,7 @@ public abstract class Special extends NavigationFragment {
         }
 
         public void onModuleRemoved() {
-            FragmentsLoader.pop(Special.this.getParent());
+            FragmentsLoader.pop(Configure.this.getParent());
         }
 
         public int getSerial() {

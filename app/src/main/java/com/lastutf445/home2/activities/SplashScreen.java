@@ -11,7 +11,6 @@ import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
-import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.network.Sync;
 
 public class SplashScreen extends AppCompatActivity {
@@ -39,18 +38,12 @@ public class SplashScreen extends AppCompatActivity {
         super.onStart();
         handler.postDelayed(transition, 1500);
 
-        FragmentsLoader.init(
-                getSupportFragmentManager(),
-                R.id.content
-        );
-
         DataLoader.init(
                 getApplicationContext(),
                 getResources()
         );
 
         CryptoLoader.init();
-        NodesLoader.init();
         ModulesLoader.init();
         Sync.init();
     }

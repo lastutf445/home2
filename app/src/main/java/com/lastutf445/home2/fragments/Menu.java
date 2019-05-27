@@ -15,7 +15,7 @@ import com.lastutf445.home2.fragments.menu.Auth;
 import com.lastutf445.home2.fragments.menu.Dashboard;
 import com.lastutf445.home2.fragments.menu.Messages;
 import com.lastutf445.home2.fragments.menu.Modules;
-import com.lastutf445.home2.fragments.menu.Nodes;
+import com.lastutf445.home2.fragments.menu.ModulesDiscovery;
 import com.lastutf445.home2.fragments.menu.Notifications;
 import com.lastutf445.home2.fragments.menu.Sync;
 import com.lastutf445.home2.loaders.DataLoader;
@@ -58,10 +58,8 @@ public final class Menu extends NavigationFragment {
                     case R.id.menuModules:
                         Modules modules = new Modules();
                         modules.setModules(ModulesLoader.getModules(), false);
+                        modules.enableAddButton();
                         child = modules;
-                        break;
-                    case R.id.menuNodes:
-                        child = new Nodes();
                         break;
                     case R.id.menuSync:
                         child = new Sync();
@@ -88,7 +86,6 @@ public final class Menu extends NavigationFragment {
                 R.id.menuMessages,
                 R.id.menuNotifications,
                 R.id.menuModules,
-                R.id.menuNodes,
                 R.id.menuSync,
                 R.id.menuAbout
         };

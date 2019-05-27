@@ -50,6 +50,7 @@ public class Sender {
     private static Thread thread;
 
     /** PROVIDER RETURN CODES
+     * -1 - Waiting
      *  0 - Unknown exception
      *  1 - Sent successfully
      *  2 - MasterServer required
@@ -88,7 +89,8 @@ public class Sender {
                         case Sync.SYNC_MESSAGES:
                             if (!DataLoader.getBoolean("SyncMessages", false)) continue;
                             if (last + DataLoader.getInt("SyncMessagesInterval", 500) > time) continue;
-                            break;
+                            continue; // sync notifications should be disabled for now
+                            //break;
                         case Sync.SYNC_NOTIFICATIONS:
                             if (!DataLoader.getBoolean("SyncNotifications", false)) continue;
                             if (last + DataLoader.getInt("SyncNotificationsInterval", 1000) > time) continue;
@@ -175,29 +177,32 @@ public class Sender {
     }
 
     private synchronized static int tSend(SyncProvider provider) {
+        if (provider.isWaiting()) return -1;
+
         if (tOut != null) {
             try {
                 JSONObject query = new JSONObject(provider.getQuery().toString());
+                JSONObject data = query.getJSONObject("data");
 
                 if (provider.getBrodcast()) {
-                    query.put("ip", "broadcast");
+                    data.put("ip", "broadcast");
+                    data.put("port", provider.getPort());
 
                 } else if (provider.getIP() != null) {
-                    query.put("ip", provider.getIP().getHostAddress());
+                    data.put("ip", provider.getIP().getHostAddress());
+                    data.put("port", provider.getPort());
                 }
 
-                query.put("port", provider.getPort());
-
                 if (provider.getEncrypted()) {
-                    String data = query.getJSONObject("data").toString();
+                    String raw_data = data.toString();
                     String encrypted;
 
                     if (CryptoLoader.hasAESKey()) {
-                        encrypted = CryptoLoader.AESEncrypt(data);
+                        encrypted = CryptoLoader.AESEncrypt(raw_data);
                         query.put("aes", true);
 
                     } else {
-                        encrypted = CryptoLoader.RSAEncrypt(data);
+                        encrypted = CryptoLoader.RSAEncrypt(raw_data);
                         query.put("rsa", true);
                     }
 
@@ -209,6 +214,8 @@ public class Sender {
                     query.put("session", UserLoader.getSession());
                     query.put("data", encrypted);
 
+                } else {
+                    query.put("data", data);
                 }
 
                 publish(-3);
@@ -305,6 +312,7 @@ public class Sender {
 
     public synchronized static void killConnection() {
         publish(-1);
+        Log.d("LOGTAG", "killConnection()");
         if (tSocket == null) return;
 
         try {

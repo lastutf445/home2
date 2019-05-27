@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Receiver {
 
-    private static StringBuffer buf = new StringBuffer();
     private static DatagramSocket uSocket;
     private static BufferedReader tIn;
     private static Thread thread;
@@ -140,7 +139,7 @@ public class Receiver {
             }.execute(new Result(source, data));
 
         } catch (JSONException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

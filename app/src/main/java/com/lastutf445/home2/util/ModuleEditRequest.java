@@ -6,8 +6,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 
 import com.lastutf445.home2.containers.Module;
-import com.lastutf445.home2.containers.Node;
-import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.network.Sync;
 
 import org.json.JSONException;
@@ -23,8 +21,8 @@ public class ModuleEditRequest extends SyncProvider {
     private boolean tainted = false;
     private int serial = -1;
 
-    public ModuleEditRequest(@NonNull Node node, @NonNull Handler handler) throws JSONException {
-        super(Sync.PROVIDER_MODULE_EDIT_REQUEST, "edit", new JSONObject(), node.getIp(), node.getPort());
+    public ModuleEditRequest(@NonNull Module module, @NonNull Handler handler) throws JSONException {
+        super(Sync.PROVIDER_MODULE_EDIT_REQUEST, "edit", new JSONObject(), module.getIp(), module.getPort());
         weakHandler = new WeakReference<>(handler);
     }
 

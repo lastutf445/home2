@@ -22,11 +22,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lastutf445.home2.R;
-import com.lastutf445.home2.containers.Node;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
-import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
@@ -40,7 +38,6 @@ import java.lang.ref.WeakReference;
 public class Module extends NavigationFragment {
 
     private com.lastutf445.home2.containers.Module module;
-    private Node node;
     private int pos;
 
     private Updater updater;
@@ -85,8 +82,6 @@ public class Module extends NavigationFragment {
         view.findViewById(R.id.moduleConfigure).setOnClickListener(c);
         view.findViewById(R.id.moduleSync).setOnClickListener(c);
         view.findViewById(R.id.moduleDelete).setOnClickListener(c);
-
-        node = NodesLoader.getNode(module.getNode());
         updater = new Updater(view);
 
         reload();
@@ -102,45 +97,19 @@ public class Module extends NavigationFragment {
                 module.getStyledType()
         );
 
-        if (node != null && node.getIp() != null) {
+        if (module.getIp() != null) {
             ((TextView) view.findViewById(R.id.moduleIPAddress)).setText(
-                    node.getIp().getHostAddress()
+                    module.getIp().getHostAddress()
             );
         }
 
-        ((TextView) view.findViewById(R.id.moduleSerial)).setText(String.valueOf(module.getSerial()));
-
-        ((TextView) view.findViewById(R.id.moduleNodeSerial)).setText(
-                String.valueOf(module.getNode())
+        ((TextView) view.findViewById(R.id.moduleSerial)).setText(
+                String.valueOf(module.getSerial())
         );
 
         ((Switch) view.findViewById(R.id.moduleSyncCheckBox)).setChecked(
                 module.getSyncing()
         );
-
-        if (node == null) {
-            view.findViewById(R.id.moduleSync).setOnClickListener(null);
-            view.findViewById(R.id.moduleSyncCheckBox).setEnabled(false);
-
-            ((ImageView) view.findViewById(R.id.moduleSyncIcon)).setColorFilter(
-                    Color.parseColor("#999999")
-            );
-
-            ((Switch) view.findViewById(R.id.moduleSyncCheckBox)).setTextColor(
-                    Color.parseColor("#999999")
-            );
-        }
-
-        if (!ModulesLoader.hasSpecial(module)) {
-            view.findViewById(R.id.moduleConfigure).setClickable(false);
-
-            ((Button) view.findViewById(R.id.moduleConfigureButton)).setTextColor(
-                    Color.parseColor("#999999")
-            );
-            ((ImageView) view.findViewById(R.id.moduleConfigureIcon)).setColorFilter(
-                    Color.parseColor("#999999")
-            );
-        }
     }
 
     public void setModule(@NonNull com.lastutf445.home2.containers.Module module, int pos) {
@@ -149,9 +118,9 @@ public class Module extends NavigationFragment {
     }
 
     private void ping() {
-        if (node != null && node.getIp() != null) {
+        if (module.getIp() != null) {
             try {
-                Ping ping = new Ping(node.getIp(), node.getPort());
+                Ping ping = new Ping(module.getIp(), module.getPort());
                 ping.setHandler(updater);
 
                 updater.sendEmptyMessage(-2);

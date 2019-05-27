@@ -1,24 +1,22 @@
-package com.lastutf445.home2.special;
+package com.lastutf445.home2.configure;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Module;
-import com.lastutf445.home2.util.Special;
+import com.lastutf445.home2.util.Configure;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SocketSpecial extends Special {
+public class Socket extends Configure {
 
     @Nullable
     @Override
@@ -45,7 +43,7 @@ public class SocketSpecial extends Special {
 
         view.findViewById(R.id.specialSocketIsOn).setOnClickListener(c);
 
-        setRender(new Special.Render() {
+        setRender(new Configure.Render() {
             @Override
             public void reload(@NonNull View view, @NonNull Module module) {
                 ((TextView) view.findViewById(R.id.specialTitle)).setText(

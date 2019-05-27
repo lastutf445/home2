@@ -145,8 +145,9 @@ public final class UserLoader {
 
                 Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
 
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+                callback.onInvalid();
             }
         }
 
@@ -200,11 +201,13 @@ public final class UserLoader {
 
         private WeakReference<Handler> weakHandler;
         private String login, password, key;
+        private int stage;
 
         public Authenticator(@NonNull String login, @NonNull String password, @NonNull Handler handler) {
             weakHandler = new WeakReference<>(handler);
             this.password = password;
             this.login = login;
+            stage = 5;
         }
 
         /**
@@ -238,12 +241,11 @@ public final class UserLoader {
 
         public void sendCredentials() {
             Handler handler = weakHandler.get();
+            stage = 7;
 
             if (handler != null) {
                 handler.sendEmptyMessage(7);
             }
-
-            //Log.d("LOGTAG", "lets auth");
 
             JSONObject data = new JSONObject();
             key = CryptoLoader.createAESKey();
@@ -268,7 +270,11 @@ public final class UserLoader {
             Handler handler = weakHandler.get();
 
             if (handler != null) {
-                handler.sendEmptyMessage(statusCode);
+                if (statusCode != 1) {
+                    handler.sendEmptyMessage(statusCode);
+                } else {
+                    handler.sendEmptyMessage(stage);
+                }
             }
         }
 
@@ -277,24 +283,32 @@ public final class UserLoader {
             Handler handler = weakHandler.get();
 
             try {
-                String status = data.getString("status");
+                int status = data.getInt("status");
 
                 if (handler != null) {
                     switch (status) {
-                        case "unknown_user":
+                        case Sync.UNKNOWN_USER:
                             handler.sendEmptyMessage(8);
                             return;
-                        case "unexpected_error":
+                        case Sync.UNEXPECTED_ERROR:
                             handler.sendEmptyMessage(0);
                             return;
                     }
                 }
 
-                if (status.equals("ok")) {
-                    if (data.has("username") && data.get("username") instanceof String) {
-                        DataLoader.set("Username", data.getString("username"));
+                if (status == Sync.OK) {
+                    try {
+                        JSONObject user = data.getJSONObject("user");
 
-                    } else {
+                        if (user != null && (DataLoader.getBoolean("SyncSettings", false) || user.has("SyncSettings") && user.getBoolean("SyncSettings"))) {
+                            DataLoader.merge(user);
+                        }
+
+                    } catch (JSONException e) {
+                        //e.printStackTrace();
+                    }
+
+                    if (DataLoader.get("Username") == null) {
                         DataLoader.set("Username", DataLoader.getAppResources().getString(R.string.usernameDefault));
                     }
 

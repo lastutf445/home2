@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Module;
-import com.lastutf445.home2.containers.Node;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 
@@ -23,12 +22,10 @@ import static android.view.View.GONE;
 
 public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHolder>  {
 
-    private boolean serials = false;
-    private boolean forceDelete = false;
+    private boolean showSerials = false;
     private SparseArray<Module> data = new SparseArray<>();
     private View.OnClickListener listener;
     private LayoutInflater inflater;
-    private Node node;
 
     public ModulesAdapter(LayoutInflater inflater, View.OnClickListener listener) {
         this.inflater = inflater;
@@ -47,21 +44,17 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
             title = view.findViewById(R.id.modulesItemTitle);
             icon = view.findViewById(R.id.modulesItemIcon);
 
-            if (!serials) serial.setVisibility(GONE);
+            if (!showSerials) serial.setVisibility(GONE);
             view.setOnClickListener(listener);
         }
 
         public void bind(@NonNull Module module) {
-            if (serials) {
+            if (showSerials) {
                 serial.setText(String.valueOf(module.getSerial()));
                 Module oldModule = ModulesLoader.getModule(module.getSerial());
 
                 if (oldModule != null) {
-                    if (node != null && node.getSerial() == oldModule.getNode()) {
-                        serial.setTextColor(DataLoader.getAppResources().getColor(R.color.colorPrimary));
-                    } else {
-                        serial.setTextColor(DataLoader.getAppResources().getColor(R.color.colorAccent));
-                    }
+                    serial.setTextColor(DataLoader.getAppResources().getColor(R.color.colorPrimary));
                 }
             }
 
@@ -70,19 +63,13 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
         }
     }
 
-    public void setData(SparseArray<Module> data, boolean serials) {
+    public void setData(SparseArray<Module> data) {
         this.data = data;
-        this.serials = serials;
         notifyDataSetChanged();
     }
 
-    public void setNode(Node node) {
-        this.node = node;
-        notifyItemRangeChanged(0, data.size());
-    }
-
-    public void setForceDelete(boolean forceDelete) {
-        this.forceDelete = forceDelete;
+    public void setShowSerials(boolean showSerials) {
+        this.showSerials = showSerials;
     }
 
     public void pushData(@NonNull Module module) {
@@ -102,8 +89,14 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
 
     public void delete(int pos) {
         if (pos < 0 || pos > data.size()) return;
-        if (forceDelete) data.removeAt(pos);
+        //data.removeAt(pos);
         notifyItemRemoved(pos);
+    }
+
+    public void deleteAll() {
+        int oldSize = data.size();
+        data.clear();
+        notifyItemRangeRemoved(0, oldSize);
     }
 
     public void update(int pos) {

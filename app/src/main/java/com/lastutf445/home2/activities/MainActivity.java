@@ -58,16 +58,6 @@ public class MainActivity extends AppCompatActivity {
                 R.id.content
         );
 
-        DataLoader.init(
-                getApplicationContext(),
-                getResources()
-        );
-
-        CryptoLoader.init();
-        NodesLoader.init();
-        ModulesLoader.init();
-        Sync.init();
-
         dashboard = new Dashboard();
         messages = new Messages();
         notifications = new Notifications();

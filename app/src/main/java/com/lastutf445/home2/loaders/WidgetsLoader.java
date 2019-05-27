@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
@@ -16,13 +15,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -34,17 +31,13 @@ import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.adapters.WidgetsAdapter;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.containers.Widget;
-import com.lastutf445.home2.fragments.Dashboard;
-import com.lastutf445.home2.util.Special;
+import com.lastutf445.home2.util.Configure;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.net.InetAddress;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -67,7 +60,7 @@ public class WidgetsLoader {
     private static final SparseArray<Widget> widgets = new SparseArray<>();
     private static final SparseArray<Module> free = new SparseArray<>();
     private static final SparseIntArray serials = new SparseIntArray();
-    private static Special.Connector bottomSheetConnect1, bottomSheetConnect2;
+    private static Configure.Connector bottomSheetConnect1, bottomSheetConnect2;
     private static WeakReference<WidgetsAdapter.Remover> weakRemover;
     private static int headId = 0, headSerial = 0;
     private static boolean unsaved = false;
@@ -332,7 +325,7 @@ public class WidgetsLoader {
             int color = Color.parseColor("#333333");
 
             if (module.getBoolean("lit", false)) {
-                color = Color.parseColor(module.getString("value", "#aaaaaa"));
+                color = Color.parseColor(module.getString("color", "#aaaaaa"));
             }
 
             ((ImageView) widget.getView().findViewById(R.id.widgetValue)).setColorFilter(color, PorterDuff.Mode.SRC_IN);
@@ -683,7 +676,7 @@ public class WidgetsLoader {
         }
     }
 
-    public static void setBottomSheetConnector(Special.Connector connector, int id) {
+    public static void setBottomSheetConnector(Configure.Connector connector, int id) {
         if (id == 1) bottomSheetConnect1 = connector;
         else if (id == 2) bottomSheetConnect2 = connector;
     }

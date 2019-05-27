@@ -19,7 +19,6 @@ import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.MessagesLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
-import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.network.Receiver;
 import com.lastutf445.home2.network.Sender;
@@ -98,7 +97,7 @@ public class Sync extends NavigationFragment {
                 switch (v.getId()) {
                     case R.id.syncDashboard:
                         data.putInt("id", R.id.syncDashboard);
-                        syncSwitch.setTask(new NodesLoader.SyncSwitch());
+                        syncSwitch.setTask(new ModulesLoader.SyncSwitch());
                         break;
                     case R.id.syncMessages:
                         data.putInt("id", R.id.syncMessages);
@@ -129,7 +128,9 @@ public class Sync extends NavigationFragment {
                 new Runnable() {
                     @Override
                     public void run() {
-                        updater.sendEmptyMessage(0);
+                        if (updater != null) {
+                            updater.sendEmptyMessage(0);
+                        }
                     }
                 });
 

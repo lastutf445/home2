@@ -9,7 +9,6 @@
     <string name="messages">Messages</string>
     <string name="notifications">Notifications</string>
     <string name="modules">Modules</string>
-    <string name="nodes">Nodes</string>
     <string name="sync">Sync</string>
     <string name="about">About</string>
 
@@ -73,31 +72,15 @@
     <string name="modulesConfigDialogTitle">Delete module</string>
     <string name="modulesConfigDialogMessage">Dependencies will be removed</string>
 
-    <string name="nodesDiscovery">Node discovery</string>
-    <string name="nodesImportOverride">Override identical serials</string>
-    <string name="nodesImportMerge">Add modules to app</string>
-    <string name="nodesImportAddNode">Add node only</string>
+    <string name="modulesDiscovery">Modules discovery</string>
+    <string name="modulesOverride">Override identical serials</string>
+    <string name="modulesMerge">Add modules to app</string>
 
-    <string name="nodesImportAddModuleTitle">Add module</string>
-    <string name="nodesImportAddModuleMessage">It will be stored in the app</string>
+    <string name="modulesAddModuleTitle">Add module</string>
+    <string name="modulesAddModuleMessage">It will be stored in the app</string>
 
-    <string name="nodesImportAddModuleOverrideTitle">Override module</string>
-    <string name="nodesImportAddModuleOverrideMessage">It will rewrite all related data</string>
-
-    <string name="nodeSyncing">Syncing now:</string>
-    <string name="nodeEditTitle">Edit node title</string>
-    <string name="nodeModules">Linked modules</string>
-    <string name="nodeGetModules">Get available modules</string>
-    <string name="nodeDisableSync">Disable sync</string>
-
-    <string name="nodeTitle">Node title</string>
-    <string name="nodeHint">Type a new title</string>
-
-    <string name="nodeSyncTitle">Disable sync</string>
-    <string name="nodeSyncMessage">Linked modules won\'t be synchronized</string>
-
-    <string name="nodeDeleteTitle">Delete node</string>
-    <string name="nodeDeleteMessage">Linked modules won\'t be able to sync</string>
+    <string name="modulesAddModuleOverrideTitle">Override module</string>
+    <string name="modulesAddModuleOverrideMessage">It will rewrite all related data</string>
 
     <string name="syncThreads">Sync threads</string>
     <string name="syncOther">Other options</string>
@@ -190,10 +173,12 @@
     <string name="unreachable">unreachable</string>
     <string name="pending">pending&#8230;</string>
     <string name="disconnectedSmall">disconnected</string>
+    <string name="networkErrorSmall">network error</string>
     <string name="unexpectedErrorSmall">unexpected error</string>
     <string name="encryptionErrorSmall">encryption error</string>
 
     <string name="success">Success</string>
+    <string name="networkError">Network error</string>
     <string name="unexpectedError">Unexpected error</string>
     <string name="encryptionError">Encryption error</string>
     <string name="masterServerRequired">Master Server required</string>
@@ -208,7 +193,6 @@
     <string name="homeNetwork">Home network</string>
     <string name="idle">Idle</string>
 
-    <string name="node">Node id:</string>
     <string name="status">Status:</string>
     <string name="serial">Serial number:</string>
     <string name="summary">Summary:</string>
@@ -223,7 +207,6 @@
     <string name="BSSIDError">unable to get bssid</string>
 
     <string name="unknownModule">Unknown module</string>
-    <string name="unknownNode">Unknown node</string>
     <string name="unknownTitle">Unknown title</string>
     <string name="unknownType">Unknown type</string>
     <string name="unknownError">Unknown error</string>

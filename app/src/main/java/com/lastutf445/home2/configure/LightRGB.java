@@ -1,13 +1,9 @@
-package com.lastutf445.home2.special;
+package com.lastutf445.home2.configure;
 
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,24 +13,14 @@ import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Module;
-import com.lastutf445.home2.containers.Node;
 import com.lastutf445.home2.fragments.dialog.ColorPicker;
-import com.lastutf445.home2.fragments.dialog.Processing;
-import com.lastutf445.home2.loaders.DataLoader;
-import com.lastutf445.home2.loaders.NodesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
-import com.lastutf445.home2.network.Sync;
-import com.lastutf445.home2.util.ModuleEditRequest;
-import com.lastutf445.home2.util.Special;
+import com.lastutf445.home2.util.Configure;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
-
-public class LightRGBSpecial extends Special {
+public class LightRGB extends Configure {
 
     @Nullable
     @Override
@@ -65,7 +51,7 @@ public class LightRGBSpecial extends Special {
         view.findViewById(R.id.specialLightRGBColor).setOnClickListener(c);
         view.findViewById(R.id.specialLightRGBIsLit).setOnClickListener(c);
 
-        setRender(new Special.Render() {
+        setRender(new Configure.Render() {
             @Override
             public void reload(@NonNull View view, @NonNull Module module) {
                 ((TextView) view.findViewById(R.id.specialTitle)).setText(
@@ -80,7 +66,7 @@ public class LightRGBSpecial extends Special {
                     int color = Color.parseColor("#333333");
 
                     if (module.getBoolean("lit", false)) {
-                        color = Color.parseColor(module.getString("value", "#aaaaaa"));
+                        color = Color.parseColor(module.getString("color", "#aaaaaa"));
                     }
 
                     ((ImageView) view.findViewById(R.id.specialLightRGBColorValue)).setColorFilter(color);
@@ -109,7 +95,7 @@ public class LightRGBSpecial extends Special {
 
     private void pickColor() {
         ColorPicker picker = new ColorPicker();
-        picker.setColor(module.getString("value", "#000000"));
+        picker.setColor(module.getString("color", "#000000"));
 
         picker.setOnColorPicked(new ColorPicker.OnColorPicked() {
             @Override
@@ -134,7 +120,7 @@ public class LightRGBSpecial extends Special {
 
         try {
             JSONObject ops = new JSONObject();
-            ops.put("value", color);
+            ops.put("color", color);
             makeEditRequest(ops);
 
         } catch (JSONException e) {

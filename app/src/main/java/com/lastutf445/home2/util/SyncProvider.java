@@ -34,6 +34,10 @@ public class SyncProvider {
         return false;
     }
 
+    public boolean isWaiting() {
+        return false;
+    }
+
     public int getGroup() {
         return group;
     }

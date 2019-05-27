@@ -103,7 +103,7 @@ public class GlobalPing extends Thread {
         Bundle msgData = new Bundle();
 
         try {
-            if (data.has("success") && data.getBoolean("success")) {
+            if (data.has("status") && data.getInt("status") == Sync.PONG) {
                 msgData.putBoolean("success", true);
 
             } else {

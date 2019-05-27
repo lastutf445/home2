@@ -19,6 +19,7 @@ import java.net.InetAddress;
 public class Ping extends SyncProvider {
 
     private WeakReference<Handler> weakHandler;
+    private volatile boolean finished;
     private int attempts;
 
     public Ping(@NonNull InetAddress ip, int port) throws JSONException {
@@ -44,7 +45,8 @@ public class Ping extends SyncProvider {
 
         switch (statusCode) {
             case 0:
-                finish(R.string.unexpectedErrorSmall);
+                //finish(R.string.unexpectedErrorSmall);
+                finish(R.string.networkErrorSmall);
                 break;
             case 1:
                 if (attempts-- <= 1) {
@@ -59,7 +61,7 @@ public class Ping extends SyncProvider {
                 break;
             case 4:
                 // TODO: think about it
-                //finish(R.string.encryptionError);
+                finish(R.string.encryptionErrorSmall);
                 break;
 
         }
@@ -68,7 +70,7 @@ public class Ping extends SyncProvider {
     @Override
     public void onReceive(JSONObject data) {
         try {
-            if (data.has("success") && data.getBoolean("success")) {
+            if (data.has("status") && data.getInt("status") == Sync.PONG) {
                 finish(R.string.reachable);
                 return;
             }
@@ -83,6 +85,9 @@ public class Ping extends SyncProvider {
     }
 
     public void finish(int status) {
+        if (finished) return;
+        finished = true;
+
         Sync.removeSyncProvider(Sync.PROVIDER_PING);
         Handler handler = weakHandler.get();
 

@@ -37,6 +37,7 @@ public class Sync {
     public static final int SYNC_NOTIFICATIONS = 2;
     public static final int SYNC_PING = 3;
 
+    public static final int PROVIDER_DASHBOARD = 0;
     public static final int PROVIDER_MESSAGES = -1;
     public static final int PROVIDER_NOTIFICATIONS = -2;
     public static final int PROVIDER_DISCOVERER = -3;
@@ -47,8 +48,31 @@ public class Sync {
     public static final int PROVIDER_EDITOR = -8;
     public static final int PROVIDER_PING = -9;
 
-    public static final int MENU_SYNC_TRIGGER = 0;
-    public static final int FRAGMENT_DASHBOARD_TRIGGER = 1;
+    public static final int FRAGMENT_DASHBOARD_TRIGGER = 0;
+    public static final int MENU_SYNC_TRIGGER = 1;
+
+    public static final int UNEXPECTED_ERROR = 0;
+    public static final int TOO_MANY_CLIENTS = 1;
+    public static final int TOO_MANY_TASKS = 2;
+    public static final int MALFORMED_PACKET = 3;
+    public static final int MALFORMED_RSA = 4;
+    public static final int MALFORMED_AES = 5;
+    public static final int UNAUTHORIZED = 6;
+    public static final int ENCRYPT_ERROR = 7;
+    public static final int ENCODE_ERROR = 8;
+    public static final int UNSUPPORTED = 9;
+    public static final int UNKNOWN_USER = 10;
+    public static final int PONG = 11;
+    public static final int OK = 12;
+
+    /*
+    public static final int = ;
+    public static final int = ;
+    public static final int = ;
+    public static final int = ;
+    public static final int = ;
+    public static final int = ;
+    */
 
     private static ConnectivityManager connectivityManager = (ConnectivityManager) DataLoader.getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE);
     private static WifiManager wifiManager = (WifiManager) DataLoader.getAppContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);

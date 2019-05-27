@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.lastutf445.home2.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +19,7 @@ import java.util.Map;
 
 public class DataLoader {
 
-    private static int DATABASE_VERSION = 17;
+    private static int DATABASE_VERSION = 19;
     private static SQLiteDatabase db;
 
     private static Context appContext;
@@ -24,7 +27,7 @@ public class DataLoader {
     private static final HashMap<String, Object> ops = new HashMap<>();
 
     static {
-        // authorization
+        // authentication
         ops.put("Session", null);
         ops.put("Username", null);
         ops.put("BasicAccount", false);
@@ -38,6 +41,7 @@ public class DataLoader {
         ops.put("ExternalAddress", null);
         ops.put("ExternalPort", null);
         // synchronization
+        ops.put("SyncSettings", true); // postponed for the future, should be enabled now
         ops.put("SyncDashboard", true);
         ops.put("SyncMessages", false);
         ops.put("SyncNotifications", false);
@@ -83,10 +87,30 @@ public class DataLoader {
 
     private static void check() {
         db.execSQL("CREATE TABLE IF NOT EXISTS core (id INTEGER PRIMARY KEY, options TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS nodes (serial INTEGER PRIMARY KEY, ip TEXT, port INTEGER, title TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, node INTEGER, title TEXT, options TEXT, syncing INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, ip TEXT, port INTEGER, title TEXT, ops TEXT, vals TEXT, syncing INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS dashboard (id INTEGER PRIMARY KEY, serial INTEGER, type TEXT, options TEXT)");
         db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS dashboard_serial ON dashboard (serial)");
+    }
+
+    public static void merge(@NonNull JSONObject data) {
+        Iterator<String> it = data.keys();
+
+        while (it.hasNext()) {
+            String key = it.next();
+            if (!DataLoader.has(key)) continue;
+
+            try {
+                Object a = DataLoader.get(key);
+                Object b = data.get(key);
+
+                if (a == null || (b != null && a.getClass().getName().equals(b.getClass().getName()))) {
+                    DataLoader.set(key, b);
+                }
+
+            } catch (JSONException e) {
+                //e.printStackTrace();
+            }
+        }
     }
 
     private static void upgrade(int oldVersion, int newVersion) {
