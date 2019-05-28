@@ -5,12 +5,19 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.SparseIntArray;
 
+import com.lastutf445.home2.R;
+import com.lastutf445.home2.configure.Humidity;
 import com.lastutf445.home2.configure.LightRGB;
+import com.lastutf445.home2.configure.Temperature;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.configure.Socket;
 import com.lastutf445.home2.network.Sync;
@@ -22,8 +29,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.WeakHashMap;
 
 public class ModulesLoader {
 
@@ -44,7 +55,8 @@ public class ModulesLoader {
 
         try {
             updater = new ModuleUpdater();
-            updater.setGroup(Sync.SYNC_DASHBOARD);
+            //updater.setGroup(Sync.SYNC_DASHBOARD);
+            Sync.addSyncProvider(updater);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -76,7 +88,7 @@ public class ModulesLoader {
                         syncing > 0
                 );
 
-                if (module.getSyncing()) onModuleSyncingChanged(module, true);
+                //if (module.getSyncing()) onModuleSyncingChanged(module, true);
                 WidgetsLoader.onModuleLinkChanged(module, true);
                 modules.put(serial, module);
 
@@ -121,7 +133,7 @@ public class ModulesLoader {
         cv.put("title", module.getTitle());
         cv.put("ops", module.getOps().toString());
         cv.put("vals", module.getVals().toString());
-        cv.put("syncing", module.getSyncing() ? 1 : 0);
+        cv.put("syncing", 0);
 
         try {
             db.replaceOrThrow("modules", null, cv);
@@ -129,10 +141,6 @@ public class ModulesLoader {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }
-
-        if (module.getSyncing()) {
-            onModuleSyncingChanged(module, true);
         }
 
         modules.put(module.getSerial(), module);
@@ -148,7 +156,7 @@ public class ModulesLoader {
 
         cv.put("serial", module.getSerial());
         cv.put("type", module.getType());
-        cv.put("ip", module.getIp().toString());
+        cv.put("ip", module.getIp().getHostAddress());
         cv.put("port", module.getPort());
         cv.put("title", module.getTitle());
         cv.put("ops", module.getOps().toString());
@@ -173,19 +181,43 @@ public class ModulesLoader {
         };
 
         db.delete("modules", "serial=?", args);
-
+/*
         if (module.getSyncing()) {
             onModuleSyncingChanged(module, false);
         }
-
-        module.setOps(new JSONObject());
+*/
+        module.wipe();
         WidgetsLoader.onModuleLinkChanged(module, false);
         modules.remove(module.getSerial());
     }
 
-    public static void onModuleSyncingChanged(@NonNull Module module, boolean syncing) {
+    public static void onModuleSyncingChanged(@NonNull Module module, boolean syncing, Handler handler) {
         if (updater != null) {
+            updater.setHandler(handler);
             updater.onModuleSyncingChanged(module, syncing);
+        }
+    }
+
+    public static void resetUpdater() {
+        if (updater != null) {
+            updater.serial = -1;
+        }
+    }
+
+    public static boolean validateState(@NonNull Module module, @NonNull String type, @NonNull JSONObject ops, @NonNull JSONObject values) {
+        if (!module.getType().equals(type)) return false;
+
+        switch (module.getType()) {
+            case "temperature":
+                return Temperature.validateState(ops, values);
+            case "humidity":
+                return Humidity.validateState(ops, values);
+            case "lightrgb":
+                return LightRGB.validateState(ops, values);
+            case "socket":
+                return Socket.validateState(ops, values);
+            default:
+                return false;
         }
     }
 
@@ -196,6 +228,12 @@ public class ModulesLoader {
         // todo: some work
 
         switch (module.getType()) {
+            case "temperature":
+                child = new Temperature();
+                break;
+            case "humidity":
+                child = new Humidity();
+                break;
             case "lightrgb":
                 child = new LightRGB();
                 break;
@@ -213,52 +251,130 @@ public class ModulesLoader {
     }
 
     private static class ModuleUpdater extends SyncProvider {
-        private boolean waiting;
+        private volatile WeakReference<Handler> weakHandler;
+        private volatile boolean subscribe, syncTainted;
+        private volatile int serial;
 
         public ModuleUpdater() throws JSONException {
-            super(Sync.PROVIDER_DASHBOARD, "update", new JSONObject(), null, 0);
-            waiting = false;
+            super(Sync.PROVIDER_DASHBOARD, "nothing", new JSONObject(), null, 0);
+            serial = -1;
+        }
+
+        public void setHandler(Handler handler) {
+            weakHandler = new WeakReference<>(handler);
+        }
+
+        @Override
+        public boolean getUseMasterConnectionOnly() {
+            return true;
         }
 
         @Override
         public boolean isWaiting() {
-            if (waiting) return true;
-            waiting = true;
-            return false;
+            return serial == -1;
         }
 
         public void onModuleSyncingChanged(@NonNull Module module, boolean syncing) {
-
+            subscribe = syncing;
+            serial = module.getSerial();
+            syncTainted = true;
         }
-/*
+
         @Override
         public void onPostPublish(int statusCode) {
-            Log.d("LOGTAG", "statusCode - " + statusCode);
+            if (statusCode < 0) return;
+
+            Bundle data = new Bundle();
+            int code = -1;
+
+            switch (statusCode) {
+                case 0:
+                    code = R.string.unexpectedError;
+                    break;
+                case 2:
+                    code = R.string.masterServerRequired;
+                    break;
+                case 3:
+                    code = R.string.disconnected;
+                    break;
+                case 4:
+                    code = R.string.encryptionError;
+                    break;
+            }
+
+            if (code != -1) {
+                serial = -1;
+                Handler handler = weakHandler.get();
+                if (handler == null) {
+                    return;
+                }
+
+                data.putInt("status", code);
+                Message msg = handler.obtainMessage(0);
+                msg.setData(data);
+                handler.sendMessage(msg);
+            }
         }
 
         @Override
         public void onReceive(JSONObject data) {
-            Iterator<String> it = data.keys();
+            try {
+                int status = data.getInt("status");
 
-            while (it.hasNext()) {
-                String s = it.next();
-
-                try {
-                    int serial = Integer.valueOf(s);
-                    if (syncing.get(serial) == null) continue;
-                    Module module = ModulesLoader.getModule(serial);
-                    if (module == null) continue;
-
-                    JSONObject state = data.getJSONObject(s);
-                    if (state.isNull("type") && state.isNull("ops")) module.wipe();
-                    module.mergeStates(state.getString("type"), state.getJSONObject("ops"));
-
-                } catch (NumberFormatException e) {
-                    //e.printStackTrace();
-
-                } catch (JSONException e) {
-                    //e.printStackTrace();
+                if (status == Sync.OK) {
+                    Handler handler = weakHandler.get();
+                    if (handler != null) handler.sendEmptyMessage(0);
+                    serial = -1;
+                    return;
                 }
+                switch (status) {
+                    case Sync.ENCODE_ERROR:
+                    case Sync.ENCRYPT_ERROR:
+                    case Sync.MALFORMED_PACKET:
+                    case Sync.UNEXPECTED_ERROR:
+                    case Sync.MALFORMED_AES:
+                    case Sync.UNAUTHORIZED:
+                        Handler handler = weakHandler.get();
+                        Bundle msgData = new Bundle();
+                        msgData.putInt("status", status);
+                        if (handler != null && serial != -1) {
+                            Message msg = handler.obtainMessage(0);
+                            msg.setData(msgData);
+                            handler.sendMessage(msg);
+                        }
+                        serial = -1;
+                        return;
+                }
+
+                if (status != Sync.UPDATE) {
+                    Log.d("LOGTAG", "unsupported msg");
+                    Log.d("LOGTAG", data.toString());
+                    return;
+                }
+
+                JSONObject msg = data.getJSONObject("msg");
+
+                int serial = msg.getInt("serial");
+                String type = msg.getString("type");
+                String act = msg.getString("act");
+
+                if (act.equals("update")) {
+                    JSONObject ops = msg.getJSONObject("ops");
+                    JSONObject values = msg.getJSONObject("values");
+                    Module module = ModulesLoader.getModule(serial);
+
+                    if (module != null) {
+                        module.mergeStates(type, ops, values);
+                    } else {
+                        Log.d("LOGTAG", "module doesn\'t exist");
+                    }
+
+                } else {
+                    Log.d("LOGTAG", "unsupported act");
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
@@ -266,29 +382,24 @@ public class ModulesLoader {
         public JSONObject getQuery() {
             if (syncTainted) {
                 try {
+                    if (subscribe) {
+                        query.put("act", "subscribe");
+                    } else {
+                        query.put("act", "unsubscribe");
+                    }
+
                     JSONObject data = new JSONObject();
-                    JSONArray modules = new JSONArray();
-
-                    for (int i = 0; i < syncing.size(); ++i) {
-                        modules.put(syncing.valueAt(i).getSerial());
-                    }
-
-                    data.put("modules", modules);
+                    data.put("serial", serial);
                     query.put("data", data);
-                    syncTainted = false;
-
-                    if (getSyncingCount() == 0) {
-                        Sync.removeSyncProvider(serial);
-                    }
 
                 } catch (JSONException e) {
-                    //e.printStackTrace();
-                    Log.d("LOGTAG", "can't update node syncProvider");
+                    e.printStackTrace();
+                    Log.d("LOGTAG", "unknown error: ML subscribers list");
                 }
             }
 
             return query;
-        }*/
+        }
     }
 
     public static class SyncSwitch implements Runnable {

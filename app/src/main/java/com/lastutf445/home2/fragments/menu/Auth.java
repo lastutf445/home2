@@ -99,8 +99,12 @@ public class Auth extends NavigationFragment {
 
     @Override
     public void onDestroy() {
-        Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
-        Sync.removeSyncProvider(Sync.PROVIDER_CREDENTIALS);
+        try {
+            Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
+            Sync.removeSyncProvider(Sync.PROVIDER_CREDENTIALS);
+        } catch (Exception e) {
+            // lol
+        }
         super.onDestroy();
     }
 

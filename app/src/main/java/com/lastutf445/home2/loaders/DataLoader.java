@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class DataLoader {
 
-    private static int DATABASE_VERSION = 19;
+    private static int DATABASE_VERSION = 20;
     private static SQLiteDatabase db;
 
     private static Context appContext;
@@ -41,7 +41,6 @@ public class DataLoader {
         ops.put("ExternalAddress", null);
         ops.put("ExternalPort", null);
         // synchronization
-        ops.put("SyncSettings", true); // postponed for the future, should be enabled now
         ops.put("SyncDashboard", true);
         ops.put("SyncMessages", false);
         ops.put("SyncNotifications", false);
@@ -51,7 +50,7 @@ public class DataLoader {
         ops.put("SyncPingAttempts", 3);
         ops.put("SyncPingInterval", 1000);
         ops.put("SyncDiscoveryPort", 44500);
-        ops.put("SyncDiscoveryAttempts", 3);
+        ops.put("SyncDiscoveryTimeout", 3);
         ops.put("SyncDashboardInterval", 5000);
         ops.put("SyncMessagesInterval", 500);
         ops.put("SyncNotificationsInterval", 2000);
@@ -161,7 +160,7 @@ public class DataLoader {
         }
     }
 
-    public synchronized static void save() {
+    public static void save() {
         synchronized (ops) {
             SQLiteDatabase db = getDb();
             JSONObject dump = new JSONObject();
@@ -185,39 +184,39 @@ public class DataLoader {
         }
     }
 
-    public synchronized static void set(String key, Object value) {
+    public static void set(String key, Object value) {
         synchronized (ops) {
             ops.put(key, value);
         }
     }
 
-    public synchronized static boolean has(String key) {
+    public static boolean has(String key) {
         synchronized (ops) {
             return ops.containsKey(key);
         }
     }
 
-    public synchronized static Object get(String option) {
+    public static Object get(String option) {
         synchronized (ops) {
             return ops.get(option);
         }
     }
 
-    public synchronized static String getString(String option, String std) {
+    public static String getString(String option, String std) {
         synchronized (ops) {
             Object res = get(option);
             return res != null ? String.valueOf(res) : std;
         }
     }
 
-    public synchronized static int getInt(String option, int std) {
+    public static int getInt(String option, int std) {
         synchronized (ops) {
             String res = getString(option, null);
             return res != null ? Integer.valueOf(res) : std;
         }
     }
 
-    public synchronized static boolean getBoolean(String option, boolean std) {
+    public static boolean getBoolean(String option, boolean std) {
         synchronized (ops) {
             String res = getString(option, null);
             return res != null ? Boolean.valueOf(res) : std;

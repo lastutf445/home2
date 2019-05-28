@@ -14,10 +14,6 @@ public class JSONPayload {
         return ops;
     }
 
-    public void setOps(@NonNull JSONObject ops) {
-        this.ops = ops;
-    }
-
     public <T> void set(@NonNull String key, T value) {
         try {
             ops.put(key, value);

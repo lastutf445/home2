@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.fragments.dialog.Processing;
+import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
@@ -158,6 +159,16 @@ public class Account extends NavigationFragment {
     @Override
     public void onResult(Bundle data) {
         reload();
+    }
+
+    @Override
+    public void onDestroy() {
+        try {
+            CryptoLoader.clearRSA();
+        } catch (Exception e) {
+            // lol
+        }
+        super.onDestroy();
     }
 
     private static class Updater extends Handler {

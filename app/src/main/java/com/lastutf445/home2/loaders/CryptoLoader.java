@@ -56,6 +56,11 @@ public class CryptoLoader {
         }
     }
 
+    public static void clearRSA() {
+        modulus = null;
+        pubExp = null;
+    }
+
     public static void setAESKey(@NonNull String key) {
         byte[] raw_key = Base64.decode(key, Base64.NO_WRAP);
 
@@ -64,31 +69,31 @@ public class CryptoLoader {
         }
     }
 
-    public synchronized static String createAESKey() {
+    public static String createAESKey() {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[16];
         random.nextBytes(bytes);
         return Base64.encodeToString(bytes, Base64.NO_WRAP);
     }
 
-    public synchronized static boolean hasAESKey() {
+    public static boolean hasAESKey() {
         return AESKey != null;
     }
 
-    public synchronized static void setPublicKey(@NonNull String modulus, @NonNull String pubExp) throws NumberFormatException {
+    public static void setPublicKey(@NonNull String modulus, @NonNull String pubExp) throws NumberFormatException {
         setPublicKey(new BigInteger(modulus, 16), new BigInteger(pubExp, 16));
     }
 
-    public synchronized static void setPublicKey(@NonNull BigInteger modulus, @NonNull BigInteger pubExp) {
+    public static void setPublicKey(@NonNull BigInteger modulus, @NonNull BigInteger pubExp) {
         CryptoLoader.modulus = modulus;
         CryptoLoader.pubExp = pubExp;
     }
 
-    public synchronized static boolean isPublicKeyValid() {
+    public static boolean isPublicKeyValid() {
         return isPublicKeyValid(modulus, pubExp);
     }
 
-    public synchronized static boolean isPublicKeyValid(BigInteger modulus, BigInteger pubExp) {
+    public static boolean isPublicKeyValid(BigInteger modulus, BigInteger pubExp) {
         if (modulus == null || pubExp == null) return false;
 
         try {
@@ -103,7 +108,7 @@ public class CryptoLoader {
         }
     }
 
-    public synchronized static boolean isPublicKeyValid(String raw_modulus, String raw_pubExp) {
+    public static boolean isPublicKeyValid(String raw_modulus, String raw_pubExp) {
         if (raw_modulus == null || raw_pubExp == null) return false;
 
         try {
@@ -117,7 +122,7 @@ public class CryptoLoader {
         }
     }
 
-    public synchronized static String RSAEncrypt(@NonNull String msg) {
+    public static String RSAEncrypt(@NonNull String msg) {
         if (modulus == null || pubExp == null) return null;
 
         try {
@@ -151,7 +156,7 @@ public class CryptoLoader {
     }
 
     @Nullable
-    public synchronized static String AESEncrypt(String msg) {
+    public static String AESEncrypt(String msg) {
         try {
             byte[] ivBytes = new byte[IV_LENGTH / 2];
             secureRandom.nextBytes(ivBytes);
@@ -179,7 +184,7 @@ public class CryptoLoader {
     }
 
     @Nullable
-    public synchronized static String AESDecrypt(String msg) {
+    public static String AESDecrypt(String msg) {
         try {
             byte[] encrypted = Base64.decode(msg, Base64.NO_WRAP);
             IvParameterSpec ivParameterSpec = new IvParameterSpec(encrypted, 0, IV_LENGTH);
@@ -196,7 +201,7 @@ public class CryptoLoader {
         }
     }
 
-    public synchronized static String bytesToHex(byte[] bytes) {
+    public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
 
         for (int i = 0; i < bytes.length; ++i) {

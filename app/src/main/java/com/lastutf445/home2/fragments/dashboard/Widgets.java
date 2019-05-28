@@ -59,7 +59,6 @@ public class Widgets extends NavigationFragment {
         view.findViewById(R.id.widgetsRestore).setOnClickListener(c);
 
         adapter = new WidgetsAdapter(getLayoutInflater(), content, getActivity());
-        adapter.setData(WidgetsLoader.getWidgets().clone());
         content.setAdapter(adapter);
         adapter.initCallback();
         reload();

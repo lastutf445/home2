@@ -28,7 +28,6 @@ public abstract class Configure extends NavigationFragment {
     protected String type;
 
     private int connectorId = 0;
-    private Connector connector;
 
     public final void setModule(@NonNull Module module) {
         type = module.getType();
@@ -145,9 +144,11 @@ public abstract class Configure extends NavigationFragment {
         private void success(Bundle data) {
             Sync.removeSyncProvider(Sync.PROVIDER_MODULE_EDIT_REQUEST);
 
+
             View view = weakView.get();
             Module module = weakModule.get();
             Processing dialog = weakDialog.get();
+            /*
 
             if (view != null && module != null) {
                 try {
@@ -164,7 +165,7 @@ public abstract class Configure extends NavigationFragment {
 
             if (dialog != null) {
                 dialog.dismiss();
-            }
+            }*/
         }
 
         private void reload() {

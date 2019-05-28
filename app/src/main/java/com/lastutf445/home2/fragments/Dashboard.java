@@ -50,7 +50,16 @@ public class Dashboard extends NavigationFragment {
         WidgetsLoader.init(updater, getLayoutInflater(), content, bottomSheet, bottomSheetView);
     }
 
-
+    @Override
+    public void onDestroy() {
+        try {
+            Sync.removeTrigger(Sync.FRAGMENT_DASHBOARD_TRIGGER);
+            Sender.unsubscribe();
+        } catch (Exception e) {
+            // lol
+        }
+        super.onDestroy();
+    }
 
     @Override
     public void onResume() {

@@ -82,7 +82,7 @@ public class Module extends NavigationFragment {
         view.findViewById(R.id.moduleConfigure).setOnClickListener(c);
         view.findViewById(R.id.moduleSync).setOnClickListener(c);
         view.findViewById(R.id.moduleDelete).setOnClickListener(c);
-        updater = new Updater(view);
+        updater = new Updater(view, module);
 
         reload();
     }
@@ -176,9 +176,10 @@ public class Module extends NavigationFragment {
         View spinner = ((ViewGroup) button).getChildAt(2);
         SimpleAnimator.fadeIn(spinner, 300);
 
-        module.setSyncing(!module.getSyncing());
-        toParent.putBoolean("syncStateChanged", true);
-        updater.sendEmptyMessage(0);
+        //module.setSyncing(!module.getSyncing());
+        ModulesLoader.onModuleSyncingChanged(module, !module.getSyncing(), updater);
+        //toParent.putBoolean("syncStateChanged", true);
+        //updater.sendEmptyMessage(0);
     }
 
     private void delete() {
@@ -220,15 +221,22 @@ public class Module extends NavigationFragment {
 
     @Override
     public void onDestroy() {
-        Sync.removeSyncProvider(Sync.PROVIDER_PING);
+        try {
+            Sync.removeSyncProvider(Sync.PROVIDER_PING);
+            ModulesLoader.resetUpdater();
+        } catch (Exception e) {
+            // lol
+        }
         super.onDestroy();
     }
 
     private static class Updater extends Handler {
+        private WeakReference<com.lastutf445.home2.containers.Module> weakModule;
         private WeakReference<View> weakView;
 
-        Updater(View view) {
+        Updater(View view, com.lastutf445.home2.containers.Module module) {
             this.weakView = new WeakReference<>(view);
+            this.weakModule = new WeakReference<>(module);
         }
 
         @Override
@@ -241,7 +249,7 @@ public class Module extends NavigationFragment {
                     updateConnectionStatus(msg.getData());
                     break;
                 case 0:
-                    unlockSyncButton();
+                    unlockSyncButton(msg.getData());
                     break;
             }
         }
@@ -288,15 +296,32 @@ public class Module extends NavigationFragment {
             });
         }
 
-        private void unlockSyncButton() {
+        private void unlockSyncButton(Bundle data) {
             View view = weakView.get();
             if (view == null) return;
+
+            if (data == null) {
+                data = new Bundle();
+            }
 
             View button = view.findViewById(R.id.moduleSync);
             button.setClickable(true);
 
             Switch switcher = (Switch) ((ViewGroup) button).getChildAt(1);
-            switcher.setChecked(!switcher.isChecked());
+            com.lastutf445.home2.containers.Module module = weakModule.get();
+
+            if (module != null && !data.containsKey("status")) {
+                switcher.setChecked(!switcher.isChecked());
+                module.setSyncing(!module.getSyncing());
+
+            } else {
+                NotificationsLoader.makeToast(
+                        DataLoader.getAppResources().getString(
+                                data.getInt("status", R.string.unexpectedError)
+                        ),
+                        true
+                );
+            }
 
             final View spinner = ((ViewGroup) button).getChildAt(2);
             SimpleAnimator.fadeOut(spinner, 300, new Animation.AnimationListener() {

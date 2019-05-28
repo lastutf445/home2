@@ -37,9 +37,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        DataLoader.kill();
-        Sync.stop();
-
+        try {
+            DataLoader.kill();
+            Sync.stop();
+        } catch (Exception e) {
+            // lol
+        }
         super.onDestroy();
     }
 

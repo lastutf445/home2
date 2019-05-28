@@ -46,7 +46,7 @@ public class Ping extends SyncProvider {
         switch (statusCode) {
             case 0:
                 //finish(R.string.unexpectedErrorSmall);
-                finish(R.string.networkErrorSmall);
+                finish(R.string.disconnectedSmall);
                 break;
             case 1:
                 if (attempts-- <= 1) {

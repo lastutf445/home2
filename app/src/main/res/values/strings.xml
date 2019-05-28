@@ -111,10 +111,10 @@
     <string name="syncClientPort">Local port</string>
 
     <string name="syncBehaviorDiscovery">Nodes discovery</string>
-    <string name="syncBehaviorDiscoveryDesc">Define a port for searching nodes and count of discovery packets.</string>
+    <string name="syncBehaviorDiscoveryDesc">Define a port for searching nodes and timeout.</string>
 
     <string name="syncDiscoveryPort">Discovery port</string>
-    <string name="syncDiscoveryAttempts">Search attempts</string>
+    <string name="syncDiscoveryAttempts">Timeout</string>
 
     <string name="syncBehaviorPing">Ping settings</string>
     <string name="syncBehaviorPingDesc">Define an interval between ping packets and count of them.</string>
@@ -170,6 +170,9 @@
     <string name="pullToRefresh">Pull down to refresh</string>
     <string name="lockedFeature">This feature isn\'t  available in this version. Watch for updates.</string>
 
+    <string name="notificationsGenericTitle">Notification</string>
+    <string name="notificationsGenericSubtitle">Content</string>
+
     <string name="IPAddress">IP address</string>
     <string name="port">Port</string>
 
@@ -177,12 +180,10 @@
     <string name="unreachable">unreachable</string>
     <string name="pending">pending&#8230;</string>
     <string name="disconnectedSmall">disconnected</string>
-    <string name="networkErrorSmall">network error</string>
     <string name="unexpectedErrorSmall">unexpected error</string>
     <string name="encryptionErrorSmall">encryption error</string>
 
     <string name="success">Success</string>
-    <string name="networkError">Network error</string>
     <string name="unexpectedError">Unexpected error</string>
     <string name="encryptionError">Encryption error</string>
     <string name="masterServerRequired">Master Server required</string>

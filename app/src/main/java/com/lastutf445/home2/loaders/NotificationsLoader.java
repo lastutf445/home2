@@ -17,7 +17,7 @@ import java.util.TimerTask;
 public final class NotificationsLoader {
 
     private static HashSet<Integer> toasts = new HashSet<>();
-    private static SparseArray<Event> notifcations;
+    private static SparseArray<Event> notifications = new SparseArray<>();
     private static Notifier notifier;
 
     private static final int LENGTH_SHORT = 2000;
@@ -32,6 +32,10 @@ public final class NotificationsLoader {
             //e.printStackTrace();
             // do something
         }
+    }
+
+    public static SparseArray<Event> getNotifications() {
+        return notifications;
     }
 
     public static void makeToast(final String msg, boolean lengthShort) {
@@ -62,9 +66,10 @@ public final class NotificationsLoader {
 
         @Override
         public void onReceive(JSONObject data) {
+            if (!data.has("status")) return;
+
             try {
-                if (!data.has("status") || data.get("status") == null || (data.get("status") instanceof Integer))
-                    return;
+                int status = data.getInt("status");
 
             } catch (JSONException e) {
                 //e.printStackTrace();

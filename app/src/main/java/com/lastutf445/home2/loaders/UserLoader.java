@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.fragments.menu.Auth;
+import com.lastutf445.home2.network.Sender;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.SyncProvider;
 
@@ -67,6 +68,8 @@ public final class UserLoader {
                 password,
                 handler
         );
+
+        Sender.killConnection();
 
         if (!CryptoLoader.isPublicKeyValid()) {
             handler.sendEmptyMessage(1);
@@ -408,6 +411,12 @@ public final class UserLoader {
             } catch (JSONException e) {
                 //e.printStackTrace();
             }
+        }
+    }
+
+    private final static class UserDataSync extends SyncProvider {
+        public UserDataSync(int source, String act, JSONObject data, InetAddress ip, int port) throws JSONException {
+            super(source, act, data, ip, port);
         }
     }
 }

@@ -82,25 +82,33 @@ public class Sender {
                     long last = current.getLastAccess();
 
                     switch (current.getGroup()) {
-                        case Sync.SYNC_DASHBOARD:
+                        /*case Sync.SYNC_DASHBOARD:
                             if (!DataLoader.getBoolean("SyncDashboard", false)) continue;
                             if (last + DataLoader.getInt("SyncDashboardInterval", 5000) > time) continue;
-                            break;
+                            break;*/
                         case Sync.SYNC_MESSAGES:
                             if (!DataLoader.getBoolean("SyncMessages", false)) continue;
                             if (last + DataLoader.getInt("SyncMessagesInterval", 500) > time) continue;
-                            continue; // sync notifications should be disabled for now
-                            //break;
+                            break;
                         case Sync.SYNC_NOTIFICATIONS:
                             if (!DataLoader.getBoolean("SyncNotifications", false)) continue;
                             if (last + DataLoader.getInt("SyncNotificationsInterval", 1000) > time) continue;
-                            break;
+                            continue; // sync notification should be disabled for now
+                            //break;
                         case Sync.SYNC_PING:
                             if (last + DataLoader.getInt("SyncPingInterval", 1000) > time) continue;
+                            break;
+                        case Sync.SYNC_USER_DATA:
+                            //just go for now
                             break;
                         default:
                             if (last + 1000 > time) continue;
                             break;
+                    }
+
+                    if (current.isWaiting()) {
+                        current.onPostPublish(-1);
+                        continue;
                     }
 
                     if (current.getUseMasterConnectionOnly() && !isMasterConnectionUsed()) {
@@ -177,9 +185,7 @@ public class Sender {
     }
 
     private synchronized static int tSend(SyncProvider provider) {
-        if (provider.isWaiting()) return -1;
-
-        if (tOut != null) {
+        if (tOut != null && !tOut.checkError()) {
             try {
                 JSONObject query = new JSONObject(provider.getQuery().toString());
                 JSONObject data = query.getJSONObject("data");
@@ -225,6 +231,7 @@ public class Sender {
 
             } catch (JSONException e) {
                 //e.printStackTrace();
+
             }
         }
 
@@ -232,8 +239,6 @@ public class Sender {
     }
 
     private synchronized static int uSend(SyncProvider provider) {
-        if (provider.isWaiting()) return -1;
-
         if (uSocket == null) {
             try {
                 uSocket = new DatagramSocket();
@@ -287,7 +292,7 @@ public class Sender {
             );
 
             tSocket.setReuseAddress(true);
-            tSocket.setSoTimeout(1000);
+            //tSocket.setSoTimeout(1000);
 
             tOut = new PrintWriter(
                     new BufferedWriter(

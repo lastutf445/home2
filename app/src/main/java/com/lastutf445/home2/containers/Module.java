@@ -133,7 +133,7 @@ public class Module extends JSONPayload {
 
     public void setSyncing(boolean syncing) {
         this.syncing = syncing;
-        ModulesLoader.onModuleSyncingChanged(this, syncing);
+        //ModulesLoader.onModuleSyncingChanged(this, syncing);
         save();
     }
 
@@ -143,79 +143,47 @@ public class Module extends JSONPayload {
         save();
     }
 
-    public void mergeStates(@Nullable String type, @Nullable JSONObject ops) {
-        if(type == null || ops == null) return;
-        boolean wiped = false;
-
-        if (this.ops.has("wiped")) {
-            wiped = true;
-        }
-
-        if (!this.type.equals(type)) {
+    public void mergeStates(String type, JSONObject ops, JSONObject values) {
+        if (type == null || ops == null || values == null) {
             // TODO: notify about it
             Log.d("LOGTAG", "validation error on serial: " + serial);
             return;
         }
 
-        Iterator<String> it = ops.keys();
-        boolean pass = true;
+        if (!ModulesLoader.validateState(this, type, ops, values)) {
+            // TODO: notify about it
+            Log.d("LOGTAG", "validation error on serial: " + serial);
+            return;
+        }
 
         try {
-            while (it.hasNext()) {
-               String key = it.next();
-                if (!this.ops.has(key) || !validateField(this.ops.get(key), ops.get(key))) {
-                    pass = false;
-                    break;
-                }
+            Iterator<String> it1 = ops.keys();
+            while (it1.hasNext()) {
+                String key = it1.next();
+                this.ops.put(key, ops.get(key));
+            }
+            Iterator<String> it2 = values.keys();
+            while (it2.hasNext()) {
+                String key = it2.next();
+                this.values.put(key, values.get(key));
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
-            pass = false;
+            // todo: transaction reverse?
         }
 
-        if (!pass && !wiped) {
-            // TODO: notify about it
-            Log.d("LOGTAG", "validation error on serial: " + serial);
-            return;
-        }
-
-        it = ops.keys();
-
-        while (it.hasNext()) {
-            try {
-                String key = it.next();
-                this.ops.put(key, ops.get(key));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        this.ops.remove("wiped");
         WidgetsLoader.onModuleStateUpdated(this);
         set("lastUpdated", System.currentTimeMillis());
         save();
     }
 
     public void wipe() {
-        this.ops = new JSONObject();
-
-        try {
-            ops.put("wiped", true);
-
-        } catch (JSONException e) {
-            Log.d("LOGTAG", "wtf?");
-        }
-
+        ops = new JSONObject();
+        values = new JSONObject();
         WidgetsLoader.onModuleStateUpdated(this);
+        set("lastUpdated", System.currentTimeMillis());
         save();
-    }
-
-    private boolean validateField(Object a, Object b) {
-        if (a == null) return true;
-        if (b == null) return false;
-        return a.getClass().getName().equals(b.getClass().getName());
     }
 
     public void save() {

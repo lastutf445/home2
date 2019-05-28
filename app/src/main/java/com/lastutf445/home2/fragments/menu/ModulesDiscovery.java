@@ -242,6 +242,16 @@ public class ModulesDiscovery extends NavigationFragment {
     }
 
     @Override
+    public void onDestroy() {
+        try {
+            Sync.removeSyncProvider(Sync.PROVIDER_DISCOVERER);
+        } catch (Exception e) {
+            // lol
+        }
+        super.onDestroy();
+    }
+
+    @Override
     public void onResult(Bundle data) {
         if (data.containsKey("updated")) {
             toParent.putBoolean("reload", true);
@@ -343,7 +353,7 @@ public class ModulesDiscovery extends NavigationFragment {
 
     private static class Discoverer extends SyncProvider {
         private WeakReference<Handler> weakHandler;
-        private int attempts = 0;
+        private int timeout = 0;
         private boolean waiting;
 
         Discoverer(@NonNull Handler handler) throws JSONException {
@@ -359,17 +369,16 @@ public class ModulesDiscovery extends NavigationFragment {
         }
 
         public void setup() {
-            attempts = DataLoader.getInt("SyncDiscoveryAttempts", 3);
+            timeout = DataLoader.getInt("SyncDiscoveryTimeout", 3);
             waiting = false;
         }
 
         @Override
         public boolean isWaiting() {
             if (waiting) {
-                if (attempts-- <= 1) {
+                if (timeout-- <= 1) {
                     finish(0);
                 }
-
                 return true;
 
             } else {
@@ -385,7 +394,7 @@ public class ModulesDiscovery extends NavigationFragment {
                     finish(R.string.disconnected);
                     break;
                 case 1:
-                    if (attempts-- <= 1) {
+                    if (timeout-- <= 1) {
                         finish(0);
                     }
 

@@ -36,12 +36,13 @@ public class Sync {
     public static final int SYNC_MESSAGES = 1;
     public static final int SYNC_NOTIFICATIONS = 2;
     public static final int SYNC_PING = 3;
+    public static final int SYNC_USER_DATA = 4;
 
     public static final int PROVIDER_DASHBOARD = 0;
     public static final int PROVIDER_MESSAGES = -1;
     public static final int PROVIDER_NOTIFICATIONS = -2;
     public static final int PROVIDER_DISCOVERER = -3;
-    public static final int PROVIDER_NODE_IMPORT = -4;
+    public static final int PROVIDER_USER_DATA = -4;
     public static final int PROVIDER_MODULE_EDIT_REQUEST = -5;
     public static final int PROVIDER_GET_PUBLIC_KEY = -6;
     public static final int PROVIDER_CREDENTIALS = -7;
@@ -64,6 +65,8 @@ public class Sync {
     public static final int UNKNOWN_USER = 10;
     public static final int PONG = 11;
     public static final int OK = 12;
+    public static final int UNKNOWN_MODULE = 13;
+    public static final int UPDATE = 14;
 
     /*
     public static final int = ;

@@ -20,6 +20,7 @@ import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
+import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
 
 import java.lang.ref.WeakReference;
@@ -99,6 +100,16 @@ public class Dashboard extends NavigationFragment {
         });
 
         builder.create().show();
+    }
+
+    @Override
+    public void onDestroy() {
+        try {
+            Sync.removeSyncProvider(Sync.PROVIDER_DASHBOARD);
+        } catch (Exception e) {
+            // lol
+        }
+        super.onDestroy();
     }
 
     @Override
