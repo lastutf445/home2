@@ -32,11 +32,8 @@ public class Sync {
 
     public static final int DEFAULT_PORT = 44501;
 
-    public static final int SYNC_DASHBOARD = 0;
-    public static final int SYNC_MESSAGES = 1;
-    public static final int SYNC_NOTIFICATIONS = 2;
-    public static final int SYNC_PING = 3;
-    public static final int SYNC_USER_DATA = 4;
+    public static final int SYNC_PING = 0;
+    public static final int SYNC_USER_DATA = 1;
 
     public static final int PROVIDER_DASHBOARD = 0;
     public static final int PROVIDER_MESSAGES = -1;
@@ -67,18 +64,10 @@ public class Sync {
     public static final int OK = 12;
     public static final int UNKNOWN_MODULE = 13;
     public static final int UPDATE = 14;
+    public static final int SYNC_USER_DATA_EVENT = 15;
 
-    /*
-    public static final int = ;
-    public static final int = ;
-    public static final int = ;
-    public static final int = ;
-    public static final int = ;
-    public static final int = ;
-    */
-
-    private static ConnectivityManager connectivityManager = (ConnectivityManager) DataLoader.getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-    private static WifiManager wifiManager = (WifiManager) DataLoader.getAppContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+    private static ConnectivityManager connectivityManager;
+    private static WifiManager wifiManager;
 
     private static SparseArray<Runnable> triggers = new SparseArray<>();
     private static InetAddress broadcastAddress, local;
@@ -91,6 +80,9 @@ public class Sync {
     public static void init() {
         Log.d("LOGTAG", "sync initialization...");
 
+        connectivityManager = (ConnectivityManager) DataLoader.getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        wifiManager = (WifiManager) DataLoader.getAppContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
         NetworkRequest.Builder builder = new NetworkRequest.Builder();
         builder.addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR);
         builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
@@ -100,22 +92,22 @@ public class Sync {
                 new ConnectivityManager.NetworkCallback() {
                     @Override
                     public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
-                        updateNetworkState();
+                        updateNetworkState2();
                     }
 
                     @Override
                     public void onAvailable(Network network) {
-                        updateNetworkState();
+                        updateNetworkState2();
                     }
 
                     @Override
                     public void onUnavailable() {
-                        updateNetworkState();
+                        updateNetworkState2();
                     }
 
                     @Override
                     public void onLost(Network network) {
-                        updateNetworkState();
+                        updateNetworkState2();
                     }
                 }
         );
@@ -123,52 +115,29 @@ public class Sync {
         start();
     }
 
-    public static void updateNetworkState() {
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+    public static void updateNetworkState2() {
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        Network network = connectivityManager.getActiveNetwork();
+        NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
 
-        if (networkInfo != null && networkInfo.isConnected()) {
-            if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-                setNetworkState(1, null);
-                return;
-            }
+        if (capabilities == null) {
+            setNetworkState(0, null);
 
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+            setNetworkState(1, null);
+
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
             setNetworkState(2, wifiInfo.getBSSID());
 
-            try {
-                broadcastAddress = getBroadcastAddress();
-                local = getLocalAddress();
-
-            } catch (UnknownHostException e) {
-                broadcastAddress = InetAddress.getLoopbackAddress();
-                local = InetAddress.getLoopbackAddress();
-                e.printStackTrace();
-            }
-        }
-
-        else setNetworkState(0, null);
+        } else {
+            setNetworkState(0, null);
+        } // todo: ethernet or vpn?
 
         for (int i = 0; i < triggers.size(); ++i) {
             (new Thread(triggers.valueAt(i))).start();
         }
 
-        Log.d("LOGTAG", "onupdatenetworkstate triggers.size() = " + triggers.size());
-    }
-
-    private static InetAddress getLocalAddress() throws UnknownHostException {
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        return getInetAddress(wifiInfo.getIpAddress());
-    }
-
-    private static InetAddress getBroadcastAddress() throws UnknownHostException {
-        DhcpInfo dhcp = wifiManager.getDhcpInfo();
-
-        if(dhcp == null) {
-            return InetAddress.getByName("255.255.255.255");
-        }
-
-        int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
-        return getInetAddress(broadcast);
+        //Log.d("LOGTAG", "onupdatenetworkstate triggers.size() = " + triggers.size());
     }
 
     private static InetAddress getInetAddress(int address) throws UnknownHostException {
@@ -223,14 +192,6 @@ public class Sync {
         networkBSSID = bssid;
     }
 
-    public synchronized static InetAddress getBroadcast() {
-        return broadcastAddress;
-    }
-
-    public synchronized static InetAddress getLocal() {
-        return local;
-    }
-
     public synchronized static String getNetworkBSSID() {
         return networkBSSID;
     }
@@ -240,15 +201,11 @@ public class Sync {
     }
 
     public static SparseArray<SyncProvider> getSyncing() {
-        synchronized (syncing) {
-            return syncing;
-        }
+        return syncing;
     }
 
     public static HashSet<Integer> getRemoved() {
-        synchronized (removed) {
-            return removed;
-        }
+        return removed;
     }
 
     public static void addSyncProvider(@NonNull SyncProvider provider) {
@@ -297,47 +254,5 @@ public class Sync {
 
     public synchronized static void removeTrigger(int id) {
         if (triggers != null) triggers.remove(id);
-    }
-
-    @Nullable
-    public InetAddress getIP(@NonNull final String raw_ip) {
-        IPResolver resolver = new IPResolver(raw_ip);
-        Thread thread = new Thread(resolver);
-        thread.start();
-
-        try {
-            thread.join();
-            return resolver.getIP();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static class IPResolver implements Runnable {
-        private InetAddress ip = null;
-        private String raw_ip;
-
-        IPResolver(String raw_ip) {
-            this.raw_ip = raw_ip;
-        }
-
-        @Override
-        public void run() {
-            try {
-                // can take a lot of time for DNS lookup
-                ip = InetAddress.getByName(raw_ip);
-
-            } catch (UnknownHostException e) {
-                Log.d("LOGTAG", "unable to get ip from string: " + raw_ip);
-                e.printStackTrace();
-            }
-        }
-
-        @Nullable
-        public InetAddress getIP() {
-            return ip;
-        }
     }
 }

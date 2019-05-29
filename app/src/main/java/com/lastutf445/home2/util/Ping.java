@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
+import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
 
 import org.json.JSONException;
@@ -37,6 +38,11 @@ public class Ping extends SyncProvider {
 
     public void setHandler(@NonNull Handler handler) {
         this.weakHandler = new WeakReference<>(handler);
+    }
+
+    @Override
+    public boolean isWaiting() {
+        return !UserLoader.isAuthenticated();
     }
 
     @Override

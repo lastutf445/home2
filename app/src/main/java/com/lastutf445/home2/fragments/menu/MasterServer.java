@@ -149,7 +149,6 @@ public class MasterServer extends NavigationFragment {
 
     private void disable() {
         if (!DataLoader.getBoolean("MasterServer", false)) {
-            NotificationsLoader.makeToast("Feature has been already disabled", true);
             return;
         }
 
@@ -158,7 +157,6 @@ public class MasterServer extends NavigationFragment {
         reload();
 
         Sync.restart();
-        NotificationsLoader.makeToast("Disabled", true);
     }
 
     private void enable() {
@@ -171,7 +169,6 @@ public class MasterServer extends NavigationFragment {
                     NotificationsLoader.makeToast("Unexpected error", true);
                     break;
                 case 1:
-                    NotificationsLoader.makeToast("Success", true);
                     DataLoader.set("MasterServerAddress", InetAddress.getByName(raw_address).getHostAddress());
                     DataLoader.set("MasterServerPort", Integer.valueOf(raw_port));
                     DataLoader.set("MasterServer", true);
@@ -185,7 +182,6 @@ public class MasterServer extends NavigationFragment {
                 case 3:
                     NotificationsLoader.makeToast("Invalid port", true);
                     break;
-
             }
 
         } catch (Exception e) {

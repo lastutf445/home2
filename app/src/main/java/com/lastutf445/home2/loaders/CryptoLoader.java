@@ -57,6 +57,7 @@ public class CryptoLoader {
     }
 
     public static void clearRSA() {
+        Log.d("LOGTAG", "clearRSA");
         modulus = null;
         pubExp = null;
     }
@@ -70,9 +71,9 @@ public class CryptoLoader {
     }
 
     public static String createAESKey() {
-        SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[16];
-        random.nextBytes(bytes);
+        int bits = DataLoader.getInt("AESBytes", 16);
+        byte[] bytes = new byte[bits];
+        secureRandom.nextBytes(bytes);
         return Base64.encodeToString(bytes, Base64.NO_WRAP);
     }
 

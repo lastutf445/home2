@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:tint="#333"
+        android:tint="#666"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,24 +20,40 @@
 
     <TextView
         android:id="@+id/notificationTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="sans-serif-medium"
+        android:layout_marginEnd="16dp"
+        android:singleLine="true"
         android:text="@string/notificationsGenericTitle"
-        android:textColor="#555"
+        android:textColor="#333"
+        app:layout_constraintEnd_toStartOf="@+id/notificationTimestamp"
         app:layout_constraintStart_toEndOf="@+id/notificationIcon"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/notificationSubtitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
         android:text="@string/notificationsGenericSubtitle"
         android:textColor="#999"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/notificationTitle"
         app:layout_constraintTop_toBottomOf="@+id/notificationTitle" />
+
+    <TextView
+        android:id="@+id/notificationTimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/notificationTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/notificationTitle" />
 </android.support.constraint.ConstraintLayout>

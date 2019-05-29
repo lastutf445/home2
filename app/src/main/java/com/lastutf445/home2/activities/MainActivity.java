@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         Thread.currentThread().setPriority(8);
+        NotificationsLoader.init();
 
         FragmentsLoader.init(
                 getSupportFragmentManager(),
@@ -98,13 +99,13 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     default:
                         root = menu;
+                        break;
                 }
 
                 active = root;
 
                 FragmentsLoader.changeFragment(
-                        FragmentsLoader.getTop(root),
-                        false, false
+                        FragmentsLoader.getTop(root)
                 );
 
                 return true;

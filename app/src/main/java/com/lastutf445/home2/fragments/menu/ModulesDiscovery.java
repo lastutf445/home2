@@ -1,7 +1,9 @@
 package com.lastutf445.home2.fragments.menu;
 
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,6 +28,7 @@ import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
 import com.lastutf445.home2.util.SimpleAnimator;
@@ -75,13 +79,22 @@ public class ModulesDiscovery extends NavigationFragment {
             getActivity().onBackPressed();
         }
 
-        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.modulesDiscoverySwipeRefreshLayout);
+        final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.modulesDiscoverySwipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
 
         swipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
+                        if (!UserLoader.isAuthenticated()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                            NotificationsLoader.makeToast(
+                                    DataLoader.getAppResources().getString(R.string.authenticationRequired),
+                                    true
+                            );
+                            return;
+                        }
+
                         adapter.deleteAll();
                         discoverer.setup();
 
@@ -141,7 +154,7 @@ public class ModulesDiscovery extends NavigationFragment {
                 switch (v.getId()) {
                     case R.id.modulesDiscoveryOverride:
                         CheckBox checkBox = (CheckBox) ((ViewGroup) v).getChildAt(0);
-                        checkBox.setChecked(checkBox.isChecked());
+                        checkBox.setChecked(!checkBox.isChecked());
                         break;
                     case R.id.modulesDiscoveryMerge:
                         merge();
@@ -152,6 +165,11 @@ public class ModulesDiscovery extends NavigationFragment {
 
         view.findViewById(R.id.modulesDiscoveryOverride).setOnClickListener(e);
         view.findViewById(R.id.modulesDiscoveryMerge).setOnClickListener(e);
+
+        AppCompatButton button = view.findViewById(R.id.modulesDiscoveryMerge);
+        button.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#999999")));
+        button.setTextColor(Color.parseColor("#999999"));
+        button.setClickable(false);
 
         adapter = new ModulesAdapter(
                 getLayoutInflater(),
@@ -342,6 +360,10 @@ public class ModulesDiscovery extends NavigationFragment {
                                 public void onAnimationRepeat(Animation animation) {}
                             });
                         }
+
+                        AppCompatButton button = view.findViewById(R.id.modulesDiscoveryMerge);
+                        button.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#333333")));
+                        button.setTextColor(Color.parseColor("#333333"));
                     }
                 }
 
@@ -401,7 +423,7 @@ public class ModulesDiscovery extends NavigationFragment {
                     waiting = true;
                     break;
                 case 2:
-                    //finish(R.string.masterServerRequired);
+                    finish(R.string.masterServerRequired);
                     break;
                 case 3:
                     finish(R.string.disconnected);

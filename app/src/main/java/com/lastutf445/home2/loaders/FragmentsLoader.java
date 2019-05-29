@@ -43,9 +43,9 @@ public final class FragmentsLoader {
                 ft.setCustomAnimations(R.anim.fragment_hide, R.anim.fragment_hide);
             }
 
-            ft.hide(manager.getPrimaryNavigationFragment()).commitNow();
+            ft.hide(manager.getPrimaryNavigationFragment()).commitAllowingStateLoss();
+            ft = manager.beginTransaction();
         }
-
 
         if (animAdd) {
             ft.setCustomAnimations(R.anim.fragment_add, R.anim.fragment_add);
@@ -54,8 +54,21 @@ public final class FragmentsLoader {
             ft.setCustomAnimations(R.anim.fragment_restore, R.anim.fragment_restore);
         }
 
-        ft.show(fragment).commitNow();
-        ft.setPrimaryNavigationFragment(fragment).commitNow();
+        ft.show(fragment);
+        ft.setPrimaryNavigationFragment(fragment).commitAllowingStateLoss();
+    }
+
+    public static void changeFragment(NavigationFragment fragment) {
+        FragmentTransaction ft = manager.beginTransaction();
+
+        if (manager.getPrimaryNavigationFragment() != null) {
+            ft.setCustomAnimations(R.anim.fragment_erase, R.anim.fragment_erase);
+            ft.hide(manager.getPrimaryNavigationFragment()).commitAllowingStateLoss();
+            ft = manager.beginTransaction();
+        }
+
+        ft.show(fragment);
+        ft.setPrimaryNavigationFragment(fragment).commitAllowingStateLoss();
     }
 
     @Nullable
@@ -64,9 +77,11 @@ public final class FragmentsLoader {
     }
 
     private static void removeFragment(NavigationFragment fragment) {
-        manager.beginTransaction().setCustomAnimations(R.anim.fragment_remove, R.anim.fragment_remove).remove(fragment).commitNow();
+        manager.beginTransaction().setCustomAnimations(R.anim.fragment_remove, R.anim.fragment_remove).remove(fragment).detach(fragment).commitAllowingStateLoss();
         fragment.getParent().onResult(fragment.getResult());
         fragment.getParent().setChild(null);
+        fragment.setParent(null);
+        fragment.setChild(null);
     }
 
     public static NavigationFragment getTop(NavigationFragment base) {

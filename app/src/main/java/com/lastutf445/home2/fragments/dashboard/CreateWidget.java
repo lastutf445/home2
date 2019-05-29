@@ -176,7 +176,7 @@ public class CreateWidget extends NavigationFragment {
     public void onResult(Bundle data) {
         if (data == null) return;
 
-        Module module = ModulesLoader.getModule(data.getInt("updated", -1));
+        Module module = ModulesLoader.getModule(data.getInt("serial", -1));
 
         String serial = DataLoader.getAppResources().getString(R.string.undefined);
         String title = DataLoader.getAppResources().getString(R.string.unknownModule);

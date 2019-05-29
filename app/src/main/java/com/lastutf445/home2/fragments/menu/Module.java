@@ -26,6 +26,7 @@ import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
 import com.lastutf445.home2.util.Ping;
@@ -119,6 +120,13 @@ public class Module extends NavigationFragment {
 
     private void ping() {
         if (module.getIp() != null) {
+            if (!UserLoader.isAuthenticated()) {
+                ((TextView) view.findViewById(R.id.moduleConnection)).setText(
+                        DataLoader.getAppResources().getString(R.string.authenticationRequiredSmall)
+                );
+                return;
+            }
+
             try {
                 Ping ping = new Ping(module.getIp(), module.getPort());
                 ping.setHandler(updater);
@@ -155,7 +163,7 @@ public class Module extends NavigationFragment {
 
                 } else {
                     NotificationsLoader.makeToast("Success", true);
-                    toParent.putBoolean("updated", true);
+                    toParent.putInt("updated", pos);
                     module.setTitle(t);
                     return true;
                 }
@@ -170,6 +178,14 @@ public class Module extends NavigationFragment {
     }
 
     private void switchSync() {
+        if (!UserLoader.isAuthenticated()) {
+            NotificationsLoader.makeToast(
+                    DataLoader.getAppResources().getString(R.string.authenticationRequired),
+                    true
+            );
+            return;
+        }
+
         View button = view.findViewById(R.id.moduleSync);
         button.setClickable(false);
 

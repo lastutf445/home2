@@ -42,9 +42,8 @@ public class Sender {
     private static SparseArray<SyncProvider> local;
 
     private volatile static BufferedReader tIn;
-    private volatile static long tAlive;
+    private volatile static long tAlive, kAlive = 0;
 
-    private static DatagramSocket uSocket;
     private static PrintWriter tOut;
     private static Socket tSocket;
     private static Thread thread;
@@ -82,19 +81,6 @@ public class Sender {
                     long last = current.getLastAccess();
 
                     switch (current.getGroup()) {
-                        /*case Sync.SYNC_DASHBOARD:
-                            if (!DataLoader.getBoolean("SyncDashboard", false)) continue;
-                            if (last + DataLoader.getInt("SyncDashboardInterval", 5000) > time) continue;
-                            break;*/
-                        case Sync.SYNC_MESSAGES:
-                            if (!DataLoader.getBoolean("SyncMessages", false)) continue;
-                            if (last + DataLoader.getInt("SyncMessagesInterval", 500) > time) continue;
-                            break;
-                        case Sync.SYNC_NOTIFICATIONS:
-                            if (!DataLoader.getBoolean("SyncNotifications", false)) continue;
-                            if (last + DataLoader.getInt("SyncNotificationsInterval", 1000) > time) continue;
-                            continue; // sync notification should be disabled for now
-                            //break;
                         case Sync.SYNC_PING:
                             if (last + DataLoader.getInt("SyncPingInterval", 1000) > time) continue;
                             break;
@@ -111,13 +97,8 @@ public class Sender {
                         continue;
                     }
 
-                    if (current.getUseMasterConnectionOnly() && !isMasterConnectionUsed()) {
-                        Log.d("LOGTAG", "requires master-connection for " + current.getQuery().toString());
-                        current.onPostPublish(Sync.getNetworkState() == 0 ? 3 : 2);
-                        continue;
-                    }
-
                     current.updateLastAccess(time);
+                    kAlive = time + 15000;
                     accessed = true;
 
                     if (Sync.getNetworkState() == 2 && DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID())) {
@@ -125,7 +106,7 @@ public class Sender {
                             current.onPostPublish(mSend(current, time));
 
                         } else {
-                            current.onPostPublish(uSend(local.valueAt(i)));
+                            current.onPostPublish(2);
                         }
 
                     } else if (Sync.getNetworkState() != 0) {
@@ -142,6 +123,10 @@ public class Sender {
                 }
 
                 if (!accessed) {
+                    if (keepAliveNeeded()) {
+                        kSend();
+                    }
+
                     try {
                         Thread.sleep(250);
 
@@ -164,7 +149,7 @@ public class Sender {
         );
 
         if (status != 1) {
-            return (status != 2 && provider.getUseMasterConnectionOnly() ? 2 : 0);
+            return status;
         }
 
         return tSend(provider);
@@ -178,7 +163,7 @@ public class Sender {
         );
 
         if (status != 1) {
-            return (status != 2 && provider.getUseMasterConnectionOnly() ? 2 : 0);
+            return status;
         }
 
         return tSend(provider);
@@ -190,7 +175,7 @@ public class Sender {
                 JSONObject query = new JSONObject(provider.getQuery().toString());
                 JSONObject data = query.getJSONObject("data");
 
-                if (provider.getBrodcast()) {
+                if (provider.getBroadcast()) {
                     data.put("ip", "broadcast");
                     data.put("port", provider.getPort());
 
@@ -238,43 +223,15 @@ public class Sender {
         return 0;
     }
 
-    private synchronized static int uSend(SyncProvider provider) {
-        if (uSocket == null) {
-            try {
-                uSocket = new DatagramSocket();
+    private synchronized static void kSend() {
+        long time = System.currentTimeMillis();
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                publish(-1);
-                return 0;
-            }
-        }
+        if (tOut != null && !tOut.checkError() && time < tAlive) {
+            kAlive = time + 15000;
+            tOut.write("z\n");
+            tOut.flush();
 
-        InetAddress address = provider.getBrodcast() ? Sync.getBroadcast() : provider.getIP();
-        JSONObject query = provider.getQuery();
-        int port = provider.getPort();
-
-        publish(-2);
-
-        try {
-            JSONObject data = query.getJSONObject("data");
-            data.put("port", DataLoader.getInt("SyncClientPort", Sync.DEFAULT_PORT));
-            query.put("data", data);
-
-        } catch (JSONException e) {
-            //e.printStackTrace();
-        }
-
-        byte[] msg = query.toString().getBytes();
-        DatagramPacket p = new DatagramPacket(msg, msg.length, address, port);
-
-        try {
-            uSocket.send(p);
-            return 1;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return 0;
+            Log.d("LOGTAG", "kAlive: " + kAlive);
         }
     }
 
@@ -288,7 +245,7 @@ public class Sender {
             tSocket.connect(
                     new InetSocketAddress(ip, port),
                     // TODO: move to DataLoader
-                    1000
+                    3000
             );
 
             tSocket.setReuseAddress(true);
@@ -342,21 +299,11 @@ public class Sender {
         Receiver.settIn(tIn);
     }
 
-    public static boolean isMasterConnectionUsed() {
-        if (Sync.getNetworkState() == 0) {
-            return false;
-        }
-
-        else if (DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID())
-                && DataLoader.getBoolean("MasterServer", false)) {
-            return true;
-        }
-
-        else if (DataLoader.getBoolean("ExternalConnection", false)) {
-            return true;
-        }
-
-        return false;
+    public static boolean keepAliveNeeded() {
+        return (DataLoader.getBoolean("SyncDashboard", false) ||
+                DataLoader.getBoolean("SyncMessages", false) ||
+                DataLoader.getBoolean("SyncUserData", false)) &&
+                System.currentTimeMillis() > kAlive && UserLoader.isAuthenticated();
     }
 
     public static void subscribe(@NonNull Handler handler) {
@@ -373,9 +320,8 @@ public class Sender {
 
         /** SUBSCRIBER RETURN CODES
          *  -1 - Disconnected
-         *  -2 - Home network
-         *  -3 - Master Server
-         *  -4 - Idle
+         *  -2 - Master Server
+         *  -3 - Idle
          */
 
         if (subscriber == null) return;

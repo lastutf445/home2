@@ -55,7 +55,7 @@ public class Modules extends NavigationFragment {
         View.OnClickListener d = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toParent.putInt("updated", adapter.getModule(content.getChildLayoutPosition(v)).getSerial());
+                toParent.putInt("serial", adapter.getModule(content.getChildLayoutPosition(v)).getSerial());
                 getActivity().onBackPressed();
             }
         };
@@ -104,7 +104,6 @@ public class Modules extends NavigationFragment {
     public void onResult(Bundle data) {
         if (data.containsKey("deleted")) {
             delete(data.getInt("deleted"));
-            toParent.putInt("deleted", data.getInt("deleted"));
         }
         if (data.containsKey("reload")) {
             reload();

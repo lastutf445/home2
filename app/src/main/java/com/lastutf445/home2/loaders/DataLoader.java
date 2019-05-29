@@ -31,6 +31,7 @@ public class DataLoader {
         ops.put("Session", null);
         ops.put("Username", null);
         ops.put("BasicAccount", false);
+        ops.put("AESBytes", 16);
         // master server
         ops.put("MasterServer", false);
         ops.put("MasterServerAddress", null);
@@ -41,9 +42,10 @@ public class DataLoader {
         ops.put("ExternalAddress", null);
         ops.put("ExternalPort", null);
         // synchronization
-        ops.put("SyncDashboard", true);
+        ops.put("SyncDashboard", false);
         ops.put("SyncMessages", false);
-        ops.put("SyncNotifications", false);
+        //ops.put("SyncUserDataInterval", 5);
+        //ops.put("SyncModulesStateOnReconnect", true);
         ops.put("SyncHomeNetwork", null);
         // sync behavior
         ops.put("SyncClientPort", 44501);
@@ -51,9 +53,7 @@ public class DataLoader {
         ops.put("SyncPingInterval", 1000);
         ops.put("SyncDiscoveryPort", 44500);
         ops.put("SyncDiscoveryTimeout", 3);
-        ops.put("SyncDashboardInterval", 5000);
-        ops.put("SyncMessagesInterval", 500);
-        ops.put("SyncNotificationsInterval", 2000);
+        //ops.put("SyncMessagesInterval", 500);
     }
 
     public static void init(Context context, Resources resources) {

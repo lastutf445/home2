@@ -170,8 +170,41 @@
     <string name="pullToRefresh">Pull down to refresh</string>
     <string name="lockedFeature">This feature isn\'t  available in this version. Watch for updates.</string>
 
-    <string name="notificationsGenericTitle">Notification</string>
-    <string name="notificationsGenericSubtitle">Content</string>
+    <string name="notificationsGenericTitle">Sample notification</string>
+    <string name="notificationsGenericSubtitle">Some content</string>
+
+    <string name="notificationEncodeErrorTitle">Server doesn\'t understand you</string>
+    <string name="notificationEncodeErrorSubtitle">Make sure the Internet connection is good</string>
+
+    <string name="notificationTooManyTasksTitle">Server is under high load</string>
+    <string name="notificationTooManyTasksSubtitle">It won\'t accept anything until any task completed</string>
+
+    <string name="notificationMalformedPacketTitle">@string/notificationEncodeErrorTitle</string>
+    <string name="notificationMalformedPacketSubtitle">@string/notificationEncodeErrorSubtitle</string>
+
+    <string name="notificationUnexpectedErrorTitle">Unexpected error happened</string>
+    <string name="notificationUnexpectedErrorSubtitle">Please, retry later</string>
+
+    <string name="notificationUnauthorizedTitle">Server can\'t recognize you</string>
+    <string name="notificationUnauthorizedSubtitle">Try to authenticate yourself</string>
+
+    <string name="notificationEncryptErrorTitle">Encryption keys are broken</string>
+    <string name="notificationEncryptErrorSubtitle">Try to re-enter into account or create a new RSA key pair on server</string>
+
+    <string name="notificationMalformedAESTitle">Client key is broken</string>
+    <string name="notificationMalformedAESSubtitle">Try to re-enter into account</string>
+
+    <string name="notificationMalformedRSATitle">Server key is broken</string>
+    <string name="notificationMalformedRSASubtitle">Try to create a new RSA key pair on server</string>
+
+    <string name="notificationUnsupportedTitle">Unsupported operation</string>
+    <string name="notificationUnsupportedSubtitle">Probably, server should be updated to the latest version</string>
+
+    <string name="notificationTooManyClientsTitle">@string/notificationTooManyTasksTitle</string>
+    <string name="notificationTooManyClientsSubtitle">It won\'t accept any connection until someone disconnected</string>
+
+    <string name="notificationSyncUserDataTitle">Syncing user data</string>
+    <string name="notificationSyncUserDataSubtitle">Don\'t worry, it\'s an automatic process</string>
 
     <string name="IPAddress">IP address</string>
     <string name="port">Port</string>
@@ -182,10 +215,12 @@
     <string name="disconnectedSmall">disconnected</string>
     <string name="unexpectedErrorSmall">unexpected error</string>
     <string name="encryptionErrorSmall">encryption error</string>
+    <string name="authenticationRequiredSmall">auth required</string>
 
     <string name="success">Success</string>
     <string name="unexpectedError">Unexpected error</string>
     <string name="encryptionError">Encryption error</string>
+    <string name="authenticationRequired">Auth required</string>
     <string name="masterServerRequired">Master Server required</string>
 
     <string name="processing">Processing&#8230;</string>

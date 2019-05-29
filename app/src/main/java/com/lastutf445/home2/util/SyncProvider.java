@@ -30,10 +30,6 @@ public class SyncProvider {
         setData(data);
     }
 
-    public boolean getUseMasterConnectionOnly() {
-        return false;
-    }
-
     public boolean isWaiting() {
         return false;
     }
@@ -46,7 +42,7 @@ public class SyncProvider {
         this.group = group;
     }
 
-    public boolean getBrodcast() {
+    public boolean getBroadcast() {
         return broadcast;
     }
 

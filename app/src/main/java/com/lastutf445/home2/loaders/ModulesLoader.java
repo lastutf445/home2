@@ -265,11 +265,6 @@ public class ModulesLoader {
         }
 
         @Override
-        public boolean getUseMasterConnectionOnly() {
-            return true;
-        }
-
-        @Override
         public boolean isWaiting() {
             return serial == -1;
         }

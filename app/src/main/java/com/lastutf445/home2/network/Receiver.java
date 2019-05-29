@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Receiver {
 
-    private static DatagramSocket uSocket;
     private static BufferedReader tIn;
     private static Thread thread;
 
@@ -33,14 +32,11 @@ public class Receiver {
         @Override
         public void run() {
             while (!Thread.interrupted()) {
-                if (Sync.getNetworkState() == 2 && DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID()) && !DataLoader.getBoolean("MasterServer", false)) {
-                    uReceive();
-
-                } else if (Sync.getNetworkState() == 0) {
-                    sleep();
-
-                } else {
+                if (Sync.getNetworkState() != 0) {
                     tReceive();
+
+                } else  {
+                    sleep();
                 }
 
                 if (!Thread.interrupted()) sleep();
@@ -50,37 +46,16 @@ public class Receiver {
     };
 
     private static void tReceive() {
-        if (tIn == null) {
-            sleep();
-            return;
-        }
-
         try {
+            if (tIn == null || !tIn.ready()) {
+                sleep();
+                return;
+            }
+
             String s = tIn.readLine();
             onReceived(s.trim());
 
         } catch (Exception e) {
-            //Log.d("RECEIVER", e.getMessage());
-            sleep();
-        }
-    }
-
-    private static void uReceive() {
-        if (!setuSocket()) {
-            sleep();
-            return;
-        }
-
-        byte[] buf = new byte[1024];
-        DatagramPacket p = new DatagramPacket(buf, buf.length);
-
-        try {
-            uSocket.receive(p);
-
-            if (Sync.getLocal().equals(p.getAddress())) return;
-            onReceived(new String(buf).trim());
-
-        } catch (IOException e) {
             //Log.d("RECEIVER", e.getMessage());
             sleep();
         }
@@ -141,25 +116,6 @@ public class Receiver {
         }
     }
 
-    private static boolean setuSocket() {
-        if (uSocket != null && !uSocket.isClosed()) return true;
-
-        try {
-            uSocket = new DatagramSocket(
-                    DataLoader.getInt("SyncClientPort", Sync.DEFAULT_PORT)
-            );
-
-            uSocket.setSoTimeout(1000);
-
-            //uSocket.setReuseAddress(true);
-            return true;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public static void settIn(BufferedReader tIn) {
         Receiver.tIn = tIn;
     }
@@ -174,10 +130,6 @@ public class Receiver {
     }
 
     public synchronized static void stop() {
-        if (uSocket != null && !uSocket.isClosed()) {
-            uSocket.close();
-        }
-
         if (thread != null) {
             thread.interrupt();
 
@@ -189,7 +141,15 @@ public class Receiver {
             }
         }
 
-        uSocket = null;
+        if (tIn != null) {
+            try {
+                tIn.close();
+
+            } catch (IOException e) {
+                //e.printStackTrace();
+            }
+        }
+
         thread = null;
         tIn = null;
     }

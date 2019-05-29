@@ -5,13 +5,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,21 +16,24 @@ import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.containers.Event;
-import com.lastutf445.home2.containers.Module;
-import com.lastutf445.home2.containers.Widget;
 import com.lastutf445.home2.loaders.DataLoader;
-import com.lastutf445.home2.loaders.ModulesLoader;
-import com.lastutf445.home2.loaders.WidgetsLoader;
+import com.lastutf445.home2.loaders.NotificationsLoader;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
 
     private SparseArray<Event> data = new SparseArray<>();
     private ItemTouchHelper itemTouchHelper;
+    private SimpleDateFormat dateFormat;
     private LayoutInflater inflater;
     private RecyclerView content;
     private Activity activity;
 
     public NotificationsAdapter(LayoutInflater inflater, RecyclerView content, Activity activity) {
+        this.dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         this.inflater = inflater;
         this.activity = activity;
         this.content = content;
@@ -57,36 +57,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         @Override
         public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, final int i) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(
-                    activity
-            );
-
-            Resources res = DataLoader.getAppResources();
-            builder.setTitle(res.getString(R.string.widgetRemoveTitle));
-            builder.setMessage(res.getString(R.string.widgetRemoveMessages));
-
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    notifyItemChanged(viewHolder.getAdapterPosition());
-                }
-            });
-
-            builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    removeItem(viewHolder.getAdapterPosition());
-                }
-            });
-
-            builder.create().show();
+            NotificationsLoader.removeAt(viewHolder.getAdapterPosition());
         }
 
         @Override
@@ -101,14 +72,15 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView title, subtitle, timestamp;
         private ImageView icon;
-        private TextView title, subtitle;
 
         public ViewHolder(@NonNull View view) {
             super(view);
 
             title = view.findViewById(R.id.notificationTitle);
             subtitle = view.findViewById(R.id.notificationSubtitle);
+            timestamp = view.findViewById(R.id.notificationTimestamp);
             icon = view.findViewById(R.id.notificationIcon);
         }
 
@@ -116,6 +88,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             title.setText(ev.getTitle());
             subtitle.setText(ev.getSubtitle());
             icon.setImageResource(ev.getIcon());
+
+            timestamp.setText(
+                    dateFormat.format(new Date(ev.getTimestamp()))
+            );
         }
     }
 
@@ -124,19 +100,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         notifyDataSetChanged();
     }
 
-    private void removeItem(int pos) {
-        if (pos < 0 || pos >= data.size()) return;
-
-        synchronized (data) {
-            //data.removeAt(pos);
-            notifyItemRemoved(pos);
-        }
-    }
-
     @NonNull
     @Override
     public NotificationsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = inflater.inflate(R.layout.widgets_item, viewGroup, false);
+        View view = inflater.inflate(R.layout.notifications_item, viewGroup, false);
         return new NotificationsAdapter.ViewHolder(view);
     }
 

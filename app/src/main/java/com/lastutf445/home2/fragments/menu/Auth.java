@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.fragments.dialog.Processing;
+import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
@@ -102,6 +103,7 @@ public class Auth extends NavigationFragment {
         try {
             Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
             Sync.removeSyncProvider(Sync.PROVIDER_CREDENTIALS);
+            CryptoLoader.clearRSA();
         } catch (Exception e) {
             // lol
         }

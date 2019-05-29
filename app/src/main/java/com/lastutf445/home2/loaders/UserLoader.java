@@ -25,6 +25,17 @@ import java.util.UUID;
 
 public final class UserLoader {
 
+    private UserDataSync userDataSync;
+
+    public void init() {
+        try {
+            userDataSync = new UserDataSync();
+
+        } catch (JSONException e) {
+            //e.printStackTrace();
+        }
+    }
+
     public synchronized static boolean isAuthenticated() {
         return DataLoader.getString("Session", null) != null || DataLoader.getBoolean("BasicAccount", false);
     }
@@ -34,21 +45,6 @@ public final class UserLoader {
         Resources res = DataLoader.getAppResources();
         String name = DataLoader.getString("Username", res.getString(R.string.usernameError));
         return isAuthenticated() ? name : res.getString(R.string.notAuthenticated);
-    }
-
-    public synchronized static void setOnlineUsername(@NonNull String s, @NonNull Handler handler) {
-        try {
-            JSONObject data = new JSONObject();
-            data.put("Username", s);
-
-            Sync.addSyncProvider(
-                    new Editor(data, handler, false)
-            );
-
-        } catch (JSONException e) {
-            //e.printStackTrace();
-            handler.sendEmptyMessage(0);
-        }
     }
 
     public synchronized static void getPublicKey(@NonNull GetPublicKey.Callback callback) {
@@ -69,7 +65,7 @@ public final class UserLoader {
                 handler
         );
 
-        Sender.killConnection();
+        //Sender.killConnection();
 
         if (!CryptoLoader.isPublicKeyValid()) {
             handler.sendEmptyMessage(1);
@@ -96,8 +92,8 @@ public final class UserLoader {
         DataLoader.set("Username", null);
         DataLoader.set("BasicAccount", null);
         DataLoader.set("AESKey", null);
-        CryptoLoader.init();
         DataLoader.save();
+        CryptoLoader.init();
     }
 
     @Nullable
@@ -152,11 +148,6 @@ public final class UserLoader {
                 e.printStackTrace();
                 callback.onInvalid();
             }
-        }
-
-        @Override
-        public boolean getUseMasterConnectionOnly() {
-            return true;
         }
 
         interface Callback {
@@ -300,21 +291,7 @@ public final class UserLoader {
                 }
 
                 if (status == Sync.OK) {
-                    try {
-                        JSONObject user = data.getJSONObject("user");
-
-                        if (user != null && (DataLoader.getBoolean("SyncSettings", false) || user.has("SyncSettings") && user.getBoolean("SyncSettings"))) {
-                            DataLoader.merge(user);
-                        }
-
-                    } catch (JSONException e) {
-                        //e.printStackTrace();
-                    }
-
-                    if (DataLoader.get("Username") == null) {
-                        DataLoader.set("Username", DataLoader.getAppResources().getString(R.string.usernameDefault));
-                    }
-
+                    DataLoader.set("Username", DataLoader.getAppResources().getString(R.string.usernameDefault));
                     DataLoader.set("Session", data.getString("session"));
                     DataLoader.set("AESKey", key);
                     CryptoLoader.setAESKey(key);
@@ -338,85 +315,31 @@ public final class UserLoader {
         }
     }
 
-    private final static class Editor extends SyncProvider {
-        private WeakReference<Handler> weakHandler;
-        private boolean sessionParams;
+    private final static class UserDataSync extends SyncProvider {
+        private boolean syncTainted;
 
-        /**
-         * HANDLER RETURN CODES:
-         * 5 - done
-         */
-
-        public Editor(@NonNull JSONObject data, @NonNull Handler handler, boolean sessionParams) throws JSONException {
-            super(
-                    Sync.PROVIDER_EDITOR,
-                    sessionParams ? "editSession" : "editProfile",
-                    data,
-                    null,
-                    Sync.DEFAULT_PORT
-            );
-
-            weakHandler = new WeakReference<>(handler);
-            this.sessionParams = sessionParams;
+        public UserDataSync() throws JSONException {
+            super(Sync.SYNC_USER_DATA, "sync", new JSONObject(), null, 0);
         }
 
         @Override
-        public boolean getUseMasterConnectionOnly() {
-            return true;
+        public boolean isWaiting() {
+            return !syncTainted;
         }
 
         @Override
         public void onPostPublish(int statusCode) {
-            Handler handler = weakHandler.get();
-
-            if (handler != null) {
-                handler.sendEmptyMessage(statusCode);
-            }
+            super.onPostPublish(statusCode);
         }
 
         @Override
         public void onReceive(JSONObject data) {
-            Handler handler = weakHandler.get();
-            Sync.removeSyncProvider(Sync.PROVIDER_EDITOR);
-            //Log.d("LOGTAG", data.toString());
-
-            try {
-                String status = data.getString("status");
-                if (status != null && status.equals("ok")) {
-                    if (!sessionParams) {
-                        JSONObject user = query.getJSONObject("data");
-                        //Log.d("LOGTAG", user.toString());
-                        Iterator<String> it = user.keys();
-
-                        while (it.hasNext()) {
-                            String key = it.next();
-                            if (!DataLoader.has(key)) continue;
-
-                            Object a = DataLoader.get(key);
-                            Object b = user.get(key);
-
-                            if (a == null || (b != null && a.getClass().getName().equals(b.getClass().getName()))) {
-                                //Log.d("LOGTAG", "set: " + key);
-                                DataLoader.set(key, b);
-                            }
-                        }
-
-                        DataLoader.save();
-                    }
-
-                    handler.sendEmptyMessage(5);
-                    return;
-                }
-
-            } catch (JSONException e) {
-                //e.printStackTrace();
-            }
+            super.onReceive(data);
         }
-    }
 
-    private final static class UserDataSync extends SyncProvider {
-        public UserDataSync(int source, String act, JSONObject data, InetAddress ip, int port) throws JSONException {
-            super(source, act, data, ip, port);
+        @Override
+        public JSONObject getQuery() {
+            return super.getQuery();
         }
     }
 }

@@ -88,11 +88,8 @@ public class Dashboard extends NavigationFragment {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case -3:
-                    updateStatus2(R.string.masterServer);
-                    break;
                 case -2:
-                    updateStatus2(R.string.homeNetwork);
+                    updateStatus2(R.string.masterServer);
                     break;
                 case -1:
                     updateStatus2(R.string.idle);

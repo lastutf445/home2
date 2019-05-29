@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,29 +98,16 @@ public class Account extends NavigationFragment {
                     NotificationsLoader.makeToast("Invalid account name", true);
                     return false;
 
-                } else if (DataLoader.getBoolean("BasicAccount", false)) {
-                    renameOffline(t);
-                    return true;
-
                 } else {
-                    processing.setTitle(
-                            DataLoader.getAppResources().getString(R.string.waitingForAConnection)
-                    );
-
-                    processing.show(getActivity().getSupportFragmentManager(), "processing");
-                    UserLoader.setOnlineUsername(t, updater);
-                    return false;
+                    NotificationsLoader.makeToast("Success", true);
+                    DataLoader.set("Username", t);
+                    DataLoader.save();
+                    return true;
                 }
             }
         });
 
         FragmentsLoader.addChild(rename, Account.this);
-    }
-
-    private void renameOffline(@NonNull String s) {
-        NotificationsLoader.makeToast("Success", true);
-        DataLoader.set("Username", s);
-        DataLoader.save();
     }
 
     private void logout() {
@@ -159,16 +147,6 @@ public class Account extends NavigationFragment {
     @Override
     public void onResult(Bundle data) {
         reload();
-    }
-
-    @Override
-    public void onDestroy() {
-        try {
-            CryptoLoader.clearRSA();
-        } catch (Exception e) {
-            // lol
-        }
-        super.onDestroy();
     }
 
     private static class Updater extends Handler {

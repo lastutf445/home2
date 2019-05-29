@@ -146,7 +146,6 @@ public class ExternalAddress extends NavigationFragment {
 
     private void disable() {
         if (!DataLoader.getBoolean("ExternalConnection", false)) {
-            NotificationsLoader.makeToast("Feature has been already disabled", true);
             return;
         }
 
@@ -155,7 +154,6 @@ public class ExternalAddress extends NavigationFragment {
         reload();
 
         Sync.restart();
-        NotificationsLoader.makeToast("Disabled", true);
     }
 
     private void enable() {
@@ -168,7 +166,6 @@ public class ExternalAddress extends NavigationFragment {
                     NotificationsLoader.makeToast("Unexpected error", true);
                     break;
                 case 1:
-                    NotificationsLoader.makeToast("Success", true);
                     DataLoader.set("ExternalAddress", InetAddress.getByName(raw_address).getHostAddress());
                     DataLoader.set("ExternalPort", Integer.valueOf(raw_port));
                     DataLoader.set("ExternalConnection", true);
