@@ -59,15 +59,17 @@ public final class NotificationsLoader {
         }, lengthShort ? LENGTH_SHORT : LENGTH_LONG);
     }
 
-    public static void makeStatusNotification(int status) {
+    public static void makeStatusNotification(int status, boolean update) {
         if (notifications.get(status) != null) {
-            Event ev = notifications.get(status);
-            ev.setTimestamp(System.currentTimeMillis());
+            if (update) {
+                Event ev = notifications.get(status);
+                ev.setTimestamp(System.currentTimeMillis());
 
-            if (callback != null) {
-                callback.updatedAt(
-                        notifications.indexOfKey(status)
-                );
+                if (callback != null) {
+                    callback.updatedAt(
+                            notifications.indexOfKey(status)
+                    );
+                }
             }
             return;
         }
@@ -130,6 +132,20 @@ public final class NotificationsLoader {
                 subtitle = R.string.notificationSyncUserDataSubtitle;
                 icon = R.drawable.sync;
                 break;
+            case Sync.SYNC_MODULES_STATE_EVENT:
+                title = R.string.notificationSyncModulesStateTitle;
+                subtitle = R.string.notificationSyncModulesStateSubtitle;
+                icon = R.drawable.sync;
+                break;
+            case Sync.SYNC_USER_DATA_FAILED_EVENT:
+                title = R.string.notificationSyncUserDataTitle;
+                subtitle = R.string.notificationSyncUserDataFailedSubtitle;
+                icon = R.drawable.sync_disabled;
+                break;
+            case Sync.SYNC_MODULES_STATE_FAILED_EVENT:
+                title = R.string.notificationSyncModulesStateTitle;
+                subtitle = R.string.notificationSyncModulesStateFailedSubtitle;
+                icon = R.drawable.sync_disabled;
         }
 
         if (title == -1) {
@@ -199,7 +215,7 @@ public final class NotificationsLoader {
 
             try {
                 int status = data.getInt("status");
-                makeStatusNotification(status);
+                makeStatusNotification(status, true);
 
             } catch (JSONException e) {
                 //e.printStackTrace();

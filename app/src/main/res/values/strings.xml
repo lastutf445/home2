@@ -205,6 +205,11 @@
 
     <string name="notificationSyncUserDataTitle">Syncing user data</string>
     <string name="notificationSyncUserDataSubtitle">Don\'t worry, it\'s an automatic process</string>
+    <string name="notificationSyncUserDataFailedSubtitle">Operation failed, retry&#8230;</string>
+
+    <string name="notificationSyncModulesStateTitle">Syncing modules state</string>
+    <string name="notificationSyncModulesStateSubtitle">@string/notificationSyncUserDataSubtitle</string>
+    <string name="notificationSyncModulesStateFailedSubtitle">@string/notificationSyncUserDataFailedSubtitle</string>
 
     <string name="IPAddress">IP address</string>
     <string name="port">Port</string>

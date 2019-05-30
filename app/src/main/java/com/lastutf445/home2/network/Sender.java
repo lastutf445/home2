@@ -8,6 +8,7 @@ import android.util.SparseArray;
 import com.lastutf445.home2.fragments.menu.MasterServer;
 import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
+import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.util.SyncProvider;
@@ -85,7 +86,12 @@ public class Sender {
                             if (last + DataLoader.getInt("SyncPingInterval", 1000) > time) continue;
                             break;
                         case Sync.SYNC_USER_DATA:
-                            //just go for now
+                            //just that for now
+                            if (last + 1000 > time) continue;
+                            break;
+                        case Sync.SYNC_MODULES_STATE:
+                            //just that for now
+                            if (last + 1000 > time) continue;
                             break;
                         default:
                             if (last + 1000 > time) continue;
@@ -98,7 +104,7 @@ public class Sender {
                     }
 
                     current.updateLastAccess(time);
-                    kAlive = time + 15000;
+                    kAlive = time + 3000;
                     accessed = true;
 
                     if (Sync.getNetworkState() == 2 && DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID())) {
@@ -209,7 +215,7 @@ public class Sender {
                     query.put("data", data);
                 }
 
-                publish(-3);
+                publish(-2);
                 tOut.write(query.toString() + "\n");
                 tOut.flush();
                 return 1;
@@ -227,11 +233,45 @@ public class Sender {
         long time = System.currentTimeMillis();
 
         if (tOut != null && !tOut.checkError() && time < tAlive) {
-            kAlive = time + 15000;
+            kAlive = time + 3000;
             tOut.write("z\n");
+            publish(-2);
             tOut.flush();
 
-            Log.d("LOGTAG", "kAlive: " + kAlive);
+            //Log.d("LOGTAG", "kAlive: " + kAlive);
+        } else {
+            int status = 0;
+
+            if (Sync.getNetworkState() == 2 && DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID())) {
+                if (DataLoader.getBoolean("MasterServer", false)) {
+                    status = makeConnection(
+                            DataLoader.getString("MasterServerAddress", "false"),
+                            DataLoader.getInt("MasterServerPort", Sync.DEFAULT_PORT),
+                            time
+                    );
+                }
+
+            } else if (Sync.getNetworkState() != 0) {
+                if (DataLoader.getBoolean("ExternalConnection", false)) {
+                    status = makeConnection(
+                            DataLoader.getString("ExternalAddress", "false"),
+                            DataLoader.getInt("ExternalPort", Sync.DEFAULT_PORT),
+                            time
+                    );
+                }
+            }
+
+            if (status != 1) {
+                publish(-1);
+
+                try {
+                    Thread.sleep(1000);
+
+                } catch (InterruptedException e) {
+                    //e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                }
+            }
         }
     }
 
@@ -259,9 +299,10 @@ public class Sender {
             );
 
             tIn = new BufferedReader(new InputStreamReader(tSocket.getInputStream()));
-            tAlive = time + 5000;
+            ModulesLoader.onReconnect();
+            tAlive = time + 6000;
             connectReceiver();
-            publish(-3);
+            publish(-2);
             return 1;
 
         } catch (UnknownHostException e) {
@@ -293,6 +334,7 @@ public class Sender {
 
     public static void setTAlive(long tAlive) {
         Sender.tAlive = tAlive;
+        //Log.d("LOGTAG", "tAlive: " + tAlive);
     }
 
     public static void connectReceiver() {
@@ -316,12 +358,11 @@ public class Sender {
         }
     }
 
-    private static void publish(int code) {
+    public static void publish(int code) {
 
         /** SUBSCRIBER RETURN CODES
-         *  -1 - Disconnected
+         *  -1 - Idle
          *  -2 - Master Server
-         *  -3 - Idle
          */
 
         if (subscriber == null) return;
@@ -354,7 +395,6 @@ public class Sender {
         }
 
         killConnection();
-        publish(0);
         thread = null;
     }
 }

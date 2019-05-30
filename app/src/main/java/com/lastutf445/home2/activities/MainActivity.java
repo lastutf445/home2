@@ -36,6 +36,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        Sync.callTriggers();
+        super.onResume();
+    }
+
+    @Override
     protected void onDestroy() {
         try {
             DataLoader.kill();
@@ -55,6 +61,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         Thread.currentThread().setPriority(8);
+
+        DataLoader.init(
+                getApplicationContext(),
+                getResources()
+        );
+
+        CryptoLoader.init();
+        ModulesLoader.init();
+        Sync.init();
+
         NotificationsLoader.init();
 
         FragmentsLoader.init(

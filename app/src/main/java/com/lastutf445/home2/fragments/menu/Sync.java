@@ -163,7 +163,9 @@ public class Sync extends NavigationFragment {
     @Override
     public void onDestroy() {
         try {
-            com.lastutf445.home2.network.Sync.removeTrigger(0);
+            com.lastutf445.home2.network.Sync.removeTrigger(
+                    com.lastutf445.home2.network.Sync.MENU_SYNC_TRIGGER
+            );
             updater = null;
         } catch (Exception e) {
             // lol

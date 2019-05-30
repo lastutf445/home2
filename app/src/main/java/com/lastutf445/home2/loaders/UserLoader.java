@@ -291,6 +291,7 @@ public final class UserLoader {
                 }
 
                 if (status == Sync.OK) {
+                    NotificationsLoader.removeById(Sync.UNAUTHORIZED);
                     DataLoader.set("Username", DataLoader.getAppResources().getString(R.string.usernameDefault));
                     DataLoader.set("Session", data.getString("session"));
                     DataLoader.set("AESKey", key);

@@ -7,11 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.lastutf445.home2.R;
-import com.lastutf445.home2.loaders.CryptoLoader;
-import com.lastutf445.home2.loaders.DataLoader;
-import com.lastutf445.home2.loaders.FragmentsLoader;
-import com.lastutf445.home2.loaders.ModulesLoader;
-import com.lastutf445.home2.network.Sync;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -36,21 +31,12 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        handler.postDelayed(transition, 1500);
-
-        DataLoader.init(
-                getApplicationContext(),
-                getResources()
-        );
-
-        CryptoLoader.init();
-        ModulesLoader.init();
-        Sync.init();
+        handler.postDelayed(transition, 1000);
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         handler.removeCallbacks(transition);
+        super.onBackPressed();
     }
 }

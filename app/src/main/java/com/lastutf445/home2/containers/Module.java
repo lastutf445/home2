@@ -181,9 +181,9 @@ public class Module extends JSONPayload {
     public void wipe() {
         ops = new JSONObject();
         values = new JSONObject();
-        WidgetsLoader.onModuleStateUpdated(this);
-        set("lastUpdated", System.currentTimeMillis());
-        save();
+        //WidgetsLoader.onModuleStateUpdated(this);
+        //set("lastUpdated", System.currentTimeMillis());
+        //save();
     }
 
     public void save() {

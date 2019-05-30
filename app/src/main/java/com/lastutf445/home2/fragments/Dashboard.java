@@ -51,17 +51,6 @@ public class Dashboard extends NavigationFragment {
     }
 
     @Override
-    public void onDestroy() {
-        try {
-            Sync.removeTrigger(Sync.FRAGMENT_DASHBOARD_TRIGGER);
-            Sender.unsubscribe();
-        } catch (Exception e) {
-            // lol
-        }
-        super.onDestroy();
-    }
-
-    @Override
     public void onResume() {
         Sync.addTrigger(
                 Sync.FRAGMENT_DASHBOARD_TRIGGER,
@@ -72,10 +61,20 @@ public class Dashboard extends NavigationFragment {
                     }
                 }
         );
-
         updater.sendEmptyMessage(0);
         Sender.subscribe(updater);
         super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        try {
+            Sync.removeTrigger(Sync.FRAGMENT_DASHBOARD_TRIGGER);
+            Sender.unsubscribe();
+        } catch (Exception e) {
+            // lol
+        }
+        super.onDestroy();
     }
 
     private static class Updater extends Handler {

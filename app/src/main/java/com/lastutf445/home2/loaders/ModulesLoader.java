@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.internal.Experimental;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -48,6 +49,7 @@ public class ModulesLoader {
     private static final int MODULES_SYNCING = 7;
 
     private static final SparseArray<Module> modules = new SparseArray<>();
+    private static SyncModulesStateRequest syncModulesState;
     private static ModuleUpdater updater;
 
     public static void init() {
@@ -55,7 +57,8 @@ public class ModulesLoader {
 
         try {
             updater = new ModuleUpdater();
-            //updater.setGroup(Sync.SYNC_DASHBOARD);
+            syncModulesState = new SyncModulesStateRequest();
+            Sync.addSyncProvider(syncModulesState);
             Sync.addSyncProvider(updater);
 
         } catch (JSONException e) {
@@ -116,12 +119,15 @@ public class ModulesLoader {
         if (modules.get(module.getSerial()) != null && !override) return false;
 
         Module oldModule = modules.get(module.getSerial());
+        int syncing = 0;
 
         if (oldModule != null) {
+            syncing = oldModule.getSyncing() ? 1 : 0;
             removeModule(oldModule);
         }
 
         module.set("lastUpdated", System.currentTimeMillis());
+        module.setSyncing(syncing > 0);
 
         SQLiteDatabase db = DataLoader.getDb();
         ContentValues cv = new ContentValues();
@@ -133,7 +139,7 @@ public class ModulesLoader {
         cv.put("title", module.getTitle());
         cv.put("ops", module.getOps().toString());
         cv.put("vals", module.getVals().toString());
-        cv.put("syncing", 0);
+        cv.put("syncing", syncing);
 
         try {
             db.replaceOrThrow("modules", null, cv);
@@ -145,6 +151,7 @@ public class ModulesLoader {
 
         modules.put(module.getSerial(), module);
         WidgetsLoader.onModuleLinkChanged(module, true);
+        addToSyncModulesStateQueue(module);
         return true;
     }
 
@@ -175,18 +182,13 @@ public class ModulesLoader {
 
     public static void removeModule(@NonNull Module module) {
         SQLiteDatabase db = DataLoader.getDb();
+        module.wipe();
 
         String[] args = {
                 String.valueOf(module.getSerial())
         };
 
         db.delete("modules", "serial=?", args);
-/*
-        if (module.getSyncing()) {
-            onModuleSyncingChanged(module, false);
-        }
-*/
-        module.wipe();
         WidgetsLoader.onModuleLinkChanged(module, false);
         modules.remove(module.getSerial());
     }
@@ -195,6 +197,8 @@ public class ModulesLoader {
         if (updater != null) {
             updater.setHandler(handler);
             updater.onModuleSyncingChanged(module, syncing);
+        } else {
+            Log.d("LOGTAG", "onModuleSyncingChanged error: updater is null");
         }
     }
 
@@ -221,11 +225,38 @@ public class ModulesLoader {
         }
     }
 
+    public static void setSyncing(JSONArray request, JSONArray subs) {
+        synchronized (modules) {
+            for (int i = 0; i < request.length(); ++i) {
+                try {
+                    Module module = modules.get(request.getInt(i));
+
+                    if (module != null) {
+                        module.setSyncing(false);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            for (int i = 0; i < subs.length(); ++i) {
+                try {
+                    Module module = modules.get(subs.getInt(i));
+
+                    if (module != null) {
+                        module.setSyncing(true);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public static boolean configure(int id, @NonNull Module module, @Nullable NavigationFragment base) {
         if (id != 1 && id != 2 || base == null) return false;
         Configure child = null;
-
-        // todo: some work
 
         switch (module.getType()) {
             case "temperature":
@@ -242,12 +273,42 @@ public class ModulesLoader {
                 break;
         }
 
-        if (child == null) return false;
+        if (child == null) {
+            NotificationsLoader.makeToast(
+                    DataLoader.getAppResources().getString(R.string.notificationUnsupportedTitle),
+                    true
+            );
+        }
 
         child.setModule(module);
         child.setConnectorId(id);
         FragmentsLoader.addChild(child, base);
         return true;
+    }
+
+    public static void onReconnect() {
+        addToSyncModulesStateQueue(modules);
+    }
+
+    public static void addToSyncModulesStateQueue(SparseArray<Module> data) {
+        if (syncModulesState != null) {
+            synchronized (syncModulesState.queue) {
+                for (int i = 0; i < data.size(); ++i) {
+                    Module module = data.valueAt(i);
+                    if (module != null) {
+                        syncModulesState.queue.add(module.getSerial());
+                    }
+                }
+            }
+        }
+    }
+
+    public static void addToSyncModulesStateQueue(@NonNull Module module) {
+        if (syncModulesState != null) {
+            synchronized (syncModulesState.queue) {
+                syncModulesState.queue.add(module.getSerial());
+            }
+        }
     }
 
     private static class ModuleUpdater extends SyncProvider {
@@ -273,6 +334,7 @@ public class ModulesLoader {
             subscribe = syncing;
             serial = module.getSerial();
             syncTainted = true;
+            Log.d("LOGTAG", "onModulesSyncingChanged: serial set");
         }
 
         @Override
@@ -322,6 +384,25 @@ public class ModulesLoader {
                     serial = -1;
                     return;
                 }
+
+                if (status == Sync.SYNC_SUBSCRIBE) {
+                    JSONObject msg = data.getJSONObject("msg");
+                    Module module = modules.get(msg.getInt("serial"));
+                    if (module != null) {
+                        module.setSyncing(true);
+                    }
+                    return;
+                }
+
+                if (status == Sync.SYNC_UNSUBSCRIBE) {
+                    JSONObject msg = data.getJSONObject("msg");
+                    Module module = modules.get(msg.getInt("serial"));
+                    if (module != null) {
+                        module.setSyncing(false);
+                    }
+                    return;
+                }
+
                 switch (status) {
                     case Sync.ENCODE_ERROR:
                     case Sync.ENCRYPT_ERROR:
@@ -375,6 +456,7 @@ public class ModulesLoader {
 
         @Override
         public JSONObject getQuery() {
+            Log.d("LOGTAG", "onModulesSyncingChanged: get query");
             if (syncTainted) {
                 try {
                     if (subscribe) {
@@ -386,10 +468,106 @@ public class ModulesLoader {
                     JSONObject data = new JSONObject();
                     data.put("serial", serial);
                     query.put("data", data);
+                    syncTainted = false;
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Log.d("LOGTAG", "unknown error: ML subscribers list");
+                }
+            }
+
+            return query;
+        }
+    }
+
+    private static class SyncModulesStateRequest extends SyncProvider {
+        private final HashSet<Integer> queue = new HashSet<>();
+        private final JSONArray request = new JSONArray();
+        private long lastSync;
+
+        public SyncModulesStateRequest() throws JSONException {
+            super(
+                    Sync.PROVIDER_SYNC_MODULES_STATE,
+                    "syncModulesState",
+                    new JSONObject(),
+                    null,
+                    0
+            );
+
+            lastSync = DataLoader.getInt("lastSyncModules", 0);
+            group = Sync.SYNC_MODULES_STATE;
+        }
+
+        @Override
+        public boolean isWaiting() {
+            return queue.isEmpty();
+        }
+
+        @Override
+        public void onReceive(JSONObject data) {
+            try {
+                int status = data.getInt("status");
+
+                if (status == Sync.OK) {
+                    long currentTime = System.currentTimeMillis();
+                    lastSync = Math.max(data.getLong("lastUpdated"), lastSync);
+                    setSyncing(request, data.getJSONArray("subs"));
+
+                    synchronized (queue) {
+                        for (int i = 0; i < request.length(); ++i) {
+                            queue.remove(request.getInt(i));
+                        }
+
+                        if (queue.isEmpty()) {
+                            NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_EVENT);
+                            NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_FAILED_EVENT);
+                        }
+                    }
+
+                    DataLoader.set("lastSyncModules", Math.min(currentTime, lastSync));
+                    DataLoader.save();
+                    return;
+                }
+
+                switch (status) {
+                    case Sync.ENCODE_ERROR:
+                    case Sync.ENCRYPT_ERROR:
+                    case Sync.MALFORMED_PACKET:
+                    case Sync.UNEXPECTED_ERROR:
+                        Log.d("LOGTAG", "syncModulesState error: " + status);
+                        NotificationsLoader.makeStatusNotification(
+                                Sync.SYNC_MODULES_STATE_FAILED_EVENT,
+                                true
+                        );
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                NotificationsLoader.makeStatusNotification(
+                        Sync.SYNC_MODULES_STATE_FAILED_EVENT,
+                        true
+                );
+            }
+        }
+
+        @Override
+        public JSONObject getQuery() {
+            NotificationsLoader.makeStatusNotification(Sync.SYNC_MODULES_STATE_EVENT, false);
+            if (request.length() == 0 && queue.size() > 0) {
+                try {
+                    synchronized (queue) {
+                        for (Integer serial: queue) {
+                            request.put(serial);
+                        }
+                    }
+
+                    JSONObject data = new JSONObject();
+                    data.put("lastSync", lastSync);
+                    data.put("serials", request);
+                    query.put("data", data);
+
+                } catch (JSONException e) {
+                    //e.printStackTrace();
                 }
             }
 

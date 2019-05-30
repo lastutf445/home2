@@ -71,7 +71,7 @@ public class Receiver {
     }
 
     private static void onReceived(final String result) {
-        Sender.setTAlive(System.currentTimeMillis() + 5000);
+        Sender.setTAlive(System.currentTimeMillis() + 6000);
         //Log.d("LOGTAG","result: " + result);
 
         if (result.equals("z")) {

@@ -34,6 +34,7 @@ public class Sync {
 
     public static final int SYNC_PING = 0;
     public static final int SYNC_USER_DATA = 1;
+    public static final int SYNC_MODULES_STATE = 2;
 
     public static final int PROVIDER_DASHBOARD = 0;
     public static final int PROVIDER_MESSAGES = -1;
@@ -45,6 +46,7 @@ public class Sync {
     public static final int PROVIDER_CREDENTIALS = -7;
     public static final int PROVIDER_EDITOR = -8;
     public static final int PROVIDER_PING = -9;
+    public static final int PROVIDER_SYNC_MODULES_STATE = -10;
 
     public static final int FRAGMENT_DASHBOARD_TRIGGER = 0;
     public static final int MENU_SYNC_TRIGGER = 1;
@@ -65,12 +67,16 @@ public class Sync {
     public static final int UNKNOWN_MODULE = 13;
     public static final int UPDATE = 14;
     public static final int SYNC_USER_DATA_EVENT = 15;
+    public static final int SYNC_MODULES_STATE_EVENT = 16;
+    public static final int SYNC_USER_DATA_FAILED_EVENT = 17;
+    public static final int SYNC_MODULES_STATE_FAILED_EVENT = 18;
+    public static final int SYNC_SUBSCRIBE = 19;
+    public static final int SYNC_UNSUBSCRIBE = 20;
 
     private static ConnectivityManager connectivityManager;
     private static WifiManager wifiManager;
 
     private static SparseArray<Runnable> triggers = new SparseArray<>();
-    private static InetAddress broadcastAddress, local;
     private static String networkBSSID = null;
     private static int networkState = 0;
 
@@ -122,22 +128,29 @@ public class Sync {
 
         if (capabilities == null) {
             setNetworkState(0, null);
+            Sender.publish(-1);
 
         } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
             setNetworkState(1, null);
+            Sender.publish(-2);
 
         } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
             setNetworkState(2, wifiInfo.getBSSID());
+            Sender.publish(-2);
 
         } else {
             setNetworkState(0, null);
+            Sender.publish(-1);
         } // todo: ethernet or vpn?
 
+        callTriggers();
+    }
+
+    public static void callTriggers() {
+        //Log.d("LOGTAG", "onupdatenetworkstate triggers.size() = " + triggers.size());
         for (int i = 0; i < triggers.size(); ++i) {
             (new Thread(triggers.valueAt(i))).start();
         }
-
-        //Log.d("LOGTAG", "onupdatenetworkstate triggers.size() = " + triggers.size());
     }
 
     private static InetAddress getInetAddress(int address) throws UnknownHostException {
