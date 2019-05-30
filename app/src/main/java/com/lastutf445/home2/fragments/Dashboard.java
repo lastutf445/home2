@@ -2,13 +2,10 @@ package com.lastutf445.home2.fragments;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +85,9 @@ public class Dashboard extends NavigationFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case -2:
-                    updateStatus2(R.string.masterServer);
+                    if (Sync.getNetworkState() != 0) {
+                        updateStatus2(R.string.masterServer);
+                    }
                     break;
                 case -1:
                     updateStatus2(R.string.idle);
@@ -106,9 +105,12 @@ public class Dashboard extends NavigationFragment {
             View view = weakView.get();
             if (view == null) return;
 
-            ((TextView) view.findViewById(R.id.dashboardStatus2)).setText(
-                    DataLoader.getAppResources().getString(statusId)
-            );
+            TextView text = view.findViewById(R.id.dashboardStatus2);
+            String newStatus = DataLoader.getAppResources().getString(statusId);
+
+            if (!newStatus.equals(text.getText().toString())) {
+                text.setText(newStatus);
+            }
         }
 
         private void updateNetworkState() {
@@ -130,9 +132,12 @@ public class Dashboard extends NavigationFragment {
                     break;
             }
 
-            ((TextView) view.findViewById(R.id.dashboardStatus)).setText(
-                    DataLoader.getAppResources().getString(title)
-            );
+            TextView text = view.findViewById(R.id.dashboardStatus);
+            String newStatus = DataLoader.getAppResources().getString(title);
+
+            if (!newStatus.equals(text.getText().toString())) {
+                text.setText(newStatus);
+            }
         }
 
         private void updateWidget(Bundle data) {

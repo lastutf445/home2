@@ -1,6 +1,5 @@
 package com.lastutf445.home2.util;
 
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;

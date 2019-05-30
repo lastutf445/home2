@@ -2,30 +2,23 @@ package com.lastutf445.home2.network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.DhcpInfo;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
-import android.widget.EditText;
 
-import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
-import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.util.SyncProvider;
 
 import org.json.JSONObject;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class Sync {
@@ -47,6 +40,7 @@ public class Sync {
     public static final int PROVIDER_EDITOR = -8;
     public static final int PROVIDER_PING = -9;
     public static final int PROVIDER_SYNC_MODULES_STATE = -10;
+    public static final int PROVIDER_HELLO = -11;
 
     public static final int FRAGMENT_DASHBOARD_TRIGGER = 0;
     public static final int MENU_SYNC_TRIGGER = 1;
@@ -118,6 +112,7 @@ public class Sync {
                 }
         );
 
+        Sender.init();
         start();
     }
 
@@ -132,11 +127,9 @@ public class Sync {
 
         } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
             setNetworkState(1, null);
-            Sender.publish(-2);
 
         } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
             setNetworkState(2, wifiInfo.getBSSID());
-            Sender.publish(-2);
 
         } else {
             setNetworkState(0, null);

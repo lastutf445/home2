@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.CheckBox;
 import android.widget.Switch;
@@ -21,7 +20,6 @@ import com.lastutf445.home2.loaders.MessagesLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.network.Receiver;
-import com.lastutf445.home2.network.Sender;
 import com.lastutf445.home2.util.NavigationFragment;
 import com.lastutf445.home2.util.SimpleAnimator;
 

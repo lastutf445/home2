@@ -69,9 +69,6 @@ public class MainActivity extends AppCompatActivity {
 
         CryptoLoader.init();
         ModulesLoader.init();
-        Sync.init();
-
-        NotificationsLoader.init();
 
         FragmentsLoader.init(
                 getSupportFragmentManager(),
@@ -93,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         FragmentsLoader.addFragment(menu);
 
         final BottomNavigationView nav = findViewById(R.id.nav);
+        NotificationsLoader.init(nav);
+        Sync.init();
 
         BottomNavigationView.OnNavigationItemSelectedListener c = new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

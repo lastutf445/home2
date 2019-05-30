@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.lastutf445.home2.R;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -216,10 +214,18 @@ public class DataLoader {
         }
     }
 
+    public static long getLong(String option, long std) {
+        synchronized (ops) {
+            String res = getString(option, null);
+            return res != null ? Long.valueOf(res) : std;
+        }
+    }
+
     public static boolean getBoolean(String option, boolean std) {
         synchronized (ops) {
             String res = getString(option, null);
             return res != null ? Boolean.valueOf(res) : std;
         }
     }
+
 }

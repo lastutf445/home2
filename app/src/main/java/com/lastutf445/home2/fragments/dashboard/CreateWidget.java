@@ -25,8 +25,6 @@ import com.lastutf445.home2.util.NavigationFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 public class CreateWidget extends NavigationFragment {
 
     private LayoutInflater inflater;

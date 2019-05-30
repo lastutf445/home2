@@ -2,7 +2,6 @@ package com.lastutf445.home2.fragments.menu;
 
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,7 +13,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -364,6 +362,7 @@ public class ModulesDiscovery extends NavigationFragment {
                         AppCompatButton button = view.findViewById(R.id.modulesDiscoveryMerge);
                         button.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#333333")));
                         button.setTextColor(Color.parseColor("#333333"));
+                        button.setClickable(true);
                     }
                 }
 

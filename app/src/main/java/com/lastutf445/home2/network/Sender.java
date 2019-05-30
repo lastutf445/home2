@@ -5,11 +5,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.lastutf445.home2.fragments.menu.MasterServer;
 import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
-import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.util.SyncProvider;
 
@@ -23,17 +21,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
-import java.math.BigInteger;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Iterator;
 
 public class Sender {
 
@@ -41,6 +32,7 @@ public class Sender {
     private static final HashSet<Integer> removed = Sync.getRemoved();
     private volatile static WeakReference<Handler> subscriber;
     private static SparseArray<SyncProvider> local;
+    private static Hello hello;
 
     private volatile static BufferedReader tIn;
     private volatile static long tAlive, kAlive = 0;
@@ -57,6 +49,16 @@ public class Sender {
      *  3 - No Internet connection
      *  4 - Encryption error
      */
+
+    public static void init() {
+        try {
+            hello = new Hello();
+            syncing.put(hello.getSource(), hello);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static Runnable task = new Runnable() {
         @Override
@@ -208,12 +210,13 @@ public class Sender {
                         return 4;
                     }
 
-                    query.put("session", UserLoader.getSession());
                     query.put("data", encrypted);
 
                 } else {
                     query.put("data", data);
                 }
+
+                query.put("session", UserLoader.getSession());
 
                 publish(-2);
                 tOut.write(query.toString() + "\n");
@@ -235,7 +238,7 @@ public class Sender {
         if (tOut != null && !tOut.checkError() && time < tAlive) {
             kAlive = time + 3000;
             tOut.write("z\n");
-            publish(-2);
+            //publish(-2);
             tOut.flush();
 
             //Log.d("LOGTAG", "kAlive: " + kAlive);
@@ -271,6 +274,8 @@ public class Sender {
                     //e.printStackTrace();
                     Thread.currentThread().interrupt();
                 }
+            } else if (hello != null) {
+                hello.isWaiting = false;
             }
         }
     }
@@ -300,9 +305,10 @@ public class Sender {
 
             tIn = new BufferedReader(new InputStreamReader(tSocket.getInputStream()));
             ModulesLoader.onReconnect();
+
             tAlive = time + 6000;
             connectReceiver();
-            publish(-2);
+            //publish(-2);
             return 1;
 
         } catch (UnknownHostException e) {
@@ -334,6 +340,7 @@ public class Sender {
 
     public static void setTAlive(long tAlive) {
         Sender.tAlive = tAlive;
+        publish(-2);
         //Log.d("LOGTAG", "tAlive: " + tAlive);
     }
 
@@ -396,5 +403,35 @@ public class Sender {
 
         killConnection();
         thread = null;
+    }
+
+    private static class Hello extends SyncProvider {
+        private boolean isWaiting = true;
+
+        public Hello() throws JSONException {
+            super(
+                    Sync.PROVIDER_HELLO,
+                    "hello",
+                    new JSONObject(),
+                    null,
+                    0
+            );
+        }
+
+        @Override
+        public boolean isWaiting() {
+            if (isWaiting) {
+                return true;
+
+            } else {
+                isWaiting = true;
+                return false;
+            }
+        }
+
+        @Override
+        public boolean getEncrypted() {
+            return false;
+        }
     }
 }

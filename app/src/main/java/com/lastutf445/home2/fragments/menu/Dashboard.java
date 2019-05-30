@@ -4,11 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +17,7 @@ import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
-import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
-
-import java.lang.ref.WeakReference;
 
 public class Dashboard extends NavigationFragment {
 
@@ -105,7 +99,7 @@ public class Dashboard extends NavigationFragment {
     @Override
     public void onDestroy() {
         try {
-            Sync.removeSyncProvider(Sync.PROVIDER_DASHBOARD);
+            //Sync.removeSyncProvider(Sync.PROVIDER_DASHBOARD);
         } catch (Exception e) {
             // lol
         }

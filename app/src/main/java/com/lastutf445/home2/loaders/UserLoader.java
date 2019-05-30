@@ -1,17 +1,11 @@
 package com.lastutf445.home2.loaders;
 
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Base64;
-import android.util.Log;
 
 import com.lastutf445.home2.R;
-import com.lastutf445.home2.fragments.menu.Auth;
-import com.lastutf445.home2.network.Sender;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.SyncProvider;
 
@@ -19,9 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.net.InetAddress;
-import java.util.Iterator;
-import java.util.UUID;
 
 public final class UserLoader {
 
@@ -318,9 +309,12 @@ public final class UserLoader {
 
     private final static class UserDataSync extends SyncProvider {
         private boolean syncTainted;
+        private long lastSync;
 
         public UserDataSync() throws JSONException {
             super(Sync.SYNC_USER_DATA, "sync", new JSONObject(), null, 0);
+            lastSync = DataLoader.getLong("lastSyncUser", 0);
+            group = Sync.SYNC_USER_DATA;
         }
 
         @Override

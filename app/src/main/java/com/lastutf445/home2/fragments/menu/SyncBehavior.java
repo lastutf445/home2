@@ -14,12 +14,8 @@ import android.widget.TextView;
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
-import com.lastutf445.home2.network.Receiver;
-import com.lastutf445.home2.network.Sender;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
-
-import java.net.InetAddress;
 
 public class SyncBehavior extends NavigationFragment {
 

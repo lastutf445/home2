@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
-import com.lastutf445.home2.network.Sender;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.GlobalPing;
 import com.lastutf445.home2.util.NavigationFragment;
@@ -25,7 +24,6 @@ import com.lastutf445.home2.util.SimpleAnimator;
 
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class ExternalAddress extends NavigationFragment {
 

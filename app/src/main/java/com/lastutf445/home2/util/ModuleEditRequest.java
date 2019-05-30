@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.net.InetAddress;
 
 public class ModuleEditRequest extends SyncProvider {
 

@@ -1,11 +1,13 @@
 package com.lastutf445.home2.loaders;
 
-import android.content.res.Resources;
+import android.support.design.widget.BottomNavigationView;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.containers.Event;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.SyncProvider;
@@ -13,6 +15,7 @@ import com.lastutf445.home2.util.SyncProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,12 +24,15 @@ public final class NotificationsLoader {
 
     private static HashSet<Integer> toasts = new HashSet<>();
     private static SparseArray<Event> notifications = new SparseArray<>();
+    private static WeakReference<BottomNavigationView> weakBottomNav;
     private static Callback callback;
 
     private static final int LENGTH_SHORT = 2000;
     private static final int LENGTH_LONG = 3500;
 
-    public static void init() {
+    public static void init(BottomNavigationView bottomNav) {
+        weakBottomNav = new WeakReference<>(bottomNav);
+
         try {
             Notifier notifier = new Notifier();
             Sync.addSyncProvider(notifier);
@@ -42,6 +48,27 @@ public final class NotificationsLoader {
 
     public static void setCallback(Callback callback) {
         NotificationsLoader.callback = callback;
+    }
+
+    private static void attract() {
+        BottomNavigationView nav = weakBottomNav.get();
+        if (nav == null) return;
+
+        final MenuItem navNotificationItem = nav.getMenu().findItem(R.id.nav_notifications);
+        MainActivity mainActivity = MainActivity.getInstance();
+
+        if (mainActivity != null) {
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    navNotificationItem.setIcon(
+                        notifications.size() == 0 ? R.drawable.notifications_none :
+                                R.drawable.notifications
+
+                    );
+                }
+            });
+        }
     }
 
     public static void makeToast(final String msg, boolean lengthShort) {
@@ -69,6 +96,7 @@ public final class NotificationsLoader {
                     callback.updatedAt(
                             notifications.indexOfKey(status)
                     );
+                    attract();
                 }
             }
             return;
@@ -140,12 +168,12 @@ public final class NotificationsLoader {
             case Sync.SYNC_USER_DATA_FAILED_EVENT:
                 title = R.string.notificationSyncUserDataTitle;
                 subtitle = R.string.notificationSyncUserDataFailedSubtitle;
-                icon = R.drawable.sync_disabled;
+                icon = R.drawable.sync_problem;
                 break;
             case Sync.SYNC_MODULES_STATE_FAILED_EVENT:
                 title = R.string.notificationSyncModulesStateTitle;
                 subtitle = R.string.notificationSyncModulesStateFailedSubtitle;
-                icon = R.drawable.sync_disabled;
+                icon = R.drawable.sync_problem;
         }
 
         if (title == -1) {
@@ -166,6 +194,7 @@ public final class NotificationsLoader {
             callback.insertedAt(
                     notifications.indexOfKey(status)
             );
+            attract();
         }
     }
 
@@ -175,6 +204,7 @@ public final class NotificationsLoader {
 
         if (callback != null) {
             callback.removeAll(oldSize);
+            attract();
         }
     }
 
@@ -189,6 +219,7 @@ public final class NotificationsLoader {
 
         if (callback != null) {
             callback.removeAt(pos);
+            attract();
         }
     }
 
@@ -219,7 +250,6 @@ public final class NotificationsLoader {
 
             } catch (JSONException e) {
                 //e.printStackTrace();
-                return;
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.lastutf445.home2.containers;
 
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
 
 import com.lastutf445.home2.loaders.DataLoader;
 

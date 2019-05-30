@@ -2,7 +2,6 @@ package com.lastutf445.home2.configure;
 
 import android.support.annotation.NonNull;
 
-import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.util.Configure;
 
 import org.json.JSONException;

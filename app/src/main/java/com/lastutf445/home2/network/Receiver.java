@@ -1,27 +1,15 @@
 package com.lastutf445.home2.network;
 
-import android.content.ContentValues;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import android.util.Pair;
 
 import com.lastutf445.home2.loaders.CryptoLoader;
-import com.lastutf445.home2.loaders.DataLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.util.Calendar;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class Receiver {
 

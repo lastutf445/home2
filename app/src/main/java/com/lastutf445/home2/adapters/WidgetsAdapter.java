@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -160,11 +159,9 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
     private void removeItem(int pos) {
         if (pos < 0 || pos >= data.size()) return;
 
-        synchronized (data) {
-            WidgetsLoader.remove(data.valueAt(pos));
-            data.removeAt(pos);
-            notifyItemRemoved(pos);
-        }
+        WidgetsLoader.remove(data.valueAt(pos));
+        data.removeAt(pos);
+        notifyItemRemoved(pos);
     }
 
     @NonNull

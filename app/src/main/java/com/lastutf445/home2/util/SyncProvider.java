@@ -1,12 +1,9 @@
 package com.lastutf445.home2.util;
 
-import com.lastutf445.home2.loaders.CryptoLoader;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.InetAddress;
-import java.util.Calendar;
 
 public class SyncProvider {
 

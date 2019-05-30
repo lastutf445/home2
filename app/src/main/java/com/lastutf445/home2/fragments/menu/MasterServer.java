@@ -4,24 +4,19 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.InputFilter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
-import com.lastutf445.home2.network.Receiver;
-import com.lastutf445.home2.network.Sender;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.GlobalPing;
 import com.lastutf445.home2.util.NavigationFragment;
@@ -29,7 +24,6 @@ import com.lastutf445.home2.util.SimpleAnimator;
 
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class MasterServer extends NavigationFragment {
 

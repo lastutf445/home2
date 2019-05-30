@@ -10,10 +10,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.internal.Experimental;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.SparseIntArray;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.configure.Humidity;
@@ -31,11 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.WeakHashMap;
 
 public class ModulesLoader {
 
@@ -440,7 +434,11 @@ public class ModulesLoader {
                     Module module = ModulesLoader.getModule(serial);
 
                     if (module != null) {
-                        module.mergeStates(type, ops, values);
+                        if (DataLoader.getBoolean("SyncDashboard", false)) {
+                            module.mergeStates(type, ops, values);
+                        } else{
+                            Log.d("LOGTAG", "SyncDashboard is off, merging states is impossible");
+                        }
                     } else {
                         Log.d("LOGTAG", "module doesn\'t exist");
                     }
@@ -500,7 +498,12 @@ public class ModulesLoader {
 
         @Override
         public boolean isWaiting() {
-            return queue.isEmpty();
+            boolean status = !UserLoader.isAuthenticated() || queue.isEmpty();
+            if (status) {
+                NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_EVENT);
+                NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_FAILED_EVENT);
+            }
+            return status;
         }
 
         @Override
