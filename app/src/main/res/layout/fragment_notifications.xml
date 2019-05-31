@@ -1,58 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <android.support.constraint.ConstraintLayout
+    android:fillViewport="true">
+    <LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView17"
-            style="@style/StyledTitle"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/notifications"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/notificationsClearAll"
-            style="@style/StyledFAB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:tint="#fff"
-            app:backgroundTint="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/clear_all" />
-    </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/textView17"
+                style="@style/StyledTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/notifications"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/notificationsClearAll"
+                style="@style/StyledFAB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:tint="#fff"
+                app:backgroundTint="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/clear_all" />
+        </android.support.constraint.ConstraintLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/notificationsContent"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/notifications_item" >
+            android:layout_height="match_parent">
 
-        </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/notificationsContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/notifications_item" >
 
-        <TextView
-            android:id="@+id/notificationsNoContent"
-            style="@style/StyledNoContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/noContent" />
-    </FrameLayout>
+            </android.support.v7.widget.RecyclerView>
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/notificationsNoContent"
+                style="@style/StyledNoContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/noContent" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

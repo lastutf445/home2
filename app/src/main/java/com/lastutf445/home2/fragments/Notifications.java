@@ -22,7 +22,7 @@ import java.lang.ref.WeakReference;
 
 public class Notifications extends NavigationFragment {
 
-    private NotificationsLoader.Callback eventCallback;
+    private NotificationsLoader.QueueInterface queueInterface;
     private NotificationsAdapter adapter;
     private RecyclerView content;
     private Updater updater;
@@ -40,37 +40,28 @@ public class Notifications extends NavigationFragment {
         content = view.findViewById(R.id.notificationsContent);
         content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()));
 
-        eventCallback = new NotificationsLoader.Callback() {
+        queueInterface = new NotificationsLoader.QueueInterface() {
             @Override
-            public void removeAll(int oldSize) {
-                Log.d("LOGTAG", "events deleted");
-                send(0, oldSize);
-            }
-
-            @Override
-            public void removeAt(int pos) {
-                Log.d("LOGTAG", "event deleted");
-                send(1, pos);
-            }
-
-            @Override
-            public void insertedAt(int pos) {
-                Log.d("LOGTAG", "event inserted");
-                send(2, pos);
-            }
-
-            @Override
-            public void updatedAt(int pos) {
-                Log.d("LOGTAG", "event updated");
-                send(3, pos);
-            }
-
-            private void send(int what, int extra) {
-                Message msg = updater.obtainMessage(what);
+            public void makeStatusNotification(int status, boolean update) {
+                Message msg = updater.obtainMessage(0);
                 Bundle data = new Bundle();
-                data.putInt("extra", extra);
+                data.putInt("status", status);
+                data.putBoolean("update", update);
                 msg.setData(data);
+                updater.sendMessage(msg);
+            }
 
+            @Override
+            public void removeAll() {
+                updater.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void removeById(int id) {
+                Message msg = updater.obtainMessage(2);
+                Bundle data = new Bundle();
+                data.putInt("id", id);
+                msg.setData(data);
                 updater.sendMessage(msg);
             }
         };
@@ -86,7 +77,7 @@ public class Notifications extends NavigationFragment {
 
         adapter = new NotificationsAdapter(getLayoutInflater(), content, getActivity());
         adapter.setData(NotificationsLoader.getNotifications());
-        NotificationsLoader.setCallback(eventCallback);
+        NotificationsLoader.setCallback(queueInterface);
         updater = new Updater(view, adapter);
         content.setAdapter(adapter);
         adapter.initCallback();
@@ -113,16 +104,41 @@ public class Notifications extends NavigationFragment {
             if (data != null) {
                 switch (msg.what) {
                     case 0:
-                        adapter.notifyItemRangeRemoved(0, data.getInt("extra"));
+                        int status = NotificationsLoader.nativeMakeStatusNotification(
+                                data.getInt("status"),
+                                data.getBoolean("update")
+                        );
+
+                        if (status == 0) break;
+
+                        int pos = NotificationsLoader.getNotifications().indexOfKey(
+                                data.getInt("status")
+                        );
+
+                        if (status == 1) {
+                            Log.d("LOGTAG", "inserted " + data.getInt("status"));
+                            adapter.notifyItemInserted(pos);
+
+                        } else if (status == 2) {
+                            Log.d("LOGTAG", "updated " + data.getInt("status"));
+                            adapter.notifyItemChanged(pos);
+                        }
                         break;
+
                     case 1:
-                        adapter.notifyItemRemoved(data.getInt("extra"));
+                        int oldSize = NotificationsLoader.getNotifications().size();
+                        NotificationsLoader.nativeRemoveAll();
+                        adapter.notifyItemRangeRemoved(0, oldSize);
                         break;
+
                     case 2:
-                        adapter.notifyItemInserted(data.getInt("extra"));
-                        break;
-                    case 3:
-                        adapter.notifyItemChanged(data.getInt("extra"));
+                        pos = NotificationsLoader.nativeRemoveById(
+                                data.getInt("id")
+                        );
+                        if (pos >= 0) {
+                            Log.d("LOGTAG", "remove " + data.getInt("id"));
+                            adapter.notifyItemRemoved(pos);
+                        }
                         break;
                 }
             }

@@ -53,7 +53,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         @Override
         public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, final int i) {
-            NotificationsLoader.removeAt(viewHolder.getAdapterPosition());
+            NotificationsLoader.removeById(
+                    data.valueAt(viewHolder.getAdapterPosition()).getId()
+            );
         }
 
         @Override

@@ -116,7 +116,7 @@
                 android:textColor="#333" />
 
             <EditText
-                android:id="@+id/syncDiscoveryAttempts"
+                android:id="@+id/syncDiscoveryTimeout"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
@@ -197,101 +197,6 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView36"
-            style="@style/StyledSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/syncBehaviorIntervals" />
-
-        <TextView
-            android:id="@+id/textView43"
-            style="@style/StyledDesc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/syncBehaviorIntervalsDesc" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
-
-            <TextView
-                android:id="@+id/textView37"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/syncDashboardInterval"
-                android:textColor="#333" />
-
-            <EditText
-                android:id="@+id/syncDashboardInterval"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:digits="1234567890."
-                android:ems="10"
-                android:inputType="number"
-                android:maxLength="6"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
-
-            <TextView
-                android:id="@+id/textView39"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/syncMessagesInterval"
-                android:textColor="#333" />
-
-            <EditText
-                android:id="@+id/syncMessagesInterval"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:digits="1234567890."
-                android:ems="10"
-                android:inputType="number"
-                android:maxLength="6"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
-
-            <TextView
-                android:id="@+id/textView38"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/syncNotificationsInterval"
-                android:textColor="#333" />
-
-            <EditText
-                android:id="@+id/syncNotificationsInterval"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:digits="1234567890."
-                android:ems="10"
-                android:inputType="number"
-                android:maxLength="6"
-                android:singleLine="true" />
-        </LinearLayout>
-
         <Space
             android:layout_width="match_parent"
             android:layout_height="24dp" />
@@ -305,7 +210,7 @@
             android:drawableTint="#444"
             android:text="@string/loadDefaults"
             android:textAllCaps="true"
-            android:textColor="#444" />
+            android:textColor="#444"/>
 
         <Button
             android:id="@+id/syncBehaviorSave"
@@ -316,7 +221,7 @@
             android:drawableTint="@color/colorPrimary"
             android:text="@string/saveChanges"
             android:textAllCaps="true"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/colorPrimary"/>
 
         <Space
             android:layout_width="match_parent"

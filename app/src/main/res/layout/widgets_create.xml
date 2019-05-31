@@ -1,50 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/textView25"
-        style="@style/StyledTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/createWidget" />
-
-    <TextView
-        android:id="@+id/textView26"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="24dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="24dp"
-        android:paddingBottom="16dp"
-        android:text="@string/createWidgetType" />
-
-    <RadioGroup
-        android:id="@+id/createWidgetRadios"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:orientation="vertical">
-
-        <RadioButton
-            android:id="@+id/createWidgetRadioTitle"
-            style="@style/StyledRadio"
-            android:layout_width="match_parent"
-            android:text="@string/createWidgetRadioTitle" />
-
-        <RadioButton
-            android:id="@+id/createWidgetRadioModule"
-            style="@style/StyledRadio"
-            android:layout_width="match_parent"
-            android:text="@string/createWidgetRadioModule" />
-    </RadioGroup>
+    android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/createWidgetInclude"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"></LinearLayout>
-</LinearLayout>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView25"
+            style="@style/StyledTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/createWidget" />
+
+        <TextView
+            android:id="@+id/textView26"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="16dp"
+            android:text="@string/createWidgetType" />
+
+        <RadioGroup
+            android:id="@+id/createWidgetRadios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/createWidgetRadioTitle"
+                style="@style/StyledRadio"
+                android:layout_width="match_parent"
+                android:text="@string/createWidgetRadioTitle" />
+
+            <RadioButton
+                android:id="@+id/createWidgetRadioModule"
+                style="@style/StyledRadio"
+                android:layout_width="match_parent"
+                android:text="@string/createWidgetRadioModule" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/createWidgetInclude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
+    </LinearLayout>
+</ScrollView>

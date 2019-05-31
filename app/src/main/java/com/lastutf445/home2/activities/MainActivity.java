@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         CryptoLoader.init();
         ModulesLoader.init();
+        UserLoader.init();
 
         FragmentsLoader.init(
                 getSupportFragmentManager(),

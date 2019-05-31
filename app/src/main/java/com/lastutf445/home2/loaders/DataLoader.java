@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,12 +18,13 @@ import java.util.Map;
 
 public class DataLoader {
 
-    private static int DATABASE_VERSION = 20;
+    private static int DATABASE_VERSION = 24;
     private static SQLiteDatabase db;
 
     private static Context appContext;
     private static Resources appResources;
     private static final HashMap<String, Object> ops = new HashMap<>();
+    private static final HashMap<String, Long> sync = new HashMap<>();
 
     static {
         // authentication
@@ -34,24 +36,21 @@ public class DataLoader {
         ops.put("MasterServer", false);
         ops.put("MasterServerAddress", null);
         ops.put("MasterServerPort", null);
-        ops.put("MasterServerSoTimeout", 2000);
         // proxy server
         ops.put("ExternalConnection", false);
         ops.put("ExternalAddress", null);
         ops.put("ExternalPort", null);
         // synchronization
-        ops.put("SyncDashboard", false);
-        ops.put("SyncMessages", false);
-        //ops.put("SyncUserDataInterval", 5);
-        //ops.put("SyncModulesStateOnReconnect", true);
+        ops.put("SyncPersistentConnection", false);
         ops.put("SyncHomeNetwork", null);
+        ops.put("lastSyncModules", 0);
+        ops.put("lastSyncUser", 0);
         // sync behavior
         ops.put("SyncClientPort", 44501);
         ops.put("SyncPingAttempts", 3);
         ops.put("SyncPingInterval", 1000);
         ops.put("SyncDiscoveryPort", 44500);
         ops.put("SyncDiscoveryTimeout", 3);
-        //ops.put("SyncMessagesInterval", 500);
     }
 
     public static void init(Context context, Resources resources) {
@@ -60,6 +59,14 @@ public class DataLoader {
 
         connect();
         load();
+
+        long lastSync = getLong("lastSyncUser", 0);
+
+        for (String key: ops.keySet()) {
+            if (getSyncTime(key) > lastSync) {
+                UserLoader.addToSyncUserDataQueue(key);
+            }
+        }
     }
 
     public static Context getAppContext() {
@@ -86,28 +93,8 @@ public class DataLoader {
         db.execSQL("CREATE TABLE IF NOT EXISTS core (id INTEGER PRIMARY KEY, options TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS modules (serial INTEGER PRIMARY KEY, type TEXT, ip TEXT, port INTEGER, title TEXT, ops TEXT, vals TEXT, syncing INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS dashboard (id INTEGER PRIMARY KEY, serial INTEGER, type TEXT, options TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS syncUserData (option TEXT PRIMARY KEY, time INTEGER)");
         db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS dashboard_serial ON dashboard (serial)");
-    }
-
-    public static void merge(@NonNull JSONObject data) {
-        Iterator<String> it = data.keys();
-
-        while (it.hasNext()) {
-            String key = it.next();
-            if (!DataLoader.has(key)) continue;
-
-            try {
-                Object a = DataLoader.get(key);
-                Object b = data.get(key);
-
-                if (a == null || (b != null && a.getClass().getName().equals(b.getClass().getName()))) {
-                    DataLoader.set(key, b);
-                }
-
-            } catch (JSONException e) {
-                //e.printStackTrace();
-            }
-        }
     }
 
     private static void upgrade(int oldVersion, int newVersion) {
@@ -155,6 +142,27 @@ public class DataLoader {
             }
 
             c.close();
+            loadSyncTable();
+        }
+    }
+
+    private static void loadSyncTable() {
+        synchronized (sync) {
+            SQLiteDatabase db = getDb();
+            Cursor c = db.rawQuery("SELECT * FROM syncUserData", null);
+
+            c.moveToFirst();
+
+            while (!c.isAfterLast()) {
+                String option = c.getString(c.getColumnIndex("option"));
+                long time = c.getLong(c.getColumnIndex("time"));
+                sync.put(option, time);
+
+                c.moveToNext();
+            }
+
+            c.close();
+
         }
     }
 
@@ -164,7 +172,7 @@ public class DataLoader {
             JSONObject dump = new JSONObject();
 
             try {
-                for (Map.Entry<String, Object> i : ops.entrySet()) {
+                for (Map.Entry<String, Object> i: ops.entrySet()) {
                     dump.put(i.getKey(), i.getValue());
                 }
 
@@ -179,18 +187,87 @@ public class DataLoader {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            saveSyncTable();
+        }
+    }
+
+    private static void saveSyncTable() {
+        synchronized (sync) {
+            SQLiteDatabase db = getDb();
+            for (Map.Entry<String, Long> i: sync.entrySet()) {
+                ContentValues cv = new ContentValues();
+
+                cv.put("option", i.getKey());
+                cv.put("time", i.getValue());
+
+                db.replace("syncUserData", null, cv);
+            }
+        }
+    }
+
+    public static void flushSyncTable() {
+        synchronized (sync) {
+            sync.clear();
+            saveSyncTable();
         }
     }
 
     public static void set(String key, Object value) {
+        UserLoader.addToSyncUserDataQueue(key);
+        sync.put(key, System.currentTimeMillis());
+        setWithoutSync(key, value);
+    }
+
+    public static void setWithoutSync(String key, Object value) {
         synchronized (ops) {
             ops.put(key, value);
+            Log.d("LOGTAG", "we are trying to set " + key + " by " + (value == null ? "null" : value.toString()));
         }
     }
 
-    public static boolean has(String key) {
-        synchronized (ops) {
-            return ops.containsKey(key);
+    public static boolean setSynced(String key, Object value, long syncedAt) {
+        synchronized (sync) {
+            Object a = get(key);
+            boolean isNull = (a == null || value == null);
+
+            Log.d("LOGTAG", "SETSYNCED: " + key + " by " + (value == null ? "null" : value.toString()) + " " + syncedAt);
+            Log.d("LOGTAG", getSyncTime(key) + " " + (isNull || a.getClass().getName().equals(value.getClass().getName())));
+            if (getSyncTime(key) <= syncedAt && (isNull || a.getClass().getName().equals(value.getClass().getName()))) {
+                UserLoader.removeFromSyncUserDataQueue(key);
+                sync.put(key, syncedAt);
+                setWithoutSync(key, value);
+            }
+
+            return true;
+        }
+    }
+
+    public static boolean merge(@NonNull JSONObject ops) {
+        try {
+            Iterator<String> it = ops.keys();
+
+            while (it.hasNext()) {
+                String key = it.next();
+                JSONArray pair = ops.getJSONArray(key);
+                long time = pair.optLong(0, 0);
+                Object value = pair.opt(1);
+
+                time = Math.min(System.currentTimeMillis(), time);
+                DataLoader.setSynced(key, value, time);
+            }
+
+            return true;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static long getSyncTime(String key) {
+        synchronized (sync) {
+            return sync.containsKey(key) ? sync.get(key) : 0;
         }
     }
 

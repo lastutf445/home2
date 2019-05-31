@@ -41,6 +41,7 @@ public class Sync {
     public static final int PROVIDER_PING = -9;
     public static final int PROVIDER_SYNC_MODULES_STATE = -10;
     public static final int PROVIDER_HELLO = -11;
+    public static final int PROVIDER_USER_DATA_STARTER = -12;
 
     public static final int FRAGMENT_DASHBOARD_TRIGGER = 0;
     public static final int MENU_SYNC_TRIGGER = 1;
@@ -144,16 +145,6 @@ public class Sync {
         for (int i = 0; i < triggers.size(); ++i) {
             (new Thread(triggers.valueAt(i))).start();
         }
-    }
-
-    private static InetAddress getInetAddress(int address) throws UnknownHostException {
-        byte[] quads = new byte[4];
-
-        for (int k = 0; k < 4; k++) {
-            quads[k] = (byte) ((address >> k * 8) & 0xFF);
-        }
-
-        return InetAddress.getByAddress(quads);
     }
 
     /**

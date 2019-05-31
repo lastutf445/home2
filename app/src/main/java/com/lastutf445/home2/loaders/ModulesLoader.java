@@ -321,7 +321,7 @@ public class ModulesLoader {
 
         @Override
         public boolean isWaiting() {
-            return serial == -1;
+            return !UserLoader.isAuthenticated() || serial == -1;
         }
 
         public void onModuleSyncingChanged(@NonNull Module module, boolean syncing) {
@@ -375,6 +375,8 @@ public class ModulesLoader {
                 if (status == Sync.OK) {
                     Handler handler = weakHandler.get();
                     if (handler != null) handler.sendEmptyMessage(0);
+                    //Module module = ModulesLoader.getModule(serial);
+                    //if (module != null) module.setSyncing(!module.getSyncing());
                     serial = -1;
                     return;
                 }
@@ -434,11 +436,8 @@ public class ModulesLoader {
                     Module module = ModulesLoader.getModule(serial);
 
                     if (module != null) {
-                        if (DataLoader.getBoolean("SyncDashboard", false)) {
-                            module.mergeStates(type, ops, values);
-                        } else{
-                            Log.d("LOGTAG", "SyncDashboard is off, merging states is impossible");
-                        }
+                        module.mergeStates(type, ops, values);
+
                     } else {
                         Log.d("LOGTAG", "module doesn\'t exist");
                     }
@@ -498,12 +497,7 @@ public class ModulesLoader {
 
         @Override
         public boolean isWaiting() {
-            boolean status = !UserLoader.isAuthenticated() || queue.isEmpty();
-            if (status) {
-                NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_EVENT);
-                NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_FAILED_EVENT);
-            }
-            return status;
+            return !UserLoader.isAuthenticated() || queue.isEmpty();
         }
 
         @Override
@@ -517,17 +511,19 @@ public class ModulesLoader {
                     setSyncing(request, data.getJSONArray("subs"));
 
                     synchronized (queue) {
-                        for (int i = 0; i < request.length(); ++i) {
-                            queue.remove(request.getInt(i));
+                        while (request.length() > 0) {
+                            queue.remove(request.getInt(0));
+                            request.remove(0);
                         }
 
                         if (queue.isEmpty()) {
                             NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_EVENT);
-                            NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_FAILED_EVENT);
                         }
                     }
 
-                    DataLoader.set("lastSyncModules", Math.min(currentTime, lastSync));
+                    NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_FAILED_EVENT);
+
+                    DataLoader.setWithoutSync("lastSyncModules", Math.min(currentTime, lastSync));
                     DataLoader.save();
                     return;
                 }
@@ -575,17 +571,6 @@ public class ModulesLoader {
             }
 
             return query;
-        }
-    }
-
-    public static class SyncSwitch implements Runnable {
-        @Override
-        public void run() {
-            boolean state = DataLoader.getBoolean("SyncDashboard", true);
-            DataLoader.set("SyncDashboard", !state);
-
-            // TODO: save optimization
-            DataLoader.save();
         }
     }
 }

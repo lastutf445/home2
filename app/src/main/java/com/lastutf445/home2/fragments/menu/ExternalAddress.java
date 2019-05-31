@@ -147,7 +147,7 @@ public class ExternalAddress extends NavigationFragment {
             return;
         }
 
-        DataLoader.set("ExternalConnection", false);
+        DataLoader.setWithoutSync("ExternalConnection", false);
         DataLoader.save();
         reload();
 
@@ -164,9 +164,9 @@ public class ExternalAddress extends NavigationFragment {
                     NotificationsLoader.makeToast("Unexpected error", true);
                     break;
                 case 1:
-                    DataLoader.set("ExternalAddress", InetAddress.getByName(raw_address).getHostAddress());
-                    DataLoader.set("ExternalPort", Integer.valueOf(raw_port));
-                    DataLoader.set("ExternalConnection", true);
+                    DataLoader.setWithoutSync("ExternalAddress", InetAddress.getByName(raw_address).getHostAddress());
+                    DataLoader.setWithoutSync("ExternalPort", Integer.valueOf(raw_port));
+                    DataLoader.setWithoutSync("ExternalConnection", true);
                     DataLoader.save();
                     Sync.restart();
                     reload();

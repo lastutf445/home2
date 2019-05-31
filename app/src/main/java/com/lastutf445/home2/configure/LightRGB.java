@@ -27,7 +27,7 @@ public class LightRGB extends Configure {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.special_lightrgb, container, false);
+        view = inflater.inflate(R.layout.configure_lightrgb, container, false);
         init();
         return view;
     }

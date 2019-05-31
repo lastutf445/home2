@@ -22,10 +22,10 @@ import java.util.TimerTask;
 
 public final class NotificationsLoader {
 
-    private static HashSet<Integer> toasts = new HashSet<>();
-    private static SparseArray<Event> notifications = new SparseArray<>();
+    private static final HashSet<Integer> toasts = new HashSet<>();
+    private static final SparseArray<Event> notifications = new SparseArray<>();
     private static WeakReference<BottomNavigationView> weakBottomNav;
-    private static Callback callback;
+    private static QueueInterface queueInterface;
 
     private static final int LENGTH_SHORT = 2000;
     private static final int LENGTH_LONG = 3500;
@@ -46,8 +46,8 @@ public final class NotificationsLoader {
         return notifications;
     }
 
-    public static void setCallback(Callback callback) {
-        NotificationsLoader.callback = callback;
+    public static void setCallback(QueueInterface queueInterface) {
+        NotificationsLoader.queueInterface = queueInterface;
     }
 
     private static void attract() {
@@ -87,19 +87,27 @@ public final class NotificationsLoader {
     }
 
     public static void makeStatusNotification(int status, boolean update) {
+        if (queueInterface != null) {
+            queueInterface.makeStatusNotification(status, update);
+        }
+    }
+
+    /**
+     * RETURN CODES:
+     * 0 - nothing changed
+     * 1 - created
+     * 2 - updated
+     *
+     */
+
+    public static int nativeMakeStatusNotification(int status, boolean update) {
         if (notifications.get(status) != null) {
             if (update) {
                 Event ev = notifications.get(status);
                 ev.setTimestamp(System.currentTimeMillis());
-
-                if (callback != null) {
-                    callback.updatedAt(
-                            notifications.indexOfKey(status)
-                    );
-                    attract();
-                }
+                return 2;
             }
-            return;
+            return 0;
         }
 
         int title = -1, subtitle = -1, icon = -1;
@@ -177,7 +185,7 @@ public final class NotificationsLoader {
         }
 
         if (title == -1) {
-            return;
+            return 0;
         }
 
         Event ev = new Event(
@@ -189,38 +197,36 @@ public final class NotificationsLoader {
         );
 
         notifications.put(status, ev);
-
-        if (callback != null) {
-            callback.insertedAt(
-                    notifications.indexOfKey(status)
-            );
-            attract();
-        }
+        attract();
+        return 1;
     }
 
     public static void removeAll() {
-        int oldSize = notifications.size();
-        notifications.clear();
-
-        if (callback != null) {
-            callback.removeAll(oldSize);
-            attract();
+        if (queueInterface != null) {
+            queueInterface.removeAll();
         }
+    }
+
+    public static void nativeRemoveAll() {
+        notifications.clear();
+        attract();
     }
 
     public static void removeById(int id) {
-        int index = notifications.indexOfKey(id);
-        if (index < 0) return;
-        removeAt(index);
+        if (queueInterface != null) {
+            queueInterface.removeById(id);
+        }
     }
 
-    public static void removeAt(int pos) {
-        notifications.removeAt(pos);
+    public static int nativeRemoveById(int id) {
+        int index = notifications.indexOfKey(id);
+        if (index >= 0) nativeRemoveAt(index);
+        return index;
+    }
 
-        if (callback != null) {
-            callback.removeAt(pos);
-            attract();
-        }
+    public static void nativeRemoveAt(int pos) {
+        notifications.removeAt(pos);
+        attract();
     }
 
     public static class Notifier extends SyncProvider {
@@ -254,21 +260,9 @@ public final class NotificationsLoader {
         }
     }
 
-    public interface Callback {
-        void removeAll(int oldSize);
-        void removeAt(int oldSize);
-        void insertedAt(int pos);
-        void updatedAt(int pos);
-    }
-
-    public static class SyncSwitch implements Runnable {
-        @Override
-        public void run() {
-            boolean state = DataLoader.getBoolean("SyncNotifications", true);
-            DataLoader.set("SyncNotifications", !state);
-
-            // TODO: save optimization
-            DataLoader.save();
-        }
+    public interface QueueInterface {
+        void makeStatusNotification(int status, boolean update);
+        void removeAll();
+        void removeById(int id);
     }
 }

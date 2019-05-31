@@ -242,7 +242,7 @@ public class Sender {
             tOut.flush();
 
             //Log.d("LOGTAG", "kAlive: " + kAlive);
-        } else {
+        } else if (DataLoader.getBoolean("SyncPersistentConnection", false)) {
             int status = 0;
 
             if (Sync.getNetworkState() == 2 && DataLoader.getString("SyncHomeNetwork", "false").equals(Sync.getNetworkBSSID())) {
@@ -305,7 +305,7 @@ public class Sender {
 
             tIn = new BufferedReader(new InputStreamReader(tSocket.getInputStream()));
             ModulesLoader.onReconnect();
-
+            UserLoader.onReconnect();
             tAlive = time + 6000;
             connectReceiver();
             //publish(-2);
@@ -349,10 +349,7 @@ public class Sender {
     }
 
     public static boolean keepAliveNeeded() {
-        return (DataLoader.getBoolean("SyncDashboard", false) ||
-                DataLoader.getBoolean("SyncMessages", false) ||
-                DataLoader.getBoolean("SyncUserData", false)) &&
-                System.currentTimeMillis() > kAlive && UserLoader.isAuthenticated();
+        return System.currentTimeMillis() > kAlive && UserLoader.isAuthenticated();
     }
 
     public static void subscribe(@NonNull Handler handler) {
@@ -420,7 +417,7 @@ public class Sender {
 
         @Override
         public boolean isWaiting() {
-            if (isWaiting) {
+            if (isWaiting || !UserLoader.isAuthenticated()) {
                 return true;
 
             } else {

@@ -92,13 +92,17 @@ public class Account extends NavigationFragment {
             public boolean onApply(String s) {
                 String t = s.trim();
 
-                if (t.length() == 0) {
+                if (t.length() == 0 || t.equals("None")) {
                     NotificationsLoader.makeToast("Invalid account name", true);
                     return false;
 
                 } else {
                     NotificationsLoader.makeToast("Success", true);
-                    DataLoader.set("Username", t);
+                    if (UserLoader.isAuthenticated()) {
+                        DataLoader.set("Username", t);
+                    } else {
+                        DataLoader.setWithoutSync("UserName", t);
+                    }
                     DataLoader.save();
                     return true;
                 }

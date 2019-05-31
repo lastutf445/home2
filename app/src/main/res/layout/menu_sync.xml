@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -27,75 +26,22 @@
             android:text="@string/syncThreads" />
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/syncDashboard"
+            android:id="@+id/syncPersistentConnection"
             style="@style/StyledTransparentButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <Switch
-                android:id="@+id/syncDashboardSwitch"
+                android:id="@+id/syncPersistentConnectionSwitch"
                 style="@style/StyledSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/syncDashboard"
+                android:background="@null"
+                android:clickable="false"
+                android:text="@string/syncPersistentConnection"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ProgressBar
-                android:id="@+id/syncDashboardSpinner"
-                style="@style/StyledSpinner"
-                android:layout_marginEnd="80dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/syncMessages"
-            style="@style/StyledTransparentButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Switch
-                android:id="@+id/syncMessagesSwitch"
-                style="@style/StyledSwitch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/syncMessages"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ProgressBar
-                android:id="@+id/syncMessagesSpinner"
-                style="@style/StyledSpinner"
-                android:layout_marginEnd="80dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/syncNotifications"
-            style="@style/StyledTransparentButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Switch
-                android:id="@+id/syncNotificationsSwitch"
-                style="@style/StyledSwitch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/syncNotifications"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ProgressBar
-                android:id="@+id/syncNotificationsSpinner"
-                style="@style/StyledSpinner"
-                android:layout_marginEnd="80dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
         <TextView
@@ -159,16 +105,11 @@
             android:id="@+id/syncCurrentNetwork"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp"
-            android:text="@string/syncCurrentNetwork" />
-
-        <TextView
-            android:id="@+id/syncHomeNetwork"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:paddingStart="24dp"
+            android:paddingTop="16dp"
             android:paddingEnd="24dp"
             android:paddingBottom="24dp"
-            android:text="@string/syncHomeNetwork" />
+            android:text="@string/syncUnknownNetwork" />
+
     </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+</ScrollView>

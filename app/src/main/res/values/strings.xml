@@ -90,9 +90,7 @@
     <string name="syncAdvanced">Advanced</string>
     <string name="syncLocalNetwork">Local network</string>
 
-    <string name="syncDashboard">Sync dashboard</string>
-    <string name="syncMessages">Sync messages</string>
-    <string name="syncNotifications">Sync notifications</string>
+    <string name="syncPersistentConnection">Always connected</string>
 
     <string name="syncBehavior">Behavior</string>
     <string name="syncInterval">Interval between sync ticks</string>
@@ -103,8 +101,8 @@
     <string name="syncExternalAddressDesc">In case of being outside your home network, the application will use this address to access Master Server.</string>
 
     <string name="syncMarkAsHomeNetwork">Mark as home network</string>
-    <string name="syncCurrentNetwork">Current network:</string>
-    <string name="syncHomeNetwork">Home network:</string>
+    <string name="syncUnknownNetwork">Connected to unknown network</string>
+    <string name="syncHomeNetwork">Connected to home network</string>
 
     <string name="syncBehaviorClient">Client settings</string>
     <string name="syncBehaviorClientDesc">Define a client port on this device.</string>
@@ -122,13 +120,6 @@
     <string name="syncPingAttempts">Ping attempts</string>
     <string name="syncPingInterval">Ping interval</string>
 
-    <string name="syncBehaviorIntervals">Intervals settings</string>
-    <string name="syncBehaviorIntervalsDesc">Define threads synchronization pauses.\n(rounded to least multiple of 500, ms)</string>
-
-    <string name="syncDashboardInterval">Sync dashboard interval</string>
-    <string name="syncMessagesInterval">Sync messages interval</string>
-    <string name="syncNotificationsInterval">Sync notifications interval</string>
-
     <string name="loadDefaults">Load defaults</string>
     <string name="loadDefaultsMessage">Values won\'t be saved automatically</string>
 
@@ -138,7 +129,7 @@
     <string name="aboutVersion">Version:</string>
     <string name="aboutAppVersion">Developer version 0.9</string>
     <string name="aboutThanksTo">Thanks to:</string>
-    <string name="aboutThanksList">Anton Denikin\nNikita Sviridov\nElena Dogman</string>
+    <string name="aboutThanksList">Anton Denikin\nNikita Sviridov</string>
 
     <string name="add">Add</string>
     <string name="load">Load</string>
@@ -168,7 +159,7 @@
     <string name="noContent">There\'s nothing to show</string>
     <string name="missedField">Please, check for a missed field</string>
     <string name="pullToRefresh">Pull down to refresh</string>
-    <string name="lockedFeature">This feature isn\'t  available in this version. Watch for updates.</string>
+    <string name="lockedFeature">This feature isn\'t available in this version. Watch for updates.</string>
 
     <string name="notificationsGenericTitle">Sample notification</string>
     <string name="notificationsGenericSubtitle">Some content</string>
@@ -235,7 +226,6 @@
     <string name="connectionMobile">Mobile connection</string>
     <string name="connectionWiFi">WiFi connection</string>
     <string name="masterServer">Master Server</string>
-    <string name="homeNetwork">Home network</string>
     <string name="idle">Idle</string>
 
     <string name="status">Status:</string>
@@ -249,7 +239,6 @@
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>
     <string name="undefined">undefined</string>
-    <string name="BSSIDError">unable to get bssid</string>
 
     <string name="unknownModule">Unknown module</string>
     <string name="unknownTitle">Unknown title</string>

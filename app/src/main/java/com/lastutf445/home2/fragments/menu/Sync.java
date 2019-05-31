@@ -50,10 +50,10 @@ public class Sync extends NavigationFragment {
 
                         if (com.lastutf445.home2.network.Sync.getNetworkState() == 2) {
                             if(!DataLoader.getString("SyncHomeNetwork", "false").equals(bssid)) {
-                                DataLoader.set("SyncHomeNetwork", bssid);
+                                DataLoader.setWithoutSync("SyncHomeNetwork", bssid);
                             }
                             else {
-                                DataLoader.set("SyncHomeNetwork", null);
+                                DataLoader.setWithoutSync("SyncHomeNetwork", null);
                             }
 
                             Receiver.stop();
@@ -74,40 +74,13 @@ public class Sync extends NavigationFragment {
                     case R.id.syncMasterServer:
                         FragmentsLoader.addChild(new MasterServer(), Sync.this);
                         break;
-                }
-            }
-        };
 
-        View.OnClickListener d = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setClickable(false);
-
-                View spinner = ((ViewGroup) v).getChildAt(1);
-                SimpleAnimator.fadeIn(spinner, 300);
-
-                Bundle data = new Bundle();
-                GlobalSyncSwitch syncSwitch = new GlobalSyncSwitch(
-                        updater,
-                        data
-                );
-
-                switch (v.getId()) {
-                    case R.id.syncDashboard:
-                        data.putInt("id", R.id.syncDashboard);
-                        syncSwitch.setTask(new ModulesLoader.SyncSwitch());
-                        break;
-                    case R.id.syncMessages:
-                        data.putInt("id", R.id.syncMessages);
-                        syncSwitch.setTask(new MessagesLoader.SyncSwitch());
-                        break;
-                    case R.id.syncNotifications:
-                        data.putInt("id", R.id.syncNotifications);
-                        syncSwitch.setTask(new NotificationsLoader.SyncSwitch());
+                    case R.id.syncPersistentConnection:
+                        Switch switcher = view.findViewById(R.id.syncPersistentConnectionSwitch);
+                        DataLoader.setWithoutSync("SyncPersistentConnection", !switcher.isChecked());
+                        switcher.setChecked(!switcher.isChecked());
                         break;
                 }
-
-                new Thread(syncSwitch).start();
             }
         };
 
@@ -115,10 +88,7 @@ public class Sync extends NavigationFragment {
         view.findViewById(R.id.syncMasterServer).setOnClickListener(c);
         view.findViewById(R.id.syncExternalConnection).setOnClickListener(c);
         view.findViewById(R.id.syncMarkAsHomeNetwork).setOnClickListener(c);
-
-        view.findViewById(R.id.syncDashboard).setOnClickListener(d);
-        view.findViewById(R.id.syncMessages).setOnClickListener(d);
-        view.findViewById(R.id.syncNotifications).setOnClickListener(d);
+        view.findViewById(R.id.syncPersistentConnection).setOnClickListener(c);
 
         com.lastutf445.home2.network.Sync.removeTrigger(com.lastutf445.home2.network.Sync.MENU_SYNC_TRIGGER);
         com.lastutf445.home2.network.Sync.addTrigger(
@@ -137,22 +107,8 @@ public class Sync extends NavigationFragment {
 
     @Override
     protected void reload() {
-        ((Switch) view.findViewById(R.id.syncDashboardSwitch)).setChecked(
-                DataLoader.getBoolean("SyncDashboard", false)
-        );
-
-        ((Switch) view.findViewById(R.id.syncMessagesSwitch)).setChecked(
-                DataLoader.getBoolean("SyncMessages", false)
-        );
-
-        ((Switch) view.findViewById(R.id.syncNotificationsSwitch)).setChecked(
-                DataLoader.getBoolean("SyncNotifications", false)
-        );
-
-        ((TextView) view.findViewById(R.id.syncHomeNetwork)).setText(
-                String.format("%s %s", DataLoader.getAppResources().getString(R.string.syncHomeNetwork),
-                        DataLoader.getString("SyncHomeNetwork",
-                                DataLoader.getAppResources().getString(R.string.undefined)))
+        ((Switch) view.findViewById(R.id.syncPersistentConnectionSwitch)).setChecked(
+                DataLoader.getBoolean("SyncPersistentConnection", false)
         );
 
         updater.sendEmptyMessage(0);
@@ -197,18 +153,19 @@ public class Sync extends NavigationFragment {
             TextView currentNetwork = view.findViewById(R.id.syncCurrentNetwork);
             CheckBox markAsHome = view.findViewById(R.id.syncMarkAsHomeNetworkCheckBox);
 
+            String bssid = com.lastutf445.home2.network.Sync.getNetworkBSSID();
+            boolean isHomeNetwork = DataLoader.getString("SyncHomeNetwork", "false").equals(bssid);
+            int networkState = com.lastutf445.home2.network.Sync.getNetworkState();
+
             if (markAsHome != null) {
-                markAsHome.setChecked(
-                        DataLoader.getString("SyncHomeNetwork", "false").equals(com.lastutf445.home2.network.Sync.getNetworkBSSID())
-                );
+                markAsHome.setChecked(isHomeNetwork);
             }
 
             if (currentNetwork != null) {
-                currentNetwork.setText(String.format("%s %s",
-                        DataLoader.getAppResources().getString(R.string.syncCurrentNetwork),
-                        com.lastutf445.home2.network.Sync.getNetworkState() == 2 ? com.lastutf445.home2.network.Sync.getNetworkBSSID() :
-                                DataLoader.getAppResources().getString(R.string.BSSIDError)
-                ));
+                currentNetwork.setText(
+                        networkState == 0 ? R.string.disconnected : isHomeNetwork ?
+                                R.string.syncHomeNetwork : R.string.syncUnknownNetwork
+                );
             }
         }
 
@@ -238,39 +195,6 @@ public class Sync extends NavigationFragment {
                 @Override
                 public void onAnimationRepeat(Animation animation) {}
             });
-        }
-    }
-
-    private static class GlobalSyncSwitch implements Runnable {
-        private Updater updater;
-        private Runnable task;
-        private Bundle data;
-
-        GlobalSyncSwitch(Updater updater, Bundle data) {
-            this.updater = updater;
-            this.data = data;
-        }
-
-        public void setTask(Runnable task) {
-            this.task = task;
-        }
-
-        @Override
-        public void run() {
-            Thread thread = new Thread(task);
-            thread.start();
-
-            try {
-                thread.sleep(300);
-                thread.join();
-
-            } catch (InterruptedException e) {
-                //e.printStackTrace();
-            }
-
-            Message msg = updater.obtainMessage(1);
-            msg.setData(data);
-            updater.sendMessage(msg);
         }
     }
 }

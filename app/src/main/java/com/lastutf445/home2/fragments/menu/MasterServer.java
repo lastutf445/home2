@@ -146,7 +146,7 @@ public class MasterServer extends NavigationFragment {
             return;
         }
 
-        DataLoader.set("MasterServer", false);
+        DataLoader.setWithoutSync("MasterServer", false);
         DataLoader.save();
         reload();
 
@@ -163,9 +163,9 @@ public class MasterServer extends NavigationFragment {
                     NotificationsLoader.makeToast("Unexpected error", true);
                     break;
                 case 1:
-                    DataLoader.set("MasterServerAddress", InetAddress.getByName(raw_address).getHostAddress());
-                    DataLoader.set("MasterServerPort", Integer.valueOf(raw_port));
-                    DataLoader.set("MasterServer", true);
+                    DataLoader.setWithoutSync("MasterServerAddress", InetAddress.getByName(raw_address).getHostAddress());
+                    DataLoader.setWithoutSync("MasterServerPort", Integer.valueOf(raw_port));
+                    DataLoader.setWithoutSync("MasterServer", true);
                     DataLoader.save();
                     Sync.restart();
                     reload();
