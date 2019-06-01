@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 
 import com.lastutf445.home2.containers.Module;
@@ -15,6 +16,7 @@ import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
 import com.lastutf445.home2.network.Sync;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
@@ -73,17 +75,9 @@ public abstract class Configure extends NavigationFragment {
                 Sync.removeSyncProvider(Sync.PROVIDER_MODULE_EDIT_REQUEST);
             }
         });
-/*
+
         try {
-            Node node = NodesLoader.getNode(module.getNode());
-
-            if (node == null) {
-                NotificationsLoader.makeToast("Node is lost, aborted", true);
-                return;
-            }
-
-            ModuleEditRequest request = new ModuleEditRequest(node, updater);
-            request.setSerial(module.getSerial());
+            ModuleEditRequest request = new ModuleEditRequest(module, updater);
             request.setOps(ops);
 
             dialog.show(getChildFragmentManager(), "processing");
@@ -92,7 +86,7 @@ public abstract class Configure extends NavigationFragment {
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     protected static class Updater extends Handler {
@@ -118,7 +112,7 @@ public abstract class Configure extends NavigationFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    fail();
+                    fail(msg.getData());
                     break;
                 case 1:
                     success(msg.getData());
@@ -129,12 +123,33 @@ public abstract class Configure extends NavigationFragment {
             }
         }
 
-        private void fail() {
+        private void fail(Bundle data) {
             Sync.removeSyncProvider(Sync.PROVIDER_MODULE_EDIT_REQUEST);
             Processing dialog = weakDialog.get();
 
             if (dialog != null) {
                 dialog.dismiss();
+            }
+
+            if (data != null) {
+                switch (data.getInt("status", -1)) {
+                    case Sync.UNEXPECTED_ERROR:
+                    case Sync.ENCODE_ERROR:
+                    case Sync.ENCRYPT_ERROR:
+                    case Sync.MALFORMED_PACKET:
+                    case Sync.TOO_MANY_CLIENTS:
+                    case Sync.TOO_MANY_TASKS:
+                    case Sync.UNAUTHORIZED:
+                    case Sync.UNKNOWN_USER:
+                    case Sync.UNSUPPORTED:
+                        NotificationsLoader.makeToast("Check notifications", true);
+                        Log.d("LOGTAG", "status: " + data.getInt("status"));
+                        NotificationsLoader.makeStatusNotification(
+                                data.getInt("status"),
+                                true
+                        );
+                        return;
+                }
             }
 
             NotificationsLoader.makeToast("Unexpected error", true);
@@ -143,19 +158,32 @@ public abstract class Configure extends NavigationFragment {
         private void success(Bundle data) {
             Sync.removeSyncProvider(Sync.PROVIDER_MODULE_EDIT_REQUEST);
 
-
             View view = weakView.get();
             Module module = weakModule.get();
             Processing dialog = weakDialog.get();
-            /*
 
             if (view != null && module != null) {
                 try {
-                    module.mergeStates(module.getType(), new JSONObject(data.getString("ops")));
+                    if (!ModulesLoader.validateState(
+                            module,
+                            data.getString("type", "-"),
+                            new JSONObject(data.getString("ops")),
+                            new JSONObject()
+                    )) {
+                        module.mergeStates(
+                                module.getType(),
+                                new JSONObject(data.getString("ops")),
+                                new JSONObject()
+                        );
+                    } else {
+                        Log.d("LOGTAG", "validation failed");
+                        fail(null);
+                        return;
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    fail();
+                    fail(null);
                     return;
                 }
 
@@ -164,7 +192,7 @@ public abstract class Configure extends NavigationFragment {
 
             if (dialog != null) {
                 dialog.dismiss();
-            }*/
+            }
         }
 
         private void reload() {

@@ -18,16 +18,14 @@ public class ModuleEditRequest extends SyncProvider {
     private WeakReference<Handler> weakHandler;
     private JSONObject ops = new JSONObject();
     private boolean tainted = false;
-    private int serial = -1;
+    private String type;
+    private int serial;
 
     public ModuleEditRequest(@NonNull Module module, @NonNull Handler handler) throws JSONException {
-        super(Sync.PROVIDER_MODULE_EDIT_REQUEST, "edit", new JSONObject(), module.getIp(), module.getPort());
+        super(Sync.PROVIDER_MODULE_EDIT_REQUEST, "moduleEditRequest", new JSONObject(), module.getIp(), module.getPort());
         weakHandler = new WeakReference<>(handler);
-    }
-
-    public void setSerial(int serial) {
-        this.serial = serial;
-        tainted = true;
+        serial = module.getSerial();
+        type = module.getType();
     }
 
     public void setOps(@NonNull JSONObject ops) {
@@ -40,13 +38,26 @@ public class ModuleEditRequest extends SyncProvider {
         Handler handler = weakHandler.get();
 
         try {
-            boolean status = data.getBoolean("success");
+            int status = data.getInt("status");
 
-            if (status && handler != null) {
-                Message msg = handler.obtainMessage(1);
+            if (status == Sync.OK) {
+                if (handler != null) {
+                    Message msg = handler.obtainMessage(1);
+                    Bundle msgData = new Bundle();
+
+                    msgData.putString("ops", data.getString("ops"));
+                    msg.setData(msgData);
+
+                    handler.sendMessage(msg);
+                }
+                return;
+            }
+
+            if (handler != null) {
+                Message msg = handler.obtainMessage(0);
                 Bundle msgData = new Bundle();
 
-                msgData.putString("ops", data.getString("ops"));
+                msgData.putInt("status", data.getInt("status"));
                 msg.setData(msgData);
 
                 handler.sendMessage(msg);
@@ -56,7 +67,6 @@ public class ModuleEditRequest extends SyncProvider {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         if (handler != null) {
             handler.sendEmptyMessage(0);
         }
@@ -68,6 +78,7 @@ public class ModuleEditRequest extends SyncProvider {
             try {
                 JSONObject data = new JSONObject();
                 data.put("serial", serial);
+                data.put("type", type);
                 data.put("ops", ops);
                 query.put("data", data);
 

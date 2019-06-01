@@ -12,15 +12,31 @@
         android:layout_height="192dp"
         app:srcCompat="@android:color/black" />
 
+    <TextView
+        android:id="@+id/textView22"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/red" />
+
     <SeekBar
         android:id="@+id/pickRed"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:layout_weight="1"
         android:max="255" />
+
+    <TextView
+        android:id="@+id/textView30"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/green" />
 
     <SeekBar
         android:id="@+id/pickGreen"
@@ -30,6 +46,14 @@
         android:layout_marginEnd="24dp"
         android:layout_weight="1"
         android:max="255" />
+
+    <TextView
+        android:id="@+id/textView37"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/blue" />
 
     <SeekBar
         android:id="@+id/pickBlue"

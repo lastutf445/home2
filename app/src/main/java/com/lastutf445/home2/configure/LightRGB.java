@@ -1,5 +1,6 @@
 package com.lastutf445.home2.configure;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,27 +41,31 @@ public class LightRGB extends Configure {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
-                    case R.id.specialLightRGBIsLit:
+                    case R.id.lightRGBON:
                         switchState();
                         break;
-                    case R.id.specialLightRGBColor:
+                    case R.id.lightRGBColor:
                         pickColor();
                         break;
                 }
             }
         };
 
-        view.findViewById(R.id.specialLightRGBColor).setOnClickListener(c);
-        view.findViewById(R.id.specialLightRGBIsLit).setOnClickListener(c);
+        view.findViewById(R.id.lightRGBColor).setOnClickListener(c);
+        view.findViewById(R.id.lightRGBON).setOnClickListener(c);
+
+        if (!module.has("color")) {
+            view.findViewById(R.id.lightRGBColor).setVisibility(View.GONE);
+        }
 
         setRender(new Configure.Render() {
             @Override
             public void reload(@NonNull View view, @NonNull Module module) {
-                ((TextView) view.findViewById(R.id.specialTitle)).setText(
+                ((TextView) view.findViewById(R.id.lightRGBTitle)).setText(
                         module.getTitle()
                 );
 
-                ((Switch) view.findViewById(R.id.specialLightRGBIsLitCheckBox)).setChecked(
+                ((Switch) view.findViewById(R.id.lightRGBONSwitch)).setChecked(
                         module.getBoolean("lit", false)
                 );
 
@@ -68,10 +73,12 @@ public class LightRGB extends Configure {
                     int color = Color.parseColor("#333333");
 
                     if (module.getBoolean("lit", false)) {
-                        color = Color.parseColor(module.getString("color", "#aaaaaa"));
+                        color = Color.parseColor(module.getString("color", "#008577"));
                     }
 
-                    ((ImageView) view.findViewById(R.id.specialLightRGBColorValue)).setColorFilter(color);
+                    ((ImageView) view.findViewById(R.id.lightRGBIcon)).setImageTintList(
+                            ColorStateList.valueOf(color)
+                    );
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -143,11 +150,6 @@ public class LightRGB extends Configure {
                             return false;
                         }
                         break;
-                    case "delay":
-                        if (!(val instanceof Integer)) {
-                            return false;
-                        }
-                        break;
                     case "lit":
                         if (!(val instanceof Boolean)) {
                             return false;
@@ -164,7 +166,6 @@ public class LightRGB extends Configure {
                     Object val = values.get(key);
                     switch (key) {
                         case "nothing":
-                        case "temp":
                             if (!(val instanceof Integer)) {
                                 return false;
                             }

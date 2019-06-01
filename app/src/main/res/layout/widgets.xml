@@ -10,7 +10,8 @@
         style="@style/StyledTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/widgetsTitle" />
+        android:text="@string/widgetsTitle"
+        android:textColor="#00796B" />
 
     <TextView
         android:id="@+id/textView23"
@@ -37,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/restore"
-            android:textColor="#666" />
+            android:textColor="#444" />
 
         <Button
             android:id="@+id/widgetsSave"
@@ -46,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/saveChanges"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="#C2185B" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

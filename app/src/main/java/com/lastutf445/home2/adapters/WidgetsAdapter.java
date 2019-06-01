@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,13 +31,15 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
     private LayoutInflater inflater;
     private RecyclerView content;
     private Activity activity;
+    private Remover remover;
 
     public WidgetsAdapter(LayoutInflater inflater, RecyclerView content, Activity activity) {
         this.inflater = inflater;
         this.activity = activity;
         this.content = content;
+        this.remover = new Remover();
 
-        WidgetsLoader.setWidgetsAdapterRemover(new Remover());
+        WidgetsLoader.setWidgetsAdapterRemover(this.remover);
     }
 
     public void initCallback() {
@@ -160,6 +163,7 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
         if (pos < 0 || pos >= data.size()) return;
 
         WidgetsLoader.remove(data.valueAt(pos));
+        Log.d("LOGTAG", "try to remove element at pos: " + pos);
         data.removeAt(pos);
         notifyItemRemoved(pos);
     }

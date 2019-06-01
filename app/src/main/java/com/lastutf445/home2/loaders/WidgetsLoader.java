@@ -52,7 +52,7 @@ public class WidgetsLoader {
     private static WeakReference<LinearLayout> weakContent;
     private static Handler handler;
 
-    private static BottomSheetLongClickListener bottomSheetLongClickListener;
+    private static BottomSheetClickListener bottomSheetClickListener;
     private static WeakReference<BottomSheetDialog> weakBottomSheetDialog;
     private static WeakReference<View> weakBottomSheetView;
     private static int bottomSheetWidgetSerial;
@@ -71,8 +71,8 @@ public class WidgetsLoader {
         weakInflater = new WeakReference<>(inflater);
         weakContent = new WeakReference<>(content);
 
-        bottomSheetLongClickListener = new BottomSheetLongClickListener();
-        BottomSheetClickListener c = new BottomSheetClickListener();
+        bottomSheetClickListener = new BottomSheetClickListener();
+        BottomSheetButtonClickListener c = new BottomSheetButtonClickListener();
 
         bottomSheetView.findViewById(R.id.bottomSheetConfigure).setOnClickListener(c);
         bottomSheetView.findViewById(R.id.bottomSheetDelete).setOnClickListener(c);
@@ -177,7 +177,7 @@ public class WidgetsLoader {
             content.addView(view, pos);
 
             view.setTag(widget.getSerial());
-            view.setOnLongClickListener(bottomSheetLongClickListener);
+            view.setOnClickListener(bottomSheetClickListener);
         }
     }
 
@@ -257,7 +257,7 @@ public class WidgetsLoader {
         Module module = ModulesLoader.getModule(widget.getSerial());
 
         if (module != null && module.getSerial() == bottomSheetWidgetSerial) {
-            bottomSheetLongClickListener.lastUpdated(module);
+            bottomSheetClickListener.lastUpdated(module);
         }
 
         switch (widget.getType()) {
@@ -340,7 +340,7 @@ public class WidgetsLoader {
             int color = Color.parseColor("#333333");
 
             if (module.getBoolean("lit", false)) {
-                color = Color.parseColor(module.getString("color", "#aaaaaa"));
+                color = Color.parseColor(module.getString("color", "#008577"));
             }
 
             ((ImageView) widget.getView().findViewById(R.id.widgetValue)).setColorFilter(color, PorterDuff.Mode.SRC_IN);
@@ -352,13 +352,6 @@ public class WidgetsLoader {
 
     private static void updateSocket(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
-        boolean current = false;
-
-        try {
-            current = module.getVals().getBoolean("current");
-        } catch (JSONException e) {
-            //e.printStackTrace();
-        }
 
         updateSimpleWidget(
                 widget.getView(),
@@ -370,7 +363,7 @@ public class WidgetsLoader {
         try {
             int color = Color.parseColor("#aaaaaa");
 
-            if (module.getBoolean("enabled", false) && current) {
+            if (module.getBoolean("enabled", false)) {
                 color = DataLoader.getAppResources().getColor(R.color.colorPrimary);
             }
 
@@ -729,11 +722,11 @@ public class WidgetsLoader {
         return true;
     }
 
-    private static class BottomSheetLongClickListener implements View.OnLongClickListener {
+    private static class BottomSheetClickListener implements View.OnClickListener {
         @Override
-        public boolean onLongClick(View v) {
+        public void onClick(View v) {
             if (!(v.getTag() instanceof Integer)) {
-                return false;
+                return;
             }
 
             BottomSheetDialog dialog = weakBottomSheetDialog.get();
@@ -779,7 +772,7 @@ public class WidgetsLoader {
                 dialog.show();
             }
 
-            return false;
+            return;
         }
 
         public void lastUpdated(@Nullable Module module) {
@@ -809,7 +802,7 @@ public class WidgetsLoader {
         }
     }
 
-    private static class BottomSheetClickListener implements View.OnClickListener {
+    private static class BottomSheetButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {

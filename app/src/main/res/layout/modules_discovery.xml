@@ -11,7 +11,8 @@
         style="@style/StyledTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/modulesDiscovery" />
+        android:text="@string/modulesDiscovery"
+        android:textColor="#00796B" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/modulesDiscoverySwipeRefreshLayout"
@@ -93,6 +94,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/add_circle_outline"
+                        android:drawableTint="#333"
                         android:text="@string/modulesMerge" />
 
                     <Space

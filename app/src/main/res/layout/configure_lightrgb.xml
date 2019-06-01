@@ -1,69 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/specialTitle"
-        style="@style/StyledTitle"
+    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:text="@string/unknownModule" />
-
-    <TextView
-        android:id="@+id/textView49"
-        style="@style/StyledSubtitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/specialModule" />
-
-    <LinearLayout
-        android:id="@+id/specialLightRGBIsLit"
-        style="@style/StyledTransparentButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Switch
-            android:id="@+id/specialLightRGBIsLitCheckBox"
-            style="@style/StyledSwitch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/specialLightRGBIsLit" />
-    </LinearLayout>
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/specialLightRGBColorWrapper"
-        style="@style/StyledTransparentButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/specialLightRGBColor"
-            style="@style/StyledButtonIcon"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/specialLightRGBPickColor"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:background="#eee"
+        android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/specialLightRGBColorValue"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="8dp"
-            android:tint="#aaa"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/specialLightRGBColor"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:color/black" />
-    </android.support.constraint.ConstraintLayout>
+            android:id="@+id/lightRGBIcon"
+            style="@style/ConfigureIcon"
+            app:srcCompat="@drawable/light_bulb" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/lightRGBTitle"
+            style="@style/ConfigureTitle"
+            android:text="@string/defaultTitleLightRGB" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fafafa"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/StyledSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/specialModule" />
+
+            <LinearLayout
+                android:id="@+id/lightRGBON"
+                style="@style/StyledTransparentButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <Switch
+                    android:id="@+id/lightRGBONSwitch"
+                    style="@style/StyledSwitch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/specialLightRGBIsLit" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/lightRGBColor"
+                style="@style/StyledButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/specialLightRGBPickColor" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

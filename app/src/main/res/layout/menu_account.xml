@@ -28,6 +28,7 @@
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/usernameError"
+            android:textColor="#00796B"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="@+id/textView"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -61,7 +62,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/exit"
+            android:drawableTint="#AD1457"
             android:text="@string/accountLogout"
+            android:textColor="#AD1457"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/accountPrivacy" />

@@ -23,7 +23,7 @@
         android:layout_marginTop="24dp"
         android:fontFamily="sans-serif-medium"
         android:text="@string/unknownModule"
-        android:textColor="#555"
+        android:textColor="#444"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/textView23"
         app:layout_constraintTop_toBottomOf="@+id/textView23" />
@@ -35,7 +35,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="sans-serif-medium"
         android:text="@string/serial"
-        android:textColor="#555"
+        android:textColor="#444"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/createModuleTitle"
         app:layout_constraintTop_toBottomOf="@+id/createModuleTitle" />

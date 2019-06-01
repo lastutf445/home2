@@ -15,7 +15,8 @@
             style="@style/StyledTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/createWidget" />
+            android:text="@string/createWidget"
+            android:textColor="#00796B" />
 
         <TextView
             android:id="@+id/textView26"

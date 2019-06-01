@@ -2,7 +2,7 @@
     <string name="appName">home2</string>
 
     <string name="notAuthenticated">You are not authenticated</string>
-    <string name="usernameError">Username error</string>
+    <string name="usernameError">USERNAME ERROR</string>
     <string name="usernameDefault">Default username</string>
 
     <string name="dashboard">Dashboard</string>
@@ -11,9 +11,10 @@
     <string name="modules">Modules</string>
     <string name="sync">Sync</string>
     <string name="about">About</string>
+    <string name="menu">Menu</string>
 
     <string name="authTitle">Authentication</string>
-    <string name="authSubtitle">Login or enter as guest</string>
+    <string name="authSubtitle">Knock-knock, who is here?</string>
     <string name="authLogin">Login</string>
     <string name="authPassword">Password</string>
     <string name="authEnter">Enter</string>
@@ -36,7 +37,7 @@
 
     <string name="createWidget">Create a new widget</string>
     <string name="moveWidgets">Move elements</string>
-    <string name="removeWidgets">Remove widgets</string>
+    <string name="removeWidgets">Remove all widgets</string>
 
     <string name="createWidgetType">Choose type:</string>
     <string name="createWidgetRadioTitle">Title</string>
@@ -54,7 +55,7 @@
     <string name="widgetRemoveTitle">Remove widget</string>
     <string name="widgetRemoveMessages">You can reverse this operation later</string>
 
-    <string name="widgetsRemoveTitle">Remove all widgets</string>
+    <string name="widgetsRemoveTitle">@string/removeWidgets</string>
     <string name="widgetsRemoveMessages">State will be saved immediately</string>
 
     <string name="savedMode">All changes saved</string>
@@ -146,12 +147,18 @@
     <string name="cancel">Cancel</string>
     
     <string name="specialModule">Module settings</string>
-    <string name="specialClient">Client settings</string>
 
     <string name="specialLightRGBIsLit">Light ON</string>
     <string name="specialLightRGBPickColor">Choose color</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
 
     <string name="specialSocketIsOn">Socket ON</string>
+    <string name="specialSocketDisableAfterInit">Disable after init</string>
+    <string name="specialSocketDisableWhenIdle">Disable when idle</string>
+    <string name="specialSocketActiveStateTimeout">Active state timeout (min)</string>
+    <string name="specialSocketActiveStateTimeoutSave">Save timeout</string>
 
     <string name="notTested">not tested</string>
     <string name="notAvailable">Not available</string>

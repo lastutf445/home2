@@ -530,7 +530,7 @@ public class ModulesLoader {
                     0
             );
 
-            lastSync = DataLoader.getInt("lastSyncModules", 0);
+            lastSync = DataLoader.getLong("lastSyncModules", 0);
             group = Sync.SYNC_MODULES_STATE;
         }
 

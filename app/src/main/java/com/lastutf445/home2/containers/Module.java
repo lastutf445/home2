@@ -145,6 +145,8 @@ public class Module extends JSONPayload {
             return;
         }
 
+        //Log.d("LOGTAG", "validating: " + type + " " + ops.toString() + " " + values.toString());
+
         if (!ModulesLoader.validateState(this, type, ops, values)) {
             // TODO: notify about it
             Log.d("LOGTAG", "validation error on serial: " + serial);

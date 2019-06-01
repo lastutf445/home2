@@ -6,20 +6,24 @@
     <item
         android:id="@+id/nav_dashboard"
         android:layout_gravity="center"
+        android:title="@string/dashboard"
         android:icon="@drawable/dashboard" />
 
     <item
         android:id="@+id/nav_messages"
         android:layout_gravity="center"
+        android:title="@string/messages"
         android:icon="@drawable/people" />
 
     <item
         android:id="@+id/nav_notifications"
         android:layout_gravity="center"
+        android:title="@string/notifications"
         android:icon="@drawable/notifications_none" />
 
     <item
         android:id="@+id/nav_menu"
         android:layout_gravity="center"
+        android:title="@string/menu"
         android:icon="@drawable/menu" />
 </menu>

@@ -67,8 +67,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/delete"
-        android:drawableTint="#333"
-        android:text="@string/widgetRemoveTitle" />
+        android:drawableTint="#C51162"
+        android:text="@string/widgetRemoveTitle"
+        android:textColor="#C51162" />
 
     <Space
         android:layout_width="match_parent"

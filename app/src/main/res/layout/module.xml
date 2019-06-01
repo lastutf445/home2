@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:text="@string/unknownModule"
+            android:textColor="#00796B"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -210,7 +211,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/delete"
+            android:drawableTint="#C51162"
             android:text="@string/delete"
+            android:textColor="#C51162"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"

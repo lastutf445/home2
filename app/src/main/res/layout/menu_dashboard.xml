@@ -9,7 +9,8 @@
         style="@style/StyledTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dashboard" />
+        android:text="@string/dashboard"
+        android:textColor="#00796B" />
 
     <Space
         android:layout_width="match_parent"
@@ -73,6 +74,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/delete"
-        android:text="@string/removeWidgets" />
+        android:drawableTint="#C51162"
+        android:text="@string/removeWidgets"
+        android:textColor="#C51162" />
 
 </LinearLayout>

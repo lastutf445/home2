@@ -29,6 +29,7 @@
             android:layout_marginTop="32dp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/appName"
+            android:textColor="#555"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,6 +43,7 @@
             android:fontFamily="sans-serif"
             android:text="@string/aboutSubtitle"
             android:textAllCaps="false"
+            android:textColor="#555"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/textView4"
             app:layout_constraintStart_toStartOf="@+id/textView4"
@@ -54,6 +56,7 @@
             android:layout_marginTop="32dp"
             android:text="@string/aboutDeveloped"
             android:textAllCaps="false"
+            android:textColor="#555"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/textView8"
             app:layout_constraintTop_toBottomOf="@+id/textView9" />
@@ -74,6 +77,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="48dp"
             android:text="@string/aboutVersion"
+            android:textColor="#555"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -93,6 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="@string/aboutThanksTo"
+            android:textColor="#555"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/textView6"
             app:layout_constraintTop_toBottomOf="@+id/textView7" />

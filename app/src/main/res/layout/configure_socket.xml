@@ -1,36 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/specialTitle"
-        style="@style/StyledTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:text="@string/unknownModule" />
-
-    <TextView
-        android:id="@+id/textView50"
-        style="@style/StyledSubtitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/specialModule" />
+    android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/specialSocketIsOn"
-        style="@style/StyledTransparentButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="#eee"
+        android:orientation="vertical">
 
-        <Switch
-            android:id="@+id/specialSocketIsOnCheckBox"
-            style="@style/StyledSwitch"
+        <ImageView
+            android:id="@+id/socketIcon"
+            style="@style/ConfigureIcon"
+            app:srcCompat="@drawable/power_plug" />
+
+        <TextView
+            android:id="@+id/socketTitle"
+            style="@style/ConfigureTitle"
+            android:text="@string/defaultTitleSocket" />
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/specialSocketIsOn" />
+            android:layout_height="match_parent"
+            android:background="#fafafa"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView50"
+                style="@style/StyledSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/specialModule" />
+
+            <LinearLayout
+                android:id="@+id/socketON"
+                style="@style/StyledTransparentButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/socketONSwitch"
+                    style="@style/StyledSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/specialSocketIsOn" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/socketDisableAfterInit"
+                style="@style/StyledTransparentButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/socketDisableAfterInitSwitch"
+                    style="@style/StyledSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/specialSocketDisableAfterInit" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/socketAdvanced"
+                style="@style/StyledSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/syncAdvanced" />
+
+            <LinearLayout
+                android:id="@+id/socketDisableWhenIdle"
+                style="@style/StyledTransparentButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/socketDisableWhenIdleSwitch"
+                    style="@style/StyledSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/specialSocketDisableWhenIdle" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/socketActiveStateTimeoutWrapper"
+                style="@style/StyledBasicButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView36"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/specialSocketActiveStateTimeout"
+                    android:textColor="#333" />
+
+                <EditText
+                    android:id="@+id/socketActiveStateTimeout"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:digits="1234567890"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:singleLine="true"
+                    android:textAlignment="textEnd" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/socketActiveStateTimeoutSave"
+                style="@style/StyledButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/specialSocketActiveStateTimeoutSave"
+                android:textColor="#00796B" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="32dp" />
+
+        </LinearLayout>
+
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

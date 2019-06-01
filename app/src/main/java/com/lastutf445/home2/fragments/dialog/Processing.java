@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.lastutf445.home2.R;
@@ -31,6 +34,15 @@ public class Processing extends DialogFragment {
         setTitle();
 
         return builder.create();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.width = DataLoader.getAppResources().getDimensionPixelSize(R.dimen.processingDialogWidth);
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        getDialog().getWindow().setAttributes(params);
     }
 
     public void setOnDismissListener(@NonNull DialogInterface.OnDismissListener d) {
