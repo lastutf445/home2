@@ -15,15 +15,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 public final class UserLoader {
 
-    private static UserDataSyncStarter userDataSyncStarter;
+    private static WeakReference<Handler> settingsHandler;
     private static UserDataSync userDataSync;
+    private static UserDataSyncTransport userDataSyncTransport;
     private static boolean allowUserDataSync;
     private static long lastSync;
 
@@ -31,13 +32,31 @@ public final class UserLoader {
         lastSync = DataLoader.getLong("lastSyncUser", 0);
 
         try {
+            userDataSyncTransport = new UserDataSyncTransport();
             userDataSync = new UserDataSync();
-            userDataSyncStarter = new UserDataSyncStarter();
+            Sync.addSyncProvider(userDataSyncTransport);
             Sync.addSyncProvider(userDataSync);
-            Sync.addSyncProvider(userDataSyncStarter);
+            scanForSync();
 
         } catch (JSONException e) {
             //e.printStackTrace();
+        }
+    }
+
+    public static void scanForSync() {
+
+        long lastSync = DataLoader.getLong("lastSyncUser", 0);
+        Log.d("LOGTAG", "current syncTime: " + lastSync);
+
+        Set<String> ops = DataLoader.getKeys();
+
+        for (String key: ops) {
+            if (DataLoader.getSyncTime(key) >= lastSync) {
+                Log.d("LOGTAG", "should to be synced: " + key + " " + DataLoader.getSyncTime(key));
+                UserLoader.addToSyncUserDataQueue(key);
+            } else {
+                Log.d("LOGTAG", "not needed to be synced: " + key + " " + DataLoader.getSyncTime(key));
+            }
         }
     }
 
@@ -93,16 +112,25 @@ public final class UserLoader {
     }
 
     public static void logout() {
-        DataLoader.setWithoutSync("Session", null);
-        DataLoader.setWithoutSync("Username", null);
-        DataLoader.setWithoutSync("BasicAccount", null);
-        DataLoader.setWithoutSync("AESKey", null);
-        DataLoader.setWithoutSync("lastSyncModules", 0);
-        DataLoader.setWithoutSync("lastSyncUser", 0);
-        DataLoader.flushSyncTable();
+        ModulesLoader.wipeModules();
+        DataLoader.flushTables();
         flushSyncUserDataQueue();
+        lastSync = 0;
         DataLoader.save();
         CryptoLoader.init();
+    }
+
+    public static void setSettingsHandler(Handler handler) {
+        settingsHandler = new WeakReference<>(handler);
+    }
+
+    private static void callSettingsHandler() {
+        if (settingsHandler != null) {
+            Handler handler = settingsHandler.get();
+            if (handler != null) {
+                handler.sendEmptyMessage(-1);
+            }
+        }
     }
 
     @Nullable
@@ -117,40 +145,39 @@ public final class UserLoader {
 
     public static void onReconnect() {
         allowUserDataSync = false;
-        if (userDataSyncStarter != null) {
-            userDataSyncStarter.reconnected = true;
+        if (userDataSync != null) {
+            userDataSync.reconnected = true;
         }
     }
 
     public static void addToSyncUserDataQueue(String option) {
-        if (userDataSync != null) {
-            userDataSync.queue.add(option);
-            if (userDataSync.request.has(option)) {
-                userDataSync.update(option);
+        if (userDataSyncTransport != null) {
+            userDataSyncTransport.queue.add(option);
+            if (userDataSyncTransport.request.has(option)) {
+                userDataSyncTransport.update(option);
             }
         }
     }
 
     public static void removeFromSyncUserDataQueue(String option) {
-        if (userDataSync != null) {
-            userDataSync.queue.remove(option);
-            userDataSync.request.remove(option);
+        if (userDataSyncTransport != null) {
+            userDataSyncTransport.queue.remove(option);
+            userDataSyncTransport.request.remove(option);
         }
     }
 
     public static void flushSyncUserDataQueue() {
-        if (userDataSync != null) {
-            synchronized (userDataSync.queue) {
-                synchronized (userDataSync.request) {
-                    while (userDataSync.request.length() > 0) {
-                        Iterator<String> it = userDataSync.request.keys();
-                        userDataSync.request.remove(it.next());
+        if (userDataSyncTransport != null) {
+            synchronized (userDataSyncTransport.queue) {
+                synchronized (userDataSyncTransport.request) {
+                    while (userDataSyncTransport.request.length() > 0) {
+                        Iterator<String> it = userDataSyncTransport.request.keys();
+                        userDataSyncTransport.request.remove(it.next());
                     }
-                    userDataSync.queue.clear();
+                    userDataSyncTransport.queue.clear();
                 }
             }
         }
-
     }
 
     private final static class GetPublicKey extends SyncProvider {
@@ -363,11 +390,11 @@ public final class UserLoader {
         }
     }
 
-    private final static class UserDataSyncStarter extends SyncProvider {
+    private final static class UserDataSync extends SyncProvider {
         private boolean reconnected;
 
-        public UserDataSyncStarter() throws JSONException {
-            super(Sync.PROVIDER_USER_DATA_STARTER, "syncUserDataStarter", new JSONObject(), null, 0);
+        public UserDataSync() throws JSONException {
+            super(Sync.PROVIDER_USER_DATA_STARTER, "syncUserData", new JSONObject(), null, 0);
             lastSync = DataLoader.getLong("lastSyncUser", 0);
             group = Sync.SYNC_USER_DATA;
         }
@@ -381,12 +408,17 @@ public final class UserLoader {
         public void onReceive(JSONObject data) {
             Log.d("LOGTAG", data.toString());
 
+            if (!UserLoader.isAuthenticated()) {
+                Log.d("LOGTAG", "SYNCUSERDATA ERROR: data received, but user isn\'t authenticated");
+                return;
+            }
+
             try {
                 int status = data.getInt("status");
                 long lastUpdated = data.getLong("lastUpdated");
 
                 if (status != Sync.UPDATE) {
-                    Log.d("LOGTAG", "SYNCUSERDATASTARTER ERROR: " + data.toString());
+                    Log.d("LOGTAG", "SYNCUSERDATA ERROR: " + data.toString());
                     NotificationsLoader.makeStatusNotification(
                             Sync.SYNC_USER_DATA_FAILED_EVENT,
                             true
@@ -397,19 +429,22 @@ public final class UserLoader {
                 JSONObject ops = data.getJSONObject("ops");
 
                 if (!DataLoader.merge(ops)) {
-                    Log.d("LOGTAG", "SYNCUSERDATASTARTER ERROR: MERGE ERROR");
+                    Log.d("LOGTAG", "SYNCUSERDATA ERROR: MERGE ERROR");
                     NotificationsLoader.makeStatusNotification(
                             Sync.SYNC_USER_DATA_FAILED_EVENT,
                             true
                     );
+                    callSettingsHandler();
                     return;
                 }
+
+                callSettingsHandler();
 
                 lastSync = Math.max(lastSync, Math.min(System.currentTimeMillis(), lastUpdated));
                 DataLoader.setWithoutSync("lastSyncUser", lastSync);
                 DataLoader.save();
 
-                Log.d("LOGTAG", "SyncUserDataStarter finished");
+                Log.d("LOGTAG", "SyncUserData finished");
                 NotificationsLoader.removeById(Sync.SYNC_USER_DATA_EVENT);
                 NotificationsLoader.removeById(Sync.SYNC_USER_DATA_FAILED_EVENT);
 
@@ -443,12 +478,12 @@ public final class UserLoader {
         }
     }
 
-    private final static class UserDataSync extends SyncProvider {
+    private final static class UserDataSyncTransport extends SyncProvider {
         private final HashSet<String> queue = new HashSet<>();
         private final JSONObject request = new JSONObject();
 
-        public UserDataSync() throws JSONException {
-            super(Sync.PROVIDER_USER_DATA, "syncUserData", new JSONObject(), null, 0);
+        public UserDataSyncTransport() throws JSONException {
+            super(Sync.PROVIDER_USER_DATA_TRANSPORT, "syncUserDataTransport", new JSONObject(), null, 0);
             group = Sync.SYNC_USER_DATA;
         }
 
@@ -460,7 +495,7 @@ public final class UserLoader {
         @Override
         public void onPostPublish(int statusCode) {
             if (statusCode < 0) return;
-            Log.d("LOGTAG", "SYNCUSERDATA: " + statusCode);
+            Log.d("LOGTAG", "SYNCUSERDATATRANSPORT: " + statusCode);
         }
 
         @Override
@@ -469,7 +504,7 @@ public final class UserLoader {
                 int status = data.getInt("status");
 
                 if (status != Sync.OK) {
-                    Log.d("LOGTAG", "SYNCUSERDATA ERROR: " + data.toString());
+                    Log.d("LOGTAG", "SYNCUSERDATATRANSPORT ERROR: " + data.toString());
                     NotificationsLoader.makeStatusNotification(
                             Sync.SYNC_USER_DATA_FAILED_EVENT,
                             true
@@ -483,13 +518,19 @@ public final class UserLoader {
                         while (request.length() > 0) {
                             Iterator<String> it = request.keys();
                             String key = it.next();
+                            lastSync = Math.max(lastSync, DataLoader.getSyncTime(key));
                             request.remove(key);
                             queue.remove(key);
                         }
                     }
                 }
 
-                Log.d("LOGTAG", "SyncUserData finished");
+                lastSync = Math.min(lastSync, System.currentTimeMillis());
+                DataLoader.setWithoutSync("lastSyncUser", lastSync);
+
+                Log.d("LOGTAG", "SYNCUSERDATATRANSPORT finished");
+                Log.d("LOGTAG", "Current lastSyncUser is " + lastSync);
+
                 NotificationsLoader.removeById(Sync.SYNC_USER_DATA_EVENT);
                 NotificationsLoader.removeById(Sync.SYNC_USER_DATA_FAILED_EVENT);
 

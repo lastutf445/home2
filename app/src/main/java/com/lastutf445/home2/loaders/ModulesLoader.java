@@ -44,6 +44,8 @@ public class ModulesLoader {
 
     private static final SparseArray<Module> modules = new SparseArray<>();
     private static SyncModulesStateRequest syncModulesState;
+    private static WeakReference<Handler> moduleUpdater;
+    private static int moduleUpdaterSerial;
     private static ModuleUpdater updater;
 
     public static void init() {
@@ -202,6 +204,21 @@ public class ModulesLoader {
         }
     }
 
+    public static void setModuleUpdater(int serial, Handler handler) {
+        moduleUpdater = new WeakReference<>(handler);
+        moduleUpdaterSerial = serial;
+    }
+
+    private static void callModuleUpdater(int serial) {
+        if (serial == moduleUpdaterSerial && moduleUpdater != null) {
+            Handler handler = moduleUpdater.get();
+
+            if (handler != null) {
+                handler.sendEmptyMessage(-3);
+            }
+        }
+    }
+
     public static boolean validateState(@NonNull Module module, @NonNull String type, @NonNull JSONObject ops, @NonNull JSONObject values) {
         if (!module.getType().equals(type)) return false;
 
@@ -305,6 +322,26 @@ public class ModulesLoader {
         }
     }
 
+    public static void wipeModules() {
+        synchronized (modules) {
+            for (int i = 0; i < modules.size(); ++i) {
+                Module module = modules.valueAt(i);
+                if (module != null) {
+                    module.wipe();
+                    module.setSyncing(false);
+                    WidgetsLoader.onModuleLinkChanged(module, false);
+                }
+            }
+        }
+
+        if (syncModulesState != null) {
+            syncModulesState.lastSync = 0;
+        }
+        if (updater != null) {
+            updater.serial = -1;
+        }
+    }
+
     private static class ModuleUpdater extends SyncProvider {
         private volatile WeakReference<Handler> weakHandler;
         private volatile boolean subscribe, syncTainted;
@@ -375,7 +412,7 @@ public class ModulesLoader {
                 if (status == Sync.OK) {
                     Handler handler = weakHandler.get();
                     if (handler != null) handler.sendEmptyMessage(0);
-                    //Module module = ModulesLoader.getModule(serial);
+                    //Module module = ModulesLoader.getModule(serial); todo: edit this weak approach
                     //if (module != null) module.setSyncing(!module.getSyncing());
                     serial = -1;
                     return;
@@ -386,6 +423,7 @@ public class ModulesLoader {
                     Module module = modules.get(msg.getInt("serial"));
                     if (module != null) {
                         module.setSyncing(true);
+                        callModuleUpdater(module.getSerial());
                     }
                     return;
                 }
@@ -395,6 +433,7 @@ public class ModulesLoader {
                     Module module = modules.get(msg.getInt("serial"));
                     if (module != null) {
                         module.setSyncing(false);
+                        callModuleUpdater(module.getSerial());
                     }
                     return;
                 }

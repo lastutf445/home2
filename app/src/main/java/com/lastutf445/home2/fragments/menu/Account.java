@@ -43,6 +43,7 @@ public class Account extends NavigationFragment {
         rename = new Rename();
         processing = new Processing();
         updater = new Updater(view, rename, processing);
+        UserLoader.setSettingsHandler(updater);
 
         processing.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -72,14 +73,7 @@ public class Account extends NavigationFragment {
         view.findViewById(R.id.accountEditUsername).setOnClickListener(c);
         view.findViewById(R.id.accountPrivacy).setOnClickListener(c);
         view.findViewById(R.id.accountLogout).setOnClickListener(c);
-        reload();
-    }
-
-    @Override
-    protected void reload() {
-        ((TextView) view.findViewById(R.id.accountUsername)).setText(
-                UserLoader.getUsername()
-        );
+        updater.sendEmptyMessage(-1);
     }
 
     private void rename() {
@@ -148,7 +142,8 @@ public class Account extends NavigationFragment {
 
     @Override
     public void onResult(Bundle data) {
-        reload();
+        updater.sendEmptyMessage(-1);
+        UserLoader.setSettingsHandler(updater);
     }
 
     private static class Updater extends Handler {
@@ -165,13 +160,18 @@ public class Account extends NavigationFragment {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                case -1:
+                    reload();
+                    break;
                 case 0:
-                    finish(R.string.unexpectedError);
+                    finish(R.string.disconnected);
                     break;
                 case 1:
                     setTitle(R.string.processing);
                     break;
                 case 2:
+                    finish(R.string.masterServerRequired);
+                    break;
                 case 3:
                     setTitle(R.string.waitingForAConnection);
                     break;
@@ -181,6 +181,24 @@ public class Account extends NavigationFragment {
                 case 5:
                     done();
                     break;
+            }
+        }
+
+        private void reload() {
+            View view = weakView.get();
+
+            if (view != null) {
+                ((TextView) view.findViewById(R.id.accountUsername)).setText(
+                        UserLoader.getUsername()
+                );
+            }
+
+            Rename rename = weakRename.get();
+
+            if (rename != null) {
+                rename.setOld(
+                        UserLoader.getUsername()
+                );
             }
         }
 

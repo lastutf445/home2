@@ -79,6 +79,7 @@ public class Module extends NavigationFragment {
         view.findViewById(R.id.moduleDelete).setOnClickListener(c);
         updater = new Updater(view, module);
 
+        ModulesLoader.setModuleUpdater(module.getSerial(), updater);
         reload();
     }
 
@@ -252,6 +253,9 @@ public class Module extends NavigationFragment {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                case -3:
+                    subscribeStatusUpdate();
+                    break;
                 case -2:
                     beginPing();
                     break;
@@ -261,6 +265,18 @@ public class Module extends NavigationFragment {
                 case 0:
                     unlockSyncButton(msg.getData());
                     break;
+            }
+        }
+
+        private void subscribeStatusUpdate() {
+            View view = weakView.get();
+            if (view == null) return;
+
+            Switch switcher = view.findViewById(R.id.moduleSyncCheckBox);
+            com.lastutf445.home2.containers.Module module = weakModule.get();
+
+            if (module != null) {
+                switcher.setChecked(module.getSyncing());
             }
         }
 

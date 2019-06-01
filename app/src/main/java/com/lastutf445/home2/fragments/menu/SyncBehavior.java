@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,8 +16,11 @@ import android.widget.TextView;
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
+
+import java.lang.ref.WeakReference;
 
 public class SyncBehavior extends NavigationFragment {
 
@@ -24,6 +29,8 @@ public class SyncBehavior extends NavigationFragment {
     private TextView syncDiscoveryTimeout;
     private TextView syncPingAttempts;
     private TextView syncPingInterval;
+
+    private Updater updater;
 
     @Nullable
     @Override
@@ -40,6 +47,9 @@ public class SyncBehavior extends NavigationFragment {
         syncDiscoveryTimeout = view.findViewById(R.id.syncDiscoveryTimeout);
         syncPingAttempts = view.findViewById(R.id.syncPingAttempts);
         syncPingInterval = view.findViewById(R.id.syncPingInterval);
+
+        updater = new Updater(view);
+        UserLoader.setSettingsHandler(updater);
 
         View.OnClickListener c = new View.OnClickListener() {
             @Override
@@ -58,30 +68,7 @@ public class SyncBehavior extends NavigationFragment {
 
         view.findViewById(R.id.syncBehaviorDefaults).setOnClickListener(c);
         view.findViewById(R.id.syncBehaviorSave).setOnClickListener(c);
-        reload();
-    }
-
-    @Override
-    protected void reload() {
-        syncClientPort.setText(
-                String.valueOf(DataLoader.getInt("SyncClientPort", 44501))
-        );
-
-        syncDiscoveryPort.setText(
-                String.valueOf(DataLoader.getInt("SyncDiscoveryPort", 44500))
-        );
-
-        syncDiscoveryTimeout.setText(
-                String.valueOf(DataLoader.getInt("SyncDiscoveryTimeout", 3))
-        );
-
-        syncPingAttempts.setText(
-                String.valueOf(DataLoader.getInt("SyncPingAttempts", 3))
-        );
-
-        syncPingInterval.setText(
-                String.valueOf(DataLoader.getInt("SyncPingInterval", 1000))
-        );
+        updater.sendEmptyMessage(-1);
     }
 
     private void loadDefaults() {
@@ -126,11 +113,26 @@ public class SyncBehavior extends NavigationFragment {
             pingAttempts = Math.max(pingAttempts, 1);
             pingInterval = Math.max((pingInterval / 500) * 500, 500);
 
-            DataLoader.set("SyncClientPort", clientPort);
-            DataLoader.set("SyncDiscoveryPort", discoveryPort);
-            DataLoader.set("SyncDiscoveryTimeout", discoveryTimeout);
-            DataLoader.set("SyncPingAttempts", pingAttempts);
-            DataLoader.set("SyncPingInterval", pingInterval);
+            if (clientPort != DataLoader.getInt("SyncClientPort", 44501)) {
+                DataLoader.set("SyncClientPort", clientPort);
+            }
+
+            if (discoveryPort != DataLoader.getInt("SyncDiscoveryPort", 44500)) {
+                DataLoader.set("SyncDiscoveryPort", discoveryPort);
+            }
+
+            if (discoveryTimeout != DataLoader.getInt("SyncDiscoveryTimeout", 3)) {
+                DataLoader.set("SyncDiscoveryTimeout", discoveryTimeout);
+            }
+
+            if (pingAttempts != DataLoader.getInt("SyncPingAttempts", 3)) {
+                DataLoader.set("SyncPingAttempts", pingAttempts);
+            }
+
+            if (pingInterval != DataLoader.getInt("SyncPingInterval", 1000)) {
+                DataLoader.set("SyncPingInterval", pingInterval);
+            }
+
             DataLoader.save();
             reload();
 
@@ -139,6 +141,45 @@ public class SyncBehavior extends NavigationFragment {
         } catch (NumberFormatException e) {
             NotificationsLoader.makeToast("Unexpected error", true);
             //e.printStackTrace();
+        }
+    }
+
+    private static class Updater extends Handler {
+        private WeakReference<View> weakView;
+
+        public Updater(View view) {
+            weakView = new WeakReference<>(view);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == -1) reload();
+        }
+
+        private void reload() {
+            View view = weakView.get();
+
+            if (view != null) {
+                ((TextView) view.findViewById(R.id.syncClientPort)).setText(
+                        String.valueOf(DataLoader.getInt("SyncClientPort", 44501))
+                );
+
+                ((TextView) view.findViewById(R.id.syncDiscoveryPort)).setText(
+                        String.valueOf(DataLoader.getInt("SyncDiscoveryPort", 44500))
+                );
+
+                ((TextView) view.findViewById(R.id.syncDiscoveryTimeout)).setText(
+                        String.valueOf(DataLoader.getInt("SyncDiscoveryTimeout", 3))
+                );
+
+                ((TextView) view.findViewById(R.id.syncPingAttempts)).setText(
+                        String.valueOf(DataLoader.getInt("SyncPingAttempts", 3))
+                );
+
+                ((TextView) view.findViewById(R.id.syncPingInterval)).setText(
+                        String.valueOf(DataLoader.getInt("SyncPingInterval", 1000))
+                );
+            }
         }
     }
 }

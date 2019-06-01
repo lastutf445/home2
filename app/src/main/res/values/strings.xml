@@ -17,7 +17,7 @@
     <string name="authLogin">Login</string>
     <string name="authPassword">Password</string>
     <string name="authEnter">Enter</string>
-    <string name="authEnterBasic">Enter basic account</string>
+    <string name="authEnterBasic">Enter fake account</string>
 
     <string name="authRequestingPubKey">Requesting public key&#8230;</string>
     <string name="authInvalidPubKey">Invalid public key, aborted</string>
@@ -112,13 +112,13 @@
     <string name="syncBehaviorDiscoveryDesc">Define a port for searching nodes and timeout.</string>
 
     <string name="syncDiscoveryPort">Discovery port</string>
-    <string name="syncDiscoveryAttempts">Timeout</string>
+    <string name="syncDiscoveryAttempts">Timeout (sec)</string>
 
     <string name="syncBehaviorPing">Ping settings</string>
     <string name="syncBehaviorPingDesc">Define an interval between ping packets and count of them.</string>
 
     <string name="syncPingAttempts">Ping attempts</string>
-    <string name="syncPingInterval">Ping interval</string>
+    <string name="syncPingInterval">Ping interval (ms)</string>
 
     <string name="loadDefaults">Load defaults</string>
     <string name="loadDefaultsMessage">Values won\'t be saved automatically</string>

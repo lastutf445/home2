@@ -19,6 +19,7 @@ import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.MessagesLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Receiver;
 import com.lastutf445.home2.util.NavigationFragment;
 import com.lastutf445.home2.util.SimpleAnimator;
@@ -40,6 +41,7 @@ public class Sync extends NavigationFragment {
     @Override
     protected void init() {
         updater = new Updater(view);
+        UserLoader.setSettingsHandler(updater);
 
         View.OnClickListener c = new View.OnClickListener() {
             @Override
@@ -56,6 +58,7 @@ public class Sync extends NavigationFragment {
                                 DataLoader.setWithoutSync("SyncHomeNetwork", null);
                             }
 
+                            updater.updateNetworkState();
                             Receiver.stop();
                             Receiver.start();
 
@@ -102,16 +105,7 @@ public class Sync extends NavigationFragment {
                     }
                 });
 
-        reload();
-    }
-
-    @Override
-    protected void reload() {
-        ((Switch) view.findViewById(R.id.syncPersistentConnectionSwitch)).setChecked(
-                DataLoader.getBoolean("SyncPersistentConnection", false)
-        );
-
-        updater.sendEmptyMessage(0);
+        updater.sendEmptyMessage(-1);
     }
 
     @Override
@@ -127,6 +121,12 @@ public class Sync extends NavigationFragment {
         super.onDestroy();
     }
 
+    @Override
+    public void onResult(Bundle data) {
+        updater.sendEmptyMessage(-1);
+        UserLoader.setSettingsHandler(updater);
+    }
+
     private static class Updater extends Handler {
         private WeakReference<View> weakView;
 
@@ -137,6 +137,9 @@ public class Sync extends NavigationFragment {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                case -1:
+                    reload();
+                    break;
                 case 0:
                     updateNetworkState();
                     break;
@@ -144,6 +147,18 @@ public class Sync extends NavigationFragment {
                     unlockButton(msg.getData());
                     break;
             }
+        }
+
+        private void reload() {
+            View view = weakView.get();
+
+            if (view != null) {
+                ((Switch) view.findViewById(R.id.syncPersistentConnectionSwitch)).setChecked(
+                        DataLoader.getBoolean("SyncPersistentConnection", false)
+                );
+            }
+
+            updateNetworkState();
         }
 
         private void updateNetworkState() {

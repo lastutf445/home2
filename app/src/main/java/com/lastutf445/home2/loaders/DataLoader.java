@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 public class DataLoader {
 
@@ -57,16 +58,11 @@ public class DataLoader {
         appContext = context;
         appResources = resources;
 
+        sync.clear();
+        ops.clear();
+
         connect();
         load();
-
-        long lastSync = getLong("lastSyncUser", 0);
-
-        for (String key: ops.keySet()) {
-            if (getSyncTime(key) > lastSync) {
-                UserLoader.addToSyncUserDataQueue(key);
-            }
-        }
     }
 
     public static Context getAppContext() {
@@ -206,11 +202,15 @@ public class DataLoader {
         }
     }
 
-    public static void flushSyncTable() {
-        synchronized (sync) {
-            sync.clear();
-            saveSyncTable();
-        }
+    public static void flushTables() {
+        db.execSQL("DROP TABLE IF EXISTS core");
+        db.execSQL("DROP TABLE IF EXISTS syncUserData");
+        kill();
+        init(appContext, appResources);
+    }
+
+    public static Set<String> getKeys() {
+        return ops.keySet();
     }
 
     public static void set(String key, Object value) {

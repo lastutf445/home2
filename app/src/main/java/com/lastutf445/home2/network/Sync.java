@@ -33,7 +33,7 @@ public class Sync {
     public static final int PROVIDER_MESSAGES = -1;
     public static final int PROVIDER_NOTIFICATIONS = -2;
     public static final int PROVIDER_DISCOVERER = -3;
-    public static final int PROVIDER_USER_DATA = -4;
+    public static final int PROVIDER_USER_DATA_TRANSPORT = -4;
     public static final int PROVIDER_MODULE_EDIT_REQUEST = -5;
     public static final int PROVIDER_GET_PUBLIC_KEY = -6;
     public static final int PROVIDER_CREDENTIALS = -7;
