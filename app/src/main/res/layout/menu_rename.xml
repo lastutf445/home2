@@ -28,7 +28,7 @@
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-medium"
             android:text="Lorem ipsum dolor"
-            android:textColor="#00695C"
+            android:textColor="#00796B"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="@+id/renameTitle"
             app:layout_constraintTop_toBottomOf="@+id/renameTitle" />

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView43"
+            style="@style/StyledTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notifications"
+            android:textColor="#00796B" />
+
+        <TextView
+            android:id="@+id/textView62"
+            style="@style/StyledSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notificationsSystem" />
+
+        <TextView
+            android:id="@+id/textView61"
+            style="@style/StyledDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notificationsDesc"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/notificationsEnabled"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/notificationsEnabledSwitch"
+                style="@style/StyledSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:clickable="false"
+                android:text="@string/notificationsEnabled" />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <TextView
+            android:id="@+id/textView55"
+            style="@style/StyledSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notificationsSuppress" />
+
+        <TextView
+            android:id="@+id/textView60"
+            style="@style/StyledDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notificationsSuppressDesc" />
+
+        <LinearLayout
+            android:id="@+id/suppressModulesStateSync"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/suppressModulesStateSyncCheckBox"
+                style="@style/StyledCheckbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:clickable="false"
+                android:text="@string/suppressModulesStateSync" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/suppressModulesStateSyncFailed"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/suppressModulesStateSyncFailedCheckBox"
+                style="@style/StyledCheckbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:clickable="false"
+                android:text="@string/suppressModulesStateSyncFailed" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/suppressUserDataSync"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/suppressUserDataSyncCheckBox"
+                style="@style/StyledCheckbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:clickable="false"
+                android:text="@string/suppressUserDataSync" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/suppressUserDataSyncFailed"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/suppressUserDataSyncFailedCheckBox"
+                style="@style/StyledCheckbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:clickable="false"
+                android:text="@string/suppressUserDataSyncFailed" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
+
+    </LinearLayout>
+</ScrollView>

@@ -110,6 +110,10 @@ public final class NotificationsLoader {
             return 0;
         }
 
+        if (!checkPermission(status)) {
+            return 0;
+        }
+
         int title = -1, subtitle = -1, icon = -1;
 
         switch (status) {
@@ -182,6 +186,7 @@ public final class NotificationsLoader {
                 title = R.string.notificationSyncModulesStateTitle;
                 subtitle = R.string.notificationSyncModulesStateFailedSubtitle;
                 icon = R.drawable.sync_problem;
+                break;
         }
 
         if (title == -1) {
@@ -199,6 +204,25 @@ public final class NotificationsLoader {
         notifications.put(status, ev);
         attract();
         return 1;
+    }
+
+    private static boolean checkPermission(int status) {
+        if (!DataLoader.getBoolean("NotificationsEnabled", false)) {
+            return false;
+        }
+
+        switch (status) {
+            case Sync.SYNC_MODULES_STATE_EVENT:
+                return !DataLoader.getBoolean("SuppressModulesStateSync", false);
+            case Sync.SYNC_MODULES_STATE_FAILED_EVENT:
+                return !DataLoader.getBoolean("SuppressModulesStateSyncFailed", false);
+            case Sync.SYNC_USER_DATA_EVENT:
+                return !DataLoader.getBoolean("SuppressUserDataSync", false);
+            case Sync.SYNC_USER_DATA_FAILED_EVENT:
+                return !DataLoader.getBoolean("SuppressUserDataSyncFailed", false);
+            default:
+                return true;
+        }
     }
 
     public static void removeAll() {

@@ -27,14 +27,109 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#fafafa"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView39"
+                android:id="@+id/textView53"
+                style="@style/StyledSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/specialSensors" />
+
+            <LinearLayout
+                style="@style/StyledButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView54"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/defaultTitleHumidity"
+                    android:textColor="#333" />
+
+                <TextView
+                    android:id="@+id/humidityHumidity"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notAvailableShort"
+                    android:textAlignment="textEnd"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <TextView
+                android:id="@+id/humidityModulesSettings"
                 style="@style/StyledSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/specialModule" />
+
+            <LinearLayout
+                android:id="@+id/humidityRefresh"
+                style="@style/StyledTransparentButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/humidityRefreshSwitch"
+                    style="@style/StyledSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:clickable="false"
+                    android:text="@string/specialHumidityRefresh" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/humidityRefreshRateWrapper"
+                style="@style/StyledButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView52"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/specialHumidityRefreshRate"
+                    android:textColor="#333" />
+
+                <EditText
+                    android:id="@+id/humidityRefreshRate"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:digits="1234567890"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:singleLine="true"
+                    android:textAlignment="textEnd" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/humidityRefreshRateSave"
+                style="@style/StyledButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/specialHumidityRefreshRateSave"
+                android:textColor="#00796B" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="32dp" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

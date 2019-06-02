@@ -76,7 +76,7 @@ public final class FragmentsLoader {
     }
 
     private static void removeFragment(NavigationFragment fragment) {
-        manager.beginTransaction().setCustomAnimations(R.anim.fragment_remove, R.anim.fragment_remove).remove(fragment).detach(fragment).commitAllowingStateLoss();
+        manager.beginTransaction().setCustomAnimations(R.anim.fragment_remove, R.anim.fragment_remove).remove(fragment).commitAllowingStateLoss();
         fragment.getParent().onResult(fragment.getResult());
         fragment.getParent().setChild(null);
         fragment.setParent(null);
@@ -98,6 +98,15 @@ public final class FragmentsLoader {
         }
 
         return parent != top;
+    }
+
+    public static void pop2(NavigationFragment base) {
+        NavigationFragment top = getTop(base);
+        NavigationFragment parent = top.getParent();
+
+        if (parent != top) {
+            removeFragment(top);
+        }
     }
 
     public static void clear() {

@@ -96,6 +96,11 @@ public class Socket extends Configure {
                     TextView timeout = view.findViewById(R.id.socketActiveStateTimeout);
                     Button save = view.findViewById(R.id.socketActiveStateTimeoutSave);
 
+                    view.findViewById(R.id.socketAdvanced).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.socketDisableWhenIdle).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.socketActiveStateTimeoutWrapper).setVisibility(View.VISIBLE);
+                    save.setVisibility(View.VISIBLE);
+
                     ((Switch) view.findViewById(R.id.socketDisableWhenIdleSwitch)).setChecked(
                             module.getBoolean("disableWhenIdle", false)
                     );
@@ -217,11 +222,6 @@ public class Socket extends Configure {
                 try {
                     Object val = values.get(key);
                     switch (key) {
-                        case "nothing":
-                            if (!(val instanceof Integer)) {
-                                return false;
-                            }
-                            break;
                         default:
                             return false;
                     }

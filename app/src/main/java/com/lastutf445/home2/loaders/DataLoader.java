@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.lastutf445.home2.network.Sync;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +35,12 @@ public class DataLoader {
         ops.put("Username", null);
         ops.put("BasicAccount", false);
         ops.put("AESBytes", 16);
+        // notifications
+        ops.put("NotificationsEnabled", true);
+        ops.put("SuppressModulesStateSync", false);
+        ops.put("SuppressModulesStateSyncFailed", false);
+        ops.put("SuppressUserDataSync", false);
+        ops.put("SuppressUserDataSyncFailed", false);
         // master server
         ops.put("MasterServer", false);
         ops.put("MasterServerAddress", null);
@@ -223,6 +231,33 @@ public class DataLoader {
         synchronized (ops) {
             ops.put(key, value);
             Log.d("LOGTAG", "we are trying to set " + key + " by " + (value == null ? "null" : value.toString()));
+
+            switch (key) {
+                case "NotificationsEnabled":
+                case "SuppressModulesStateSync":
+                case "SuppressModulesStateSyncFailed":
+                case "SuppressUserDataSync":
+                case "SuppressUserDataSyncFailed":
+                immediatelySync();
+            }
+        }
+    }
+
+    private static void immediatelySync() {
+        if (!getBoolean("NotificationsEnabled", false)) {
+            NotificationsLoader.removeAll();
+
+        } else if (getBoolean("SuppressModulesStateSync", false)) {
+            NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_EVENT);
+
+        } else if (getBoolean("SuppressModulesStateSyncFailed", false)) {
+            NotificationsLoader.removeById(Sync.SYNC_MODULES_STATE_FAILED_EVENT);
+
+        } else if (getBoolean("SuppressUserDataSync", false)) {
+            NotificationsLoader.removeById(Sync.SYNC_USER_DATA_EVENT);
+
+        } else if (getBoolean("SuppressUserDataSyncFailed", false)) {
+            NotificationsLoader.removeById(Sync.SYNC_USER_DATA_FAILED_EVENT);
         }
     }
 

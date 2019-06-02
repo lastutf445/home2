@@ -35,6 +35,17 @@
     <string name="accountUsernameTitle">Account name</string>
     <string name="accountUsernameHint">Type your name</string>
 
+    <string name="accountEncryption">Encryption</string>
+    <string name="accountEncryptionAESGen">Generate new AES key</string>
+    <string name="accountEncryptionAESKeyLength">AES key length</string>
+    <string name="accountEncryptionAESKeyLengthDesc">Remember to log in again if the changes are synced to apply the selected key length</string>
+    <string name="accountEncryptionAES16">128 bits</string>
+    <string name="accountEncryptionAES32">256 bits</string>
+    <string name="accountPassword">Password management</string>
+    <string name="accountPasswordOld">Current password</string>
+    <string name="accountPasswordNew">New password</string>
+    <string name="accountPasswordEmulate">Note that password change isn\'t implemented in this version because it can annoy many people during testing at Samsung IT School</string>
+
     <string name="createWidget">Create a new widget</string>
     <string name="moveWidgets">Move elements</string>
     <string name="removeWidgets">Remove all widgets</string>
@@ -61,10 +72,19 @@
     <string name="savedMode">All changes saved</string>
     <string name="unsavedMode">Unsaved changes detected</string>
 
+    <string name="notificationsDesc">The application uses an internal notification system. However, it will be changed in the future</string>
+    <string name="notificationsSystem">Global settings</string>
+    <string name="notificationsEnabled">Notifications enabled</string>
+    <string name="notificationsSuppress">Suppressed notifications</string>
+    <string name="notificationsSuppressDesc">Select unimportant notification types to suppress them</string>
+    <string name="suppressModulesStateSync">Modules state syncing</string>
+    <string name="suppressModulesStateSyncFailed">Modules state sync failed</string>
+    <string name="suppressUserDataSync">User data syncing</string>
+    <string name="suppressUserDataSyncFailed">User data sync failed</string>
+
     <string name="moduleSummary">Summary</string>
     <string name="moduleEditTitle">Edit title</string>
     <string name="moduleConfigure">Configure</string>
-    <string name="moduleGoToNode">Open node screen</string>
     <string name="moduleSync">Sync state</string>
 
     <string name="moduleTitle">Module title</string>
@@ -147,6 +167,7 @@
     <string name="cancel">Cancel</string>
     
     <string name="specialModule">Module settings</string>
+    <string name="specialSensors">Sensors</string>
 
     <string name="specialLightRGBIsLit">Light ON</string>
     <string name="specialLightRGBPickColor">Choose color</string>
@@ -160,13 +181,21 @@
     <string name="specialSocketActiveStateTimeout">Active state timeout (min)</string>
     <string name="specialSocketActiveStateTimeoutSave">Save timeout</string>
 
+    <string name="specialTemperatureRefresh">Refresh</string>
+    <string name="specialTemperatureRefreshRate">Refresh rate</string>
+    <string name="specialTemperatureRefreshRateSave">Save refresh rate</string>
+
+    <string name="specialHumidityRefresh">@string/specialTemperatureRefresh</string>
+    <string name="specialHumidityRefreshRate">@string/specialTemperatureRefreshRate</string>
+    <string name="specialHumidityRefreshRateSave">@string/specialTemperatureRefreshRateSave</string>
+
     <string name="notTested">not tested</string>
     <string name="notAvailable">Not available</string>
     <string name="notAvailableShort">N/A</string>
     <string name="noContent">There\'s nothing to show</string>
     <string name="missedField">Please, check for a missed field</string>
     <string name="pullToRefresh">Pull down to refresh</string>
-    <string name="lockedFeature">This feature isn\'t available in this version. Watch for updates.</string>
+    <string name="lockedFeature">This feature isn\'t available in this version. Watch for updates</string>
 
     <string name="notificationsGenericTitle">Sample notification</string>
     <string name="notificationsGenericSubtitle">Some content</string>

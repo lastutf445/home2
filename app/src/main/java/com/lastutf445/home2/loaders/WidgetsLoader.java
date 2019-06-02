@@ -37,6 +37,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -65,6 +67,9 @@ public class WidgetsLoader {
     private static int headId = 0, headSerial = 0;
     private static boolean unsaved = false;
 
+    private static NumberFormat tempFormatter;
+    private static NumberFormat humidityFormatter;
+
     public static void init(Handler handler, LayoutInflater inflater, LinearLayout content, BottomSheetDialog dialog, View bottomSheetView) {
         weakBottomSheetView = new WeakReference<>(bottomSheetView);
         weakBottomSheetDialog = new WeakReference<>(dialog);
@@ -82,6 +87,9 @@ public class WidgetsLoader {
     }
 
     public static void reload() {
+        tempFormatter = new DecimalFormat("#0.0 °C");
+        humidityFormatter = new DecimalFormat("#0.0 '%'");
+
         load();
         render();
         updateAll();
@@ -293,38 +301,50 @@ public class WidgetsLoader {
 
     private static void updateTemperature(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
-        String value = null;
-
-        try {
-            value = String.valueOf(module.getVals().getInt("temp"));
-        } catch (JSONException e) {
-            //e.printStackTrace();
-        }
 
         updateSimpleWidget(
                 widget.getView(),
                 module.getTitle(),
-                "%s °C",
-                value
+                null,
+                null
         );
+
+        try {
+            ((TextView) widget.getView().findViewById(R.id.widgetValue)).setText(
+                    tempFormatter.format(module.getVals().getDouble("temp"))
+            );
+
+        } catch (JSONException e) {
+            ((TextView) widget.getView().findViewById(R.id.widgetValue)).setText(
+                    R.string.notAvailableShort
+            );
+
+            //e.printStackTrace();
+        }
     }
 
     private static void updateHumidity(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
-        String value = null;
-
-        try {
-            value = String.valueOf(module.getVals().getInt("humidity"));
-        } catch (JSONException e) {
-            //e.printStackTrace();
-        }
 
         updateSimpleWidget(
                 widget.getView(),
                 module.getTitle(),
-                "%s %%",
-                value
+                null,
+                null
         );
+
+        try {
+            ((TextView) widget.getView().findViewById(R.id.widgetValue)).setText(
+                    humidityFormatter.format(module.getVals().getDouble("humidity"))
+            );
+
+        } catch (JSONException e) {
+            ((TextView) widget.getView().findViewById(R.id.widgetValue)).setText(
+                    R.string.notAvailableShort
+            );
+
+            //e.printStackTrace();
+        }
     }
 
     private static void updateLightRGB(@NonNull Widget widget, @Nullable Module module) {

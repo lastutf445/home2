@@ -74,8 +74,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/delete"
-        android:drawableTint="#C51162"
+        android:drawableTint="#AD1457"
         android:text="@string/removeWidgets"
-        android:textColor="#C51162" />
+        android:textColor="#AD1457" />
 
 </LinearLayout>

@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        nav.setSelectedItemId(R.id.nav_dashboard);
         nav.setOnNavigationItemSelectedListener(c);
         FragmentsLoader.changeFragment(dashboard, false, false);
     }

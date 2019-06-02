@@ -225,7 +225,7 @@ public abstract class Configure extends NavigationFragment {
         }
 
         public void onModuleRemoved() {
-            FragmentsLoader.pop(Configure.this.getParent());
+            FragmentsLoader.pop2(Configure.this.getParent());
         }
 
         public int getSerial() {

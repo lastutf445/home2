@@ -165,11 +165,6 @@ public class LightRGB extends Configure {
                 try {
                     Object val = values.get(key);
                     switch (key) {
-                        case "nothing":
-                            if (!(val instanceof Integer)) {
-                                return false;
-                            }
-                            break;
                         default:
                             return false;
                     }

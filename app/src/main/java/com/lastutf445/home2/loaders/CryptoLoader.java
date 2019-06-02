@@ -67,6 +67,9 @@ public class CryptoLoader {
     }
 
     public static String createAESKey() {
+        Log.d("LOGTAG", "create aes key: " + DataLoader.getInt("AESBytes", 16));
+        // it will work, i promise, just not now
+
         int bits = DataLoader.getInt("AESBytes", 16);
         byte[] bytes = new byte[bits];
         secureRandom.nextBytes(bytes);
