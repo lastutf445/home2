@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,12 +15,12 @@ import android.util.SparseArray;
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.configure.Humidity;
 import com.lastutf445.home2.configure.LightRGB;
+import com.lastutf445.home2.configure.Socket;
 import com.lastutf445.home2.configure.Temperature;
 import com.lastutf445.home2.containers.Module;
-import com.lastutf445.home2.configure.Socket;
 import com.lastutf445.home2.network.Sync;
-import com.lastutf445.home2.util.NavigationFragment;
 import com.lastutf445.home2.util.Configure;
+import com.lastutf445.home2.util.NavigationFragment;
 import com.lastutf445.home2.util.SyncProvider;
 
 import org.json.JSONArray;
@@ -170,7 +169,7 @@ public class ModulesLoader {
             db.replaceOrThrow("modules", null, cv);
             return true;
 
-        } catch (SQLiteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -236,7 +235,7 @@ public class ModulesLoader {
         }
     }
 
-    public static void setSyncing(JSONArray request, JSONArray subs) {
+    public static void setSyncing(JSONArray request, @NonNull JSONArray subs) {
         synchronized (modules) {
             for (int i = 0; i < request.length(); ++i) {
                 try {
@@ -301,7 +300,7 @@ public class ModulesLoader {
         addToSyncModulesStateQueue(modules);
     }
 
-    public static void addToSyncModulesStateQueue(SparseArray<Module> data) {
+    public static void addToSyncModulesStateQueue(@NonNull SparseArray<Module> data) {
         if (syncModulesState != null) {
             synchronized (syncModulesState.queue) {
                 for (int i = 0; i < data.size(); ++i) {
@@ -405,7 +404,7 @@ public class ModulesLoader {
         }
 
         @Override
-        public void onReceive(JSONObject data) {
+        public void onReceive(@NonNull JSONObject data) {
             try {
                 int status = data.getInt("status");
 
@@ -540,7 +539,7 @@ public class ModulesLoader {
         }
 
         @Override
-        public void onReceive(JSONObject data) {
+        public void onReceive(@NonNull JSONObject data) {
             try {
                 int status = data.getInt("status");
 

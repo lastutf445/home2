@@ -133,7 +133,7 @@ public class ModulesDiscovery extends NavigationFragment {
 
         View.OnClickListener d = new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(@NonNull View v) {
                 int pos = content.getChildLayoutPosition(v);
                 Module module = adapter.getModule(pos);
 
@@ -198,7 +198,7 @@ public class ModulesDiscovery extends NavigationFragment {
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(@NonNull DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
@@ -232,7 +232,7 @@ public class ModulesDiscovery extends NavigationFragment {
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(@NonNull DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
@@ -268,7 +268,7 @@ public class ModulesDiscovery extends NavigationFragment {
     }
 
     @Override
-    public void onResult(Bundle data) {
+    public void onResult(@NonNull Bundle data) {
         if (data.containsKey("updated")) {
             toParent.putBoolean("reload", true);
             reload();
@@ -288,7 +288,7 @@ public class ModulesDiscovery extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case 0:
                     stopRefreshing(msg.getData());
@@ -322,7 +322,7 @@ public class ModulesDiscovery extends NavigationFragment {
             }
         }
 
-        private synchronized void pushModule(Bundle data) {
+        private synchronized void pushModule(@NonNull Bundle data) {
             ModulesAdapter adapter = weakAdapter.get();
             if (adapter == null) return;
 
@@ -434,7 +434,7 @@ public class ModulesDiscovery extends NavigationFragment {
         }
 
         @Override
-        public void onReceive(JSONObject data) {
+        public void onReceive(@NonNull JSONObject data) {
             //Log.d("LOGTAG", data.toString());
 
             Handler handler = weakHandler.get();

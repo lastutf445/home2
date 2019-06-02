@@ -18,6 +18,7 @@ import com.lastutf445.home2.util.NavigationFragment;
 
 public class Widgets extends NavigationFragment {
 
+    @Nullable
     private WidgetsAdapter adapter;
     private RecyclerView content;
 

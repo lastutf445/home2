@@ -14,10 +14,15 @@ import com.lastutf445.home2.util.NavigationFragment;
 
 public class Rename extends NavigationFragment {
 
+    @Nullable
     private EditText renameNew = null;
+    @Nullable
     private Callback callback = null;
+    @Nullable
     private String title = null;
+    @Nullable
     private String hint = null;
+    @Nullable
     private String old = null;
 
     @Nullable

@@ -23,8 +23,10 @@ import java.lang.ref.WeakReference;
 public class Notifications extends NavigationFragment {
 
     private NotificationsLoader.QueueInterface queueInterface;
+    @Nullable
     private NotificationsAdapter adapter;
     private RecyclerView content;
+    @Nullable
     private Updater updater;
 
     @Nullable
@@ -95,7 +97,7 @@ public class Notifications extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             NotificationsAdapter adapter = weakAdapter.get();
             Bundle data = msg.getData();
             View view = weakView.get();
@@ -121,7 +123,9 @@ public class Notifications extends NavigationFragment {
 
                         } else if (status == 2) {
                             Log.d("LOGTAG", "updated " + data.getInt("status"));
-                            adapter.notifyItemChanged(pos);
+                            if (adapter.getSelectedId() != status) {
+                                adapter.notifyItemChanged(pos);
+                            } // temporary fix
                         }
                         break;
 

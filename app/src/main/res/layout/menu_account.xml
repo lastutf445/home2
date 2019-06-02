@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nestedScrollView2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="128dp"
+            android:layout_marginStart="@dimen/stdPadding"
+            android:layout_marginTop="@dimen/inter128"
             android:text="@string/accountTitle"
+            android:textSize="@dimen/inter14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,11 +25,11 @@
             android:id="@+id/accountUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/inter8"
             android:fontFamily="sans-serif-medium"
             android:text="@string/usernameError"
             android:textColor="#00796B"
-            android:textSize="18sp"
+            android:textSize="@dimen/inter18sp"
             app:layout_constraintStart_toStartOf="@+id/textView"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -38,7 +38,7 @@
             style="@style/StyledButtonIcon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="@dimen/inter64"
             android:drawableStart="@drawable/edit"
             android:text="@string/accountUsername"
             app:layout_constraintEnd_toEndOf="parent"

@@ -26,6 +26,7 @@ import java.lang.ref.WeakReference;
 public class Auth extends NavigationFragment {
 
     private Processing processing;
+    @Nullable
     private Updater updater;
 
     @Nullable
@@ -43,7 +44,7 @@ public class Auth extends NavigationFragment {
 
         processing.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismiss(@NonNull DialogInterface dialog) {
                 Sync.removeSyncProvider(Sync.PROVIDER_CREDENTIALS);
                 Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
                 dialog.cancel();
@@ -125,7 +126,7 @@ public class Auth extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case 0:
                     finish(R.string.unexpectedError);

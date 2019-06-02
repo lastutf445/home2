@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.lastutf445.home2.network.Sync;
@@ -29,7 +30,7 @@ public class DataLoader {
     private static final HashMap<String, Object> ops = new HashMap<>();
     private static final HashMap<String, Long> sync = new HashMap<>();
 
-    static {
+    private static void setDefault() {
         // authentication
         ops.put("Session", null);
         ops.put("Username", null);
@@ -69,6 +70,7 @@ public class DataLoader {
         sync.clear();
         ops.clear();
 
+        setDefault();
         connect();
         load();
     }
@@ -188,8 +190,9 @@ public class DataLoader {
 
                 db.replace("core", null, cv);
 
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+                return;
             }
 
             saveSyncTable();
@@ -205,7 +208,13 @@ public class DataLoader {
                 cv.put("option", i.getKey());
                 cv.put("time", i.getValue());
 
-                db.replace("syncUserData", null, cv);
+                try {
+                    db.replace("syncUserData", null, cv);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
             }
         }
     }
@@ -221,13 +230,13 @@ public class DataLoader {
         return ops.keySet();
     }
 
-    public static void set(String key, Object value) {
+    public static void set(@NonNull String key, Object value) {
         UserLoader.addToSyncUserDataQueue(key);
         sync.put(key, System.currentTimeMillis());
         setWithoutSync(key, value);
     }
 
-    public static void setWithoutSync(String key, Object value) {
+    public static void setWithoutSync(@NonNull String key, @Nullable Object value) {
         synchronized (ops) {
             ops.put(key, value);
             Log.d("LOGTAG", "we are trying to set " + key + " by " + (value == null ? "null" : value.toString()));
@@ -261,7 +270,7 @@ public class DataLoader {
         }
     }
 
-    public static boolean setSynced(String key, Object value, long syncedAt) {
+    public static boolean setSynced(@NonNull String key, @Nullable Object value, long syncedAt) {
         synchronized (sync) {
             Object a = get(key);
             boolean isNull = (a == null || value == null);
@@ -306,13 +315,15 @@ public class DataLoader {
         }
     }
 
+    @Nullable
     public static Object get(String option) {
         synchronized (ops) {
             return ops.get(option);
         }
     }
 
-    public static String getString(String option, String std) {
+    @NonNull
+    public static String getString(String option, @NonNull String std) {
         synchronized (ops) {
             Object res = get(option);
             return res != null ? String.valueOf(res) : std;

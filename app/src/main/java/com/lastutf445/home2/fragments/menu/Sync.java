@@ -16,9 +16,6 @@ import android.widget.TextView;
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
-import com.lastutf445.home2.loaders.MessagesLoader;
-import com.lastutf445.home2.loaders.ModulesLoader;
-import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Receiver;
 import com.lastutf445.home2.util.NavigationFragment;
@@ -28,6 +25,7 @@ import java.lang.ref.WeakReference;
 
 public class Sync extends NavigationFragment {
 
+    @Nullable
     private Updater updater;
 
     @Nullable
@@ -135,7 +133,7 @@ public class Sync extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case -1:
                     reload();
@@ -184,7 +182,7 @@ public class Sync extends NavigationFragment {
             }
         }
 
-        private void unlockButton(Bundle data) {
+        private void unlockButton(@Nullable Bundle data) {
             if (data == null || !data.containsKey("id")) return;
             int id = data.getInt("id");
             View view = weakView.get();

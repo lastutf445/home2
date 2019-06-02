@@ -47,7 +47,7 @@ public class Account extends NavigationFragment {
 
         processing.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismiss(@NonNull DialogInterface dialog) {
                 Sync.removeSyncProvider(Sync.PROVIDER_EDITOR);
                 dialog.cancel();
             }
@@ -83,7 +83,7 @@ public class Account extends NavigationFragment {
 
         rename.setCallback(new Rename.Callback() {
             @Override
-            public boolean onApply(String s) {
+            public boolean onApply(@NonNull String s) {
                 String t = s.trim();
 
                 if (t.length() == 0 || t.equals("None")) {
@@ -117,7 +117,7 @@ public class Account extends NavigationFragment {
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(@NonNull DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
@@ -158,7 +158,7 @@ public class Account extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case -1:
                     reload();

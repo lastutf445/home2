@@ -43,9 +43,10 @@ public class MasterServer extends NavigationFragment {
         InputFilter[] filters = new InputFilter[1];
 
         filters[0] = new InputFilter() {
+            @Nullable
             @Override
-            public CharSequence filter(CharSequence source, int start, int end,
-                                       android.text.Spanned dest, int dstart, int dend) {
+            public CharSequence filter(@NonNull CharSequence source, int start, int end,
+                                       @NonNull android.text.Spanned dest, int dstart, int dend) {
                 if (end > start) {
                     String destTxt = dest.toString();
                     String resultingTxt = destTxt.substring(0, dstart)
@@ -201,7 +202,7 @@ public class MasterServer extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case -2:
                     beginPing();
@@ -229,7 +230,7 @@ public class MasterServer extends NavigationFragment {
             check.setClickable(false);
         }
 
-        private void updateConnectionStatus(Bundle data) {
+        private void updateConnectionStatus(@Nullable Bundle data) {
             View view = weakView.get();
             if (view == null) return;
 

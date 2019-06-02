@@ -13,6 +13,7 @@ import org.json.JSONObject;
 public class Widget extends JSONPayload {
 
     private int id, serial;
+    @Nullable
     private String type;
     private View view;
 

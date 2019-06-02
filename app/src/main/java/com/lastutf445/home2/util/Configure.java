@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
@@ -66,7 +67,7 @@ public abstract class Configure extends NavigationFragment {
         super.onDestroy();
     }
 
-    protected void makeEditRequest(JSONObject ops) {
+    protected void makeEditRequest(@NonNull JSONObject ops) {
         Processing dialog = new Processing();
 
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -109,7 +110,7 @@ public abstract class Configure extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case 0:
                     fail(msg.getData());
@@ -123,7 +124,7 @@ public abstract class Configure extends NavigationFragment {
             }
         }
 
-        private void fail(Bundle data) {
+        private void fail(@Nullable Bundle data) {
             Sync.removeSyncProvider(Sync.PROVIDER_MODULE_EDIT_REQUEST);
             Processing dialog = weakDialog.get();
 
@@ -155,7 +156,7 @@ public abstract class Configure extends NavigationFragment {
             NotificationsLoader.makeToast("Unexpected error", true);
         }
 
-        private void success(Bundle data) {
+        private void success(@NonNull Bundle data) {
             Sync.removeSyncProvider(Sync.PROVIDER_MODULE_EDIT_REQUEST);
 
             View view = weakView.get();

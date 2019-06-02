@@ -25,7 +25,9 @@ import javax.crypto.spec.SecretKeySpec;
 public class CryptoLoader {
 
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    @Nullable
     private volatile static BigInteger modulus = null, pubExp = null;
+    @Nullable
     private volatile static SecretKeySpec AESKey = null;
     private volatile static SecureRandom secureRandom;
     private final static int IV_LENGTH = 16;
@@ -93,7 +95,7 @@ public class CryptoLoader {
         return isPublicKeyValid(modulus, pubExp);
     }
 
-    public static boolean isPublicKeyValid(BigInteger modulus, BigInteger pubExp) {
+    public static boolean isPublicKeyValid(@Nullable BigInteger modulus, @Nullable BigInteger pubExp) {
         if (modulus == null || pubExp == null) return false;
 
         try {
@@ -108,7 +110,7 @@ public class CryptoLoader {
         }
     }
 
-    public static boolean isPublicKeyValid(String raw_modulus, String raw_pubExp) {
+    public static boolean isPublicKeyValid(@Nullable String raw_modulus, @Nullable String raw_pubExp) {
         if (raw_modulus == null || raw_pubExp == null) return false;
 
         try {
@@ -156,7 +158,7 @@ public class CryptoLoader {
     }
 
     @Nullable
-    public static String AESEncrypt(String msg) {
+    public static String AESEncrypt(@NonNull String msg) {
         try {
             byte[] ivBytes = new byte[IV_LENGTH / 2];
             secureRandom.nextBytes(ivBytes);

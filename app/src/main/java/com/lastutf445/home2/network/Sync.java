@@ -9,6 +9,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -71,7 +72,9 @@ public class Sync {
     private static ConnectivityManager connectivityManager;
     private static WifiManager wifiManager;
 
+    @NonNull
     private static SparseArray<Runnable> triggers = new SparseArray<>();
+    @Nullable
     private static String networkBSSID = null;
     private static int networkState = 0;
 
@@ -155,7 +158,7 @@ public class Sync {
      * 3 - invalid port
      */
 
-    public static int validateAddress(String raw_ip, String raw_port) {
+    public static int validateAddress(@NonNull String raw_ip, @NonNull String raw_port) {
         try {
             if (raw_ip.length() == 0) {
                 throw new UnknownHostException("Null-length address");
@@ -183,12 +186,13 @@ public class Sync {
         }
     }
 
-    private synchronized static void setNetworkState(int mode, String bssid) {
+    private synchronized static void setNetworkState(int mode, @Nullable String bssid) {
         Log.d("LOGTAG", mode + " - networkstate, " + (bssid != null ? bssid : "non-bssid"));
         networkState = mode;
         networkBSSID = bssid;
     }
 
+    @Nullable
     public synchronized static String getNetworkBSSID() {
         return networkBSSID;
     }
@@ -197,10 +201,12 @@ public class Sync {
         return networkState;
     }
 
+    @NonNull
     public static SparseArray<SyncProvider> getSyncing() {
         return syncing;
     }
 
+    @NonNull
     public static HashSet<Integer> getRemoved() {
         return removed;
     }

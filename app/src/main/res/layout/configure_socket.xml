@@ -75,7 +75,7 @@
                 style="@style/StyledSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/inter16sp"
                 android:text="@string/syncAdvanced" />
 
             <LinearLayout
@@ -109,11 +109,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/specialSocketActiveStateTimeout"
-                    android:textColor="#333" />
+                    android:textColor="#333"
+                    android:textSize="@dimen/inter14sp" />
 
                 <EditText
                     android:id="@+id/socketActiveStateTimeout"
-                    android:layout_width="80dp"
+                    android:layout_width="@dimen/inter80"
                     android:layout_height="wrap_content"
                     android:digits="1234567890"
                     android:ems="10"
@@ -121,7 +122,7 @@
                     android:inputType="number"
                     android:maxLength="3"
                     android:singleLine="true"
-                    android:textAlignment="textEnd" />
+                    android:textSize="@dimen/inter18sp" />
 
             </LinearLayout>
 
@@ -131,11 +132,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/specialSocketActiveStateTimeoutSave"
-                android:textColor="#00796B" />
+                android:textColor="#00796B"
+                android:textSize="@dimen/inter14sp" />
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="32dp" />
+                android:layout_height="@dimen/inter32" />
 
         </LinearLayout>
 

@@ -1,12 +1,14 @@
 package com.lastutf445.home2.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JSONPayload {
 
+    @Nullable
     protected JSONObject ops = new JSONObject();
 
     @NonNull
@@ -27,6 +29,7 @@ public class JSONPayload {
         return ops.has(key);
     }
 
+    @Nullable
     public Object get(String key) {
         try {
             return ops.get(key);
@@ -52,7 +55,8 @@ public class JSONPayload {
         return res != null ? (long) res : std;
     }
 
-    public String getString(String key, String std) {
+    @NonNull
+    public String getString(String key, @NonNull String std) {
         Object res = get(key);
         return res != null ? (String) res : std;
     }

@@ -83,7 +83,7 @@
                             android:background="@null"
                             android:clickable="false"
                             android:drawableStart="@drawable/format_paint"
-                            android:drawablePadding="24dp"
+                            android:drawablePadding="@dimen/stdPadding"
                             android:drawableTint="#333"
                             android:text="@string/modulesOverride" />
                     </LinearLayout>
@@ -99,7 +99,7 @@
 
                     <Space
                         android:layout_width="match_parent"
-                        android:layout_height="16dp" />
+                        android:layout_height="@dimen/inter16" />
 
                 </LinearLayout>
 

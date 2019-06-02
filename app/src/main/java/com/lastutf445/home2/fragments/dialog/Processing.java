@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -19,6 +17,7 @@ import com.lastutf445.home2.loaders.DataLoader;
 
 public class Processing extends DialogFragment {
 
+    @NonNull
     private String title = DataLoader.getAppResources().getString(R.string.processing);
     private DialogInterface.OnDismissListener d;
     private View view;

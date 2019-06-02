@@ -40,7 +40,7 @@
             <LinearLayout
                 style="@style/StyledButtonIcon"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/stdHeight"
                 android:background="@null"
                 android:orientation="horizontal">
 
@@ -50,20 +50,21 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/defaultTitleHumidity"
-                    android:textColor="#333" />
+                    android:textColor="#333"
+                    android:textSize="@dimen/inter14sp" />
 
                 <TextView
                     android:id="@+id/humidityHumidity"
-                    android:layout_width="80dp"
+                    android:layout_width="@dimen/inter80"
                     android:layout_height="wrap_content"
                     android:text="@string/notAvailableShort"
                     android:textAlignment="textEnd"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/inter16sp" />
             </LinearLayout>
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="16dp" />
+                android:layout_height="@dimen/inter16" />
 
             <TextView
                 android:id="@+id/humidityModulesSettings"
@@ -93,7 +94,7 @@
                 android:id="@+id/humidityRefreshRateWrapper"
                 style="@style/StyledButtonIcon"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/stdHeight"
                 android:background="@null"
                 android:orientation="horizontal">
 
@@ -103,11 +104,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/specialHumidityRefreshRate"
-                    android:textColor="#333" />
+                    android:textColor="#333"
+                    android:textSize="@dimen/inter14sp" />
 
                 <EditText
                     android:id="@+id/humidityRefreshRate"
-                    android:layout_width="80dp"
+                    android:layout_width="@dimen/inter80"
                     android:layout_height="wrap_content"
                     android:digits="1234567890"
                     android:ems="10"
@@ -115,7 +117,7 @@
                     android:inputType="number"
                     android:maxLength="4"
                     android:singleLine="true"
-                    android:textAlignment="textEnd" />
+                    android:textSize="@dimen/inter18sp" />
             </LinearLayout>
 
             <Button
@@ -124,11 +126,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/specialHumidityRefreshRateSave"
-                android:textColor="#00796B" />
+                android:textColor="#00796B"
+                android:textSize="@dimen/inter14sp" />
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="32dp" />
+                android:layout_height="@dimen/inter32" />
 
         </LinearLayout>
     </LinearLayout>

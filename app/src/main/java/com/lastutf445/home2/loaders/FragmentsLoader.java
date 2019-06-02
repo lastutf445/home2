@@ -1,5 +1,6 @@
 package com.lastutf445.home2.loaders;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,19 +20,19 @@ public final class FragmentsLoader {
         clear();
     }
 
-    public static void addFragment(NavigationFragment fragment) {
+    public static void addFragment(@NonNull NavigationFragment fragment) {
         manager.beginTransaction().add(contentId, fragment).hide(fragment).commitNow();
         fragment.setParent(fragment);
     }
 
-    public static void addChild(NavigationFragment fragment, NavigationFragment parent) {
+    public static void addChild(@NonNull NavigationFragment fragment, NavigationFragment parent) {
         addFragment(fragment);
         parent.setChild(fragment);
         fragment.setParent(parent);
         changeFragment(fragment, false, true);
     }
 
-    public static void changeFragment(NavigationFragment fragment, boolean animRemove, boolean animAdd) {
+    public static void changeFragment(@NonNull NavigationFragment fragment, boolean animRemove, boolean animAdd) {
         FragmentTransaction ft = manager.beginTransaction();
 
         if (manager.getPrimaryNavigationFragment() != null) {
@@ -57,7 +58,7 @@ public final class FragmentsLoader {
         ft.setPrimaryNavigationFragment(fragment).commitAllowingStateLoss();
     }
 
-    public static void changeFragment(NavigationFragment fragment) {
+    public static void changeFragment(@NonNull NavigationFragment fragment) {
         FragmentTransaction ft = manager.beginTransaction();
 
         if (manager.getPrimaryNavigationFragment() != null) {
@@ -75,7 +76,7 @@ public final class FragmentsLoader {
         return (NavigationFragment) manager.getPrimaryNavigationFragment();
     }
 
-    private static void removeFragment(NavigationFragment fragment) {
+    private static void removeFragment(@NonNull NavigationFragment fragment) {
         manager.beginTransaction().setCustomAnimations(R.anim.fragment_remove, R.anim.fragment_remove).remove(fragment).commitAllowingStateLoss();
         fragment.getParent().onResult(fragment.getResult());
         fragment.getParent().setChild(null);
@@ -83,12 +84,13 @@ public final class FragmentsLoader {
         fragment.setChild(null);
     }
 
+    @NonNull
     public static NavigationFragment getTop(NavigationFragment base) {
         while (base.getChild() != null) base = base.getChild();
         return base;
     }
 
-    public static boolean pop(NavigationFragment base) {
+    public static boolean pop(@NonNull NavigationFragment base) {
         NavigationFragment top = getTop(base);
         NavigationFragment parent = top.getParent();
 
@@ -100,7 +102,7 @@ public final class FragmentsLoader {
         return parent != top;
     }
 
-    public static void pop2(NavigationFragment base) {
+    public static void pop2(@NonNull NavigationFragment base) {
         NavigationFragment top = getTop(base);
         NavigationFragment parent = top.getParent();
 

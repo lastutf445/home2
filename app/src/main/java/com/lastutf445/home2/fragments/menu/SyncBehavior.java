@@ -82,7 +82,7 @@ public class SyncBehavior extends NavigationFragment {
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(@NonNull DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
@@ -152,7 +152,7 @@ public class SyncBehavior extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             if (msg.what == -1) reload();
         }
 

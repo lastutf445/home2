@@ -22,18 +22,19 @@
             android:id="@+id/textView26"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="24dp"
+            android:paddingStart="@dimen/stdPadding"
             android:paddingTop="16dp"
-            android:paddingEnd="24dp"
-            android:paddingBottom="16dp"
-            android:text="@string/createWidgetType" />
+            android:paddingEnd="@dimen/stdPadding"
+            android:paddingBottom="@dimen/inter16"
+            android:text="@string/createWidgetType"
+            android:textSize="@dimen/inter14sp" />
 
         <RadioGroup
             android:id="@+id/createWidgetRadios"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginStart="@dimen/stdPadding"
+            android:layout_marginEnd="@dimen/stdPadding"
             android:orientation="vertical">
 
             <RadioButton

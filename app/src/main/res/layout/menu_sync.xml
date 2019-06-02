@@ -106,11 +106,12 @@
             android:id="@+id/syncCurrentNetwork"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="24dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="24dp"
-            android:paddingBottom="24dp"
-            android:text="@string/syncUnknownNetwork" />
+            android:paddingStart="@dimen/stdPadding"
+            android:paddingTop="@dimen/inter16"
+            android:paddingEnd="@dimen/stdPadding"
+            android:paddingBottom="@dimen/stdPadding"
+            android:text="@string/syncUnknownNetwork"
+            android:textSize="@dimen/inter14sp" />
 
     </LinearLayout>
 </ScrollView>

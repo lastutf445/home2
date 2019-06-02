@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -16,7 +13,7 @@
             android:id="@+id/menuAccount"
             style="@style/StyledButtonIcon"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="@dimen/inter80"
             android:drawableStart="@drawable/account"
             android:drawableTint="#00695C"
             android:fontFamily="sans-serif-medium"
@@ -26,7 +23,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="8dp" />
+            android:layout_height="@dimen/inter8" />
 
         <Button
             android:id="@+id/menuDashboard"
@@ -81,6 +78,10 @@
             android:drawableStart="@drawable/about"
             android:drawableTint="#444"
             android:text="@string/about" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/inter32" />
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

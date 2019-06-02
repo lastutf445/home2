@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -15,9 +13,10 @@
             android:id="@+id/renameTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="128dp"
+            android:layout_marginStart="@dimen/stdPadding"
+            android:layout_marginTop="@dimen/inter128"
             android:text=""
+            android:textSize="@dimen/inter14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,23 +24,24 @@
             android:id="@+id/renameOld"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/inter8"
             android:fontFamily="sans-serif-medium"
             android:text="Lorem ipsum dolor"
             android:textColor="#00796B"
-            android:textSize="18sp"
+            android:textSize="@dimen/inter18sp"
             app:layout_constraintStart_toStartOf="@+id/renameTitle"
             app:layout_constraintTop_toBottomOf="@+id/renameTitle" />
 
         <EditText
             android:id="@+id/renameNew"
             android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="64dp"
-            android:layout_marginEnd="24dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/inter64"
+            android:layout_marginEnd="@dimen/stdPadding"
             android:ems="10"
             android:inputType="textPersonName"
             android:singleLine="true"
+            android:textSize="@dimen/inter18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/renameOld"
@@ -51,8 +51,8 @@
             android:id="@+id/renameApply"
             style="@style/StyledBasicButton"
             android:layout_width="wrap_content"
-            android:layout_height="56dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/inter16"
             android:text="@string/apply"
             android:textColor="@color/colorPrimary"
             app:layout_constraintStart_toStartOf="@+id/renameNew"

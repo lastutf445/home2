@@ -8,13 +8,10 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
-import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.util.NavigationFragment;
 
@@ -93,7 +90,7 @@ public class Privacy extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             if (msg.what == -1) reload();
         }
 

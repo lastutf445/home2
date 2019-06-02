@@ -149,7 +149,7 @@ public class Module extends NavigationFragment {
 
         rename.setCallback(new Rename.Callback() {
             @Override
-            public boolean onApply(String s) {
+            public boolean onApply(@NonNull String s) {
                 String t = s.trim();
 
                 if (t.length() == 0) {
@@ -204,7 +204,7 @@ public class Module extends NavigationFragment {
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(@NonNull DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
@@ -223,7 +223,7 @@ public class Module extends NavigationFragment {
     }
 
     @Override
-    public void onResult(Bundle data) {
+    public void onResult(@NonNull Bundle data) {
         if (data.containsKey("reload")) {
             toParent.putInt("updated", pos);
             reload();
@@ -251,7 +251,7 @@ public class Module extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case -3:
                     subscribeStatusUpdate();
@@ -294,7 +294,7 @@ public class Module extends NavigationFragment {
             connection.setClickable(false);
         }
 
-        private void updateConnectionStatus(Bundle data) {
+        private void updateConnectionStatus(@Nullable Bundle data) {
             View view = weakView.get();
             if (view == null) return;
 
@@ -322,7 +322,7 @@ public class Module extends NavigationFragment {
             });
         }
 
-        private void unlockSyncButton(Bundle data) {
+        private void unlockSyncButton(@Nullable Bundle data) {
             View view = weakView.get();
             if (view == null) return;
 

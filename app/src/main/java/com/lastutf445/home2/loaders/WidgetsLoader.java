@@ -62,6 +62,7 @@ public class WidgetsLoader {
     private static final SparseArray<Widget> widgets = new SparseArray<>();
     private static final SparseArray<Module> free = new SparseArray<>();
     private static final SparseIntArray serials = new SparseIntArray();
+    @Nullable
     private static Configure.Connector bottomSheetConnect1, bottomSheetConnect2;
     private static WeakReference<WidgetsAdapter.Remover> weakRemover;
     private static int headId = 0, headSerial = 0;
@@ -70,7 +71,7 @@ public class WidgetsLoader {
     private static NumberFormat tempFormatter;
     private static NumberFormat humidityFormatter;
 
-    public static void init(Handler handler, LayoutInflater inflater, LinearLayout content, BottomSheetDialog dialog, View bottomSheetView) {
+    public static void init(Handler handler, LayoutInflater inflater, LinearLayout content, BottomSheetDialog dialog, @NonNull View bottomSheetView) {
         weakBottomSheetView = new WeakReference<>(bottomSheetView);
         weakBottomSheetDialog = new WeakReference<>(dialog);
         weakInflater = new WeakReference<>(inflater);
@@ -229,10 +230,12 @@ public class WidgetsLoader {
         ((TextView) widget.getView().findViewById(R.id.widgetTitle)).setText(title);
     }
 
+    @NonNull
     public static SparseArray<Widget> getWidgets() {
         return widgets;
     }
 
+    @NonNull
     public static SparseArray<Module> getFree() {
         return free;
     }
@@ -744,7 +747,7 @@ public class WidgetsLoader {
 
     private static class BottomSheetClickListener implements View.OnClickListener {
         @Override
-        public void onClick(View v) {
+        public void onClick(@NonNull View v) {
             if (!(v.getTag() instanceof Integer)) {
                 return;
             }
@@ -824,7 +827,7 @@ public class WidgetsLoader {
 
     private static class BottomSheetButtonClickListener implements View.OnClickListener {
         @Override
-        public void onClick(View v) {
+        public void onClick(@NonNull View v) {
             switch (v.getId()) {
                 case R.id.bottomSheetConfigure:
                     configure();
@@ -864,7 +867,7 @@ public class WidgetsLoader {
 
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(@NonNull DialogInterface dialog, int which) {
                     dialog.cancel();
                 }
             });

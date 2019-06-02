@@ -24,7 +24,7 @@
         <ProgressBar
             android:id="@+id/moduleSpinner"
             style="@style/StyledSpinner"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="@dimen/inter32"
             app:layout_constraintBottom_toBottomOf="@+id/moduleTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/moduleTitle" />
@@ -33,20 +33,18 @@
             android:id="@+id/textView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="@dimen/stdPadding"
+            android:layout_marginTop="@dimen/inter16"
             android:text="@string/summary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/moduleTitle" />
 
         <TextView
             android:id="@+id/moduleType"
+            style="@style/StyledKey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif-medium"
             android:text="@string/unknownType"
-            android:textColor="#555"
             app:layout_constraintStart_toStartOf="@+id/textView11"
             app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
@@ -54,65 +52,55 @@
             android:id="@+id/textView19"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif-medium"
             android:text="@string/connection"
-            android:textAllCaps="false"
-            android:textColor="#555"
             app:layout_constraintStart_toStartOf="@+id/textView11"
-            app:layout_constraintTop_toBottomOf="@+id/moduleType" />
+            app:layout_constraintTop_toBottomOf="@+id/moduleType"
+            style="@style/StyledKey" />
 
         <TextView
             android:id="@+id/moduleConnection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:text="@string/notTested"
-            android:textColor="#555"
             app:layout_constraintBottom_toBottomOf="@+id/textView19"
             app:layout_constraintStart_toEndOf="@+id/textView19"
-            app:layout_constraintTop_toTopOf="@+id/textView19" />
+            app:layout_constraintTop_toTopOf="@+id/textView19"
+            style="@style/StyledValue" />
 
         <TextView
             android:id="@+id/textView20"
+            style="@style/StyledKey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif-medium"
             android:text="@string/IPAddress2"
-            android:textColor="#555"
             app:layout_constraintStart_toStartOf="@+id/textView11"
             app:layout_constraintTop_toBottomOf="@+id/textView19" />
 
         <TextView
             android:id="@+id/moduleIPAddress"
+            style="@style/StyledValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:text="@string/undefined"
-            android:textColor="#555"
             app:layout_constraintBottom_toBottomOf="@+id/textView20"
             app:layout_constraintStart_toEndOf="@+id/textView20"
             app:layout_constraintTop_toTopOf="@+id/textView20" />
 
         <TextView
             android:id="@+id/textView21"
+            style="@style/StyledKey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif-medium"
             android:text="@string/serial"
-            android:textColor="#555"
             app:layout_constraintStart_toStartOf="@+id/textView11"
             app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
         <TextView
             android:id="@+id/moduleSerial"
+            style="@style/StyledValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:text="@string/undefined"
-            android:textColor="#555"
             app:layout_constraintBottom_toBottomOf="@+id/textView21"
             app:layout_constraintStart_toEndOf="@+id/textView21"
             app:layout_constraintTop_toTopOf="@+id/textView21" />
@@ -122,7 +110,7 @@
             style="@style/StyledButtonIcon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="@dimen/inter32"
             android:drawableStart="@drawable/edit"
             android:text="@string/moduleEditTitle"
             app:layout_constraintEnd_toEndOf="parent"
@@ -140,7 +128,7 @@
                 android:id="@+id/moduleConfigureIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="@dimen/stdPadding"
                 android:tint="#333"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -173,11 +161,9 @@
 
             <ImageView
                 android:id="@+id/moduleSyncIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/stdPadding"
                 android:tint="#333"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -199,7 +185,7 @@
             <ProgressBar
                 android:id="@+id/moduleSyncSpinner"
                 style="@style/StyledSpinner"
-                android:layout_marginEnd="80dp"
+                android:layout_marginEnd="@dimen/inter80"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

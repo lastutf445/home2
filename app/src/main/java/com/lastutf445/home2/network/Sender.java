@@ -2,6 +2,7 @@ package com.lastutf445.home2.network;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -38,7 +39,9 @@ public class Sender {
     private volatile static long tAlive, kAlive = 0;
 
     private static PrintWriter tOut;
+    @Nullable
     private static Socket tSocket;
+    @Nullable
     private static Thread thread;
 
     /** PROVIDER RETURN CODES
@@ -60,6 +63,7 @@ public class Sender {
         }
     }
 
+    @NonNull
     private static Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -149,7 +153,7 @@ public class Sender {
         }
     };
 
-    private synchronized static int mSend(SyncProvider provider, long time) {
+    private synchronized static int mSend(@NonNull SyncProvider provider, long time) {
         int status = makeConnection(
                 DataLoader.getString("MasterServerAddress", "false"),
                 DataLoader.getInt("MasterServerPort", Sync.DEFAULT_PORT),
@@ -163,7 +167,7 @@ public class Sender {
         return tSend(provider);
     }
 
-    private synchronized static int eSend(SyncProvider provider, long time) {
+    private synchronized static int eSend(@NonNull SyncProvider provider, long time) {
         int status = makeConnection(
                 DataLoader.getString("ExternalAddress", "false"),
                 DataLoader.getInt("ExternalPort", Sync.DEFAULT_PORT),
@@ -177,7 +181,7 @@ public class Sender {
         return tSend(provider);
     }
 
-    private synchronized static int tSend(SyncProvider provider) {
+    private synchronized static int tSend(@NonNull SyncProvider provider) {
         if (tOut != null && !tOut.checkError()) {
             try {
                 JSONObject query = new JSONObject(provider.getQuery().toString());

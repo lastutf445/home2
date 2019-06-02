@@ -171,7 +171,7 @@ public class CreateWidget extends NavigationFragment {
     }
 
     @Override
-    public void onResult(Bundle data) {
+    public void onResult(@Nullable Bundle data) {
         if (data == null) return;
 
         Module module = ModulesLoader.getModule(data.getInt("serial", -1));

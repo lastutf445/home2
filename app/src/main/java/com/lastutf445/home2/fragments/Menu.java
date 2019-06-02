@@ -128,7 +128,7 @@ public final class Menu extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             if (msg.what == -1) reload();
         }
 

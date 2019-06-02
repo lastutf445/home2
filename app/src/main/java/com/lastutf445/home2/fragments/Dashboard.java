@@ -23,6 +23,7 @@ import java.lang.ref.WeakReference;
 
 public class Dashboard extends NavigationFragment {
 
+    @Nullable
     private BottomSheetDialog bottomSheet;
     private View bottomSheetView;
     private Updater updater;
@@ -82,7 +83,7 @@ public class Dashboard extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case -2:
                     if (Sync.getNetworkState() != 0) {
@@ -140,7 +141,7 @@ public class Dashboard extends NavigationFragment {
             }
         }
 
-        private void updateWidget(Bundle data) {
+        private void updateWidget(@Nullable Bundle data) {
             if (data == null) return;
             WidgetsLoader.update(
                     data.getInt("id", Integer.MAX_VALUE)

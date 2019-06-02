@@ -5,15 +5,16 @@
 
     <TextView
         android:id="@+id/textView51"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:drawableStart="@drawable/lock"
-        android:drawablePadding="24dp"
+        android:drawablePadding="@dimen/inter24"
         android:drawableTint="@color/colorPrimary"
         android:lineSpacingExtra="8sp"
-        android:paddingStart="48dp"
-        android:paddingEnd="48dp"
+        android:paddingStart="@dimen/inter48"
+        android:paddingEnd="@dimen/inter48"
         android:text="@string/lockedFeature"
-        android:textColor="#333" />
+        android:textColor="#333"
+        android:textSize="@dimen/inter14sp" />
 </FrameLayout>

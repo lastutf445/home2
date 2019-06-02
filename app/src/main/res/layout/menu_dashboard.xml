@@ -14,20 +14,20 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="8dp" />
+        android:layout_height="@dimen/inter8" />
 
     <TextView
         android:id="@+id/dashboardSaved"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/done"
-        android:drawablePadding="24dp"
+        android:drawablePadding="@dimen/stdPadding"
         android:drawableTint="#999"
-        android:lineSpacingExtra="8sp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
+        android:paddingStart="@dimen/stdPadding"
+        android:paddingEnd="@dimen/stdPadding"
         android:text="@string/savedMode"
         android:textColor="#999"
+        android:textSize="@dimen/inter14sp"
         android:visibility="visible" />
 
     <TextView
@@ -35,18 +35,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/error_outline"
-        android:drawablePadding="24dp"
+        android:drawablePadding="@dimen/stdPadding"
         android:drawableTint="#999"
-        android:lineSpacingExtra="8sp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
+        android:paddingStart="@dimen/stdPadding"
+        android:paddingEnd="@dimen/stdPadding"
         android:text="@string/unsavedMode"
         android:textColor="#999"
+        android:textSize="@dimen/inter14sp"
         android:visibility="visible" />
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="24dp" />
+        android:layout_height="@dimen/inter24" />
 
     <Button
         android:id="@+id/dashboardCreateWidget"
@@ -66,7 +66,7 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="16dp" />
+        android:layout_height="@dimen/inter16" />
 
     <Button
         android:id="@+id/dashboardRemoveWidgets"

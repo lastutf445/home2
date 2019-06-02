@@ -13,6 +13,7 @@ import com.lastutf445.home2.R;
 public class NavigationFragment extends Fragment {
 
     protected NavigationFragment parent, child;
+    @NonNull
     protected Bundle toParent = new Bundle();
     protected View view;
 
@@ -27,6 +28,7 @@ public class NavigationFragment extends Fragment {
 
     protected void reload() {}
 
+    @NonNull
     public Bundle getResult() {
         return toParent;
     }

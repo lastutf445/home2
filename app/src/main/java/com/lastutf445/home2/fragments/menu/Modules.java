@@ -41,7 +41,7 @@ public class Modules extends NavigationFragment {
 
         View.OnClickListener c = new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(@NonNull View v) {
                 int pos = content.getChildLayoutPosition(v);
                 com.lastutf445.home2.containers.Module module = adapter.getModule(pos);
                 Module mc = new Module();
@@ -53,7 +53,7 @@ public class Modules extends NavigationFragment {
 
         View.OnClickListener d = new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(@NonNull View v) {
                 toParent.putInt("serial", adapter.getModule(content.getChildLayoutPosition(v)).getSerial());
                 getActivity().onBackPressed();
             }
@@ -100,7 +100,7 @@ public class Modules extends NavigationFragment {
     }
 
     @Override
-    public void onResult(Bundle data) {
+    public void onResult(@NonNull Bundle data) {
         if (data.containsKey("deleted")) {
             delete(data.getInt("deleted"));
         }

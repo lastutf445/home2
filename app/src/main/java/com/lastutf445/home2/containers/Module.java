@@ -23,6 +23,7 @@ public class Module extends JSONPayload {
 
     private int serial;
     private boolean syncing;
+    @Nullable
     private String type, title;
     private JSONObject values;
     private InetAddress ip;
@@ -77,6 +78,7 @@ public class Module extends JSONPayload {
         }
     }
 
+    @NonNull
     public String getTitle() {
         return title == null ? getDefaultTitle(type) : title;
     }
@@ -138,7 +140,7 @@ public class Module extends JSONPayload {
         save();
     }
 
-    public void mergeStates(String type, JSONObject ops, JSONObject values) {
+    public void mergeStates(@Nullable String type, @Nullable JSONObject ops, @Nullable JSONObject values) {
         if (type == null || ops == null || values == null) {
             // TODO: notify about it
             Log.d("LOGTAG", "validation error on serial: " + serial);
@@ -195,6 +197,7 @@ public class Module extends JSONPayload {
             this.module = module;
         }
 
+        @Nullable
         @Override
         protected Void doInBackground(Void... voids) {
             ModulesLoader.saveState(module);

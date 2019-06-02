@@ -33,11 +33,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/stdHeight"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
+            android:paddingStart="@dimen/stdPadding"
+            android:paddingEnd="@dimen/stdPadding">
 
             <TextView
                 android:id="@+id/textView32"
@@ -45,18 +45,19 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/syncClientPort"
-                android:textColor="#333" />
+                android:textColor="#333"
+                android:textSize="@dimen/inter14sp" />
 
             <EditText
                 android:id="@+id/syncClientPort"
-                android:layout_width="80dp"
+                android:layout_width="@dimen/inter80"
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
                 android:inputType="number"
                 android:maxLength="5"
                 android:singleLine="true"
-                android:textSize="18sp" />
+                android:textSize="@dimen/inter18sp" />
         </LinearLayout>
 
         <TextView
@@ -75,11 +76,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/stdHeight"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
+            android:paddingStart="@dimen/stdPadding"
+            android:paddingEnd="@dimen/stdPadding">
 
             <TextView
                 android:id="@+id/textView34"
@@ -87,26 +88,28 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/syncDiscoveryPort"
-                android:textColor="#333" />
+                android:textColor="#333"
+                android:textSize="@dimen/inter14sp" />
 
             <EditText
                 android:id="@+id/syncDiscoveryPort"
-                android:layout_width="80dp"
+                android:layout_width="@dimen/inter80"
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
                 android:inputType="number"
                 android:maxLength="5"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="@dimen/inter18sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/stdHeight"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
+            android:paddingStart="@dimen/stdPadding"
+            android:paddingEnd="@dimen/stdPadding">
 
             <TextView
                 android:id="@+id/textView35"
@@ -114,17 +117,19 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/syncDiscoveryAttempts"
-                android:textColor="#333" />
+                android:textColor="#333"
+                android:textSize="@dimen/inter14sp" />
 
             <EditText
                 android:id="@+id/syncDiscoveryTimeout"
-                android:layout_width="80dp"
+                android:layout_width="@dimen/inter80"
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
                 android:inputType="number"
                 android:maxLength="3"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="@dimen/inter18sp" />
 
         </LinearLayout>
 
@@ -144,11 +149,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/stdHeight"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
+            android:paddingStart="@dimen/stdPadding"
+            android:paddingEnd="@dimen/stdPadding">
 
             <TextView
                 android:id="@+id/textView48"
@@ -156,27 +161,29 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/syncPingAttempts"
-                android:textColor="#333" />
+                android:textColor="#333"
+                android:textSize="@dimen/inter14sp" />
 
             <EditText
                 android:id="@+id/syncPingAttempts"
-                android:layout_width="80dp"
+                android:layout_width="@dimen/inter80"
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
                 android:inputType="number"
                 android:maxLength="3"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="@dimen/inter18sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/stdHeight"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
+            android:paddingStart="@dimen/stdPadding"
+            android:paddingEnd="@dimen/stdPadding">
 
             <TextView
                 android:id="@+id/textView49"
@@ -184,23 +191,25 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/syncPingInterval"
-                android:textColor="#333" />
+                android:textColor="#333"
+                android:textSize="@dimen/inter14sp" />
 
             <EditText
                 android:id="@+id/syncPingInterval"
-                android:layout_width="80dp"
+                android:layout_width="@dimen/inter80"
                 android:layout_height="wrap_content"
                 android:digits="1234567890."
                 android:ems="10"
                 android:inputType="number"
                 android:maxLength="6"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="@dimen/inter18sp" />
 
         </LinearLayout>
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="24dp" />
+            android:layout_height="@dimen/inter24" />
 
         <Button
             android:id="@+id/syncBehaviorDefaults"
@@ -226,6 +235,6 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="16dp" />
+            android:layout_height="@dimen/inter32" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -74,7 +74,7 @@ public class Ping extends SyncProvider {
     }
 
     @Override
-    public void onReceive(JSONObject data) {
+    public void onReceive(@NonNull JSONObject data) {
         try {
             if (data.has("status") && data.getInt("status") == Sync.PONG) {
                 finish(R.string.reachable);

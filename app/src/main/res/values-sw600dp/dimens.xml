@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="loginFieldWidth">380dp</dimen>
+    <dimen name="processingDialogWidth">400dp</dimen>
+    <dimen name="peekColorDialogColorHeight">280dp</dimen>
+    <dimen name="configureTop">144dp</dimen>
+    <dimen name="configureBottom">80dp</dimen>
+    <dimen name="stdHeight">68dp</dimen>
+    <dimen name="stdPadding">32dp</dimen>
+    <dimen name="navHeight">64dp</dimen>
+
+    <dimen name="inter4">8dp</dimen>
+    <dimen name="inter8">16dp</dimen>
+    <dimen name="inter16">24dp</dimen>
+    <dimen name="inter24">32dp</dimen>
+    <dimen name="inter32">48dp</dimen>
+    <dimen name="inter48">56dp</dimen>
+    <dimen name="inter64">72dp</dimen>
+    <dimen name="inter80">112dp</dimen>
+    <dimen name="inter128">256dp</dimen>
+
+    <dimen name="inter8sp">10sp</dimen>
+    <dimen name="inter12sp">14sp</dimen>
+    <dimen name="inter14sp">16sp</dimen>
+    <dimen name="inter16sp">18sp</dimen>
+    <dimen name="inter18sp">20sp</dimen>
+    <dimen name="inter24sp">28sp</dimen>
+</resources>

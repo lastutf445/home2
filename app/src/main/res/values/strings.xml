@@ -38,7 +38,7 @@
     <string name="accountEncryption">Encryption</string>
     <string name="accountEncryptionAESGen">Generate new AES key</string>
     <string name="accountEncryptionAESKeyLength">AES key length</string>
-    <string name="accountEncryptionAESKeyLengthDesc">Remember to log in again if the changes are synced to apply the selected key length</string>
+    <string name="accountEncryptionAESKeyLengthDesc">Remember to log in again if changes are synced to apply the selected key length</string>
     <string name="accountEncryptionAES16">128 bits</string>
     <string name="accountEncryptionAES32">256 bits</string>
     <string name="accountPassword">Password management</string>
@@ -82,7 +82,6 @@
     <string name="suppressUserDataSync">User data syncing</string>
     <string name="suppressUserDataSyncFailed">User data sync failed</string>
 
-    <string name="moduleSummary">Summary</string>
     <string name="moduleEditTitle">Edit title</string>
     <string name="moduleConfigure">Configure</string>
     <string name="moduleSync">Sync state</string>
@@ -114,7 +113,6 @@
     <string name="syncPersistentConnection">Always connected</string>
 
     <string name="syncBehavior">Behavior</string>
-    <string name="syncInterval">Interval between sync ticks</string>
 
     <string name="syncMasterServerDesc">This technique let you define an address to \"core\" of your home network to transfer each packet through it. Application of the method is only limited by your imagination.</string>
 
@@ -157,8 +155,6 @@
     <string name="merge">Merge</string>
     <string name="apply">Apply</string>
     <string name="delete">Delete</string>
-    <string name="enable">Enable</string>
-    <string name="disable">Disable</string>
     <string name="disableFeature">Disable feature</string>
     <string name="restore">Restore</string>
     <string name="override">Override</string>
@@ -182,7 +178,7 @@
     <string name="specialSocketActiveStateTimeoutSave">Save timeout</string>
 
     <string name="specialTemperatureRefresh">Refresh</string>
-    <string name="specialTemperatureRefreshRate">Refresh rate</string>
+    <string name="specialTemperatureRefreshRate">Refresh rate (min)</string>
     <string name="specialTemperatureRefreshRateSave">Save refresh rate</string>
 
     <string name="specialHumidityRefresh">@string/specialTemperatureRefresh</string>
@@ -245,7 +241,6 @@
     <string name="unreachable">unreachable</string>
     <string name="pending">pending&#8230;</string>
     <string name="disconnectedSmall">disconnected</string>
-    <string name="unexpectedErrorSmall">unexpected error</string>
     <string name="encryptionErrorSmall">encryption error</string>
     <string name="authenticationRequiredSmall">auth required</string>
 
@@ -270,7 +265,6 @@
     <string name="connection">Connection:</string>
     <string name="IPAddress2">IP address:</string>
     <string name="lastUpdated">Last updated:</string>
-    <string name="isSyncing">Syncing&#8230;</string>
 
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>
@@ -280,7 +274,6 @@
     <string name="unknownTitle">Unknown title</string>
     <string name="unknownType">Unknown type</string>
     <string name="unknownError">Unknown error</string>
-    <string name="unknownAddress">Unknown address</string>
     <string name="unknownAddressSmall">unknown address</string>
 
     <string name="defaultTitleTemperature">Temperature</string>
@@ -294,5 +287,4 @@
     <string name="modulesTypeHumidity">Humidity sensor</string>
     <string name="modulesTypeLightRGB">LightRGB module</string>
     <string name="modulesTypeSocket">Socket module</string>
-    <string name="modulesTypeUnknownModule">@string/unknownModule</string>
 </resources>

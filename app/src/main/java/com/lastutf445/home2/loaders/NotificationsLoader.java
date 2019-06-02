@@ -1,5 +1,6 @@
 package com.lastutf445.home2.loaders;
 
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.util.Log;
 import android.util.SparseArray;
@@ -42,6 +43,7 @@ public final class NotificationsLoader {
         }
     }
 
+    @NonNull
     public static SparseArray<Event> getNotifications() {
         return notifications;
     }
@@ -270,7 +272,7 @@ public final class NotificationsLoader {
         }
 
         @Override
-        public void onReceive(JSONObject data) {
+        public void onReceive(@NonNull JSONObject data) {
             Log.d("LOGTAG", "notification received");
             if (!data.has("status")) return;
 

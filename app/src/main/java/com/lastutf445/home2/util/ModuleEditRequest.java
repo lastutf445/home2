@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 public class ModuleEditRequest extends SyncProvider {
 
     private WeakReference<Handler> weakHandler;
+    @NonNull
     private JSONObject ops = new JSONObject();
     private boolean tainted = false;
     private String type;
@@ -34,7 +35,7 @@ public class ModuleEditRequest extends SyncProvider {
     }
 
     @Override
-    public void onReceive(JSONObject data) {
+    public void onReceive(@NonNull JSONObject data) {
         Handler handler = weakHandler.get();
 
         try {

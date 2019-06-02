@@ -95,7 +95,7 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
 
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(@NonNull DialogInterface dialog, int which) {
                     dialog.cancel();
                 }
             });
@@ -139,7 +139,7 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
             icon = view.findViewById(R.id.widgetIcon);
         }
 
-        public void bind(Widget op) {
+        public void bind(@NonNull Widget op) {
             Module module = ModulesLoader.getModule(op.getSerial());
             icon.setImageResource(op.getIcon());
 
@@ -176,7 +176,7 @@ public class WidgetsAdapter extends RecyclerView.Adapter<WidgetsAdapter.ViewHold
 
         view.findViewById(R.id.widgetDragHandle).setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public boolean onTouch(View v, @NonNull MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     itemTouchHelper.startDrag(viewHolder);
                 }

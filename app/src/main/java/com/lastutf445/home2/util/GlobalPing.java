@@ -28,6 +28,7 @@ import java.net.UnknownHostException;
 public class GlobalPing extends Thread {
     private WeakReference<Handler> weakHandler;
     private volatile boolean aborted = false;
+    @Nullable
     private InetAddress ip;
     private int port;
 
@@ -35,6 +36,7 @@ public class GlobalPing extends Thread {
 
     private volatile BufferedReader in;
     private volatile PrintWriter out;
+    @Nullable
     private volatile Socket sock;
 
     public GlobalPing(@NonNull Handler handler, @Nullable InetAddress ip, int port) {
@@ -89,7 +91,7 @@ public class GlobalPing extends Thread {
         sleep();
     }
 
-    private void onReceive(JSONObject data) {
+    private void onReceive(@NonNull JSONObject data) {
         Handler handler = weakHandler.get();
 
         if (handler == null) {

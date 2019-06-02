@@ -1,6 +1,8 @@
 package com.lastutf445.home2.network;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.lastutf445.home2.loaders.CryptoLoader;
@@ -13,9 +15,12 @@ import java.io.IOException;
 
 public class Receiver {
 
+    @Nullable
     private static BufferedReader tIn;
+    @Nullable
     private static Thread thread;
 
+    @NonNull
     private static Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -89,6 +94,7 @@ public class Receiver {
             Log.d("LOGTAG", "result, id " + source + ": " + data.toString());
 
             new AsyncTask<Result, Void,  Void>() {
+                @Nullable
                 @Override
                 protected Void doInBackground(Result... results) {
                     if (results[0] != null) {

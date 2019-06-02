@@ -3,25 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingStart="24dp"
-    android:paddingTop="32dp"
-    android:paddingEnd="24dp">
+    android:paddingStart="@dimen/stdPadding"
+    android:paddingTop="@dimen/inter32"
+    android:paddingEnd="@dimen/stdPadding">
 
     <TextView
         android:id="@+id/textView27"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/createTitleTitle" />
+        android:text="@string/createTitleTitle"
+        android:textSize="@dimen/inter14sp" />
 
     <EditText
         android:id="@+id/createTitleTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="@dimen/inter16"
+        android:layout_marginBottom="@dimen/inter16"
         android:ems="10"
         android:hint="@string/createTitleExample"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:textSize="@dimen/inter18sp" />
 
     <Button
         android:id="@+id/createTitleApply"
@@ -29,9 +31,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/done"
+        android:drawablePadding="@dimen/inter16"
         android:drawableTint="@color/colorPrimary"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="@dimen/inter16"
+        android:paddingEnd="@dimen/inter16"
         android:text="@string/apply"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimary" />

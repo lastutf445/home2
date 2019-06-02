@@ -5,19 +5,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;
-import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
-import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
 
 import java.lang.ref.WeakReference;
@@ -96,7 +92,7 @@ public class Notifications extends NavigationFragment {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             if (msg.what == -1) reload();
         }
 
