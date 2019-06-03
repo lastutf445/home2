@@ -1,12 +1,13 @@
 package com.lastutf445.home2.loaders;
 
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.containers.Event;

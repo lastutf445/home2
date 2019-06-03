@@ -8,10 +8,11 @@ import android.net.NetworkRequest;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.NetworkOnMainThreadException;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.util.SyncProvider;

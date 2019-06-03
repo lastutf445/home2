@@ -1,9 +1,10 @@
 package com.lastutf445.home2.util;
 
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+
+import androidx.annotation.NonNull;
 
 public class SimpleAnimator {
 

@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:text="@string/syncThreads" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/syncPersistentConnection"
             style="@style/StyledTransparentButton"
             android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/textView14"

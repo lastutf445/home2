@@ -3,8 +3,9 @@ package com.lastutf445.home2.util;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.loaders.DataLoader;

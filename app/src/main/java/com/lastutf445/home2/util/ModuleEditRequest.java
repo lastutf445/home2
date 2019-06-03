@@ -3,7 +3,8 @@ package com.lastutf445.home2.util;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.network.Sync;

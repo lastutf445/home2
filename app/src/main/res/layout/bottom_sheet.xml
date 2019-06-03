@@ -29,7 +29,7 @@
         android:textColor="#666"
         android:textSize="@dimen/inter14sp" />
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomSheetConfigure"
         style="@style/StyledTransparentButton"
         android:layout_width="match_parent"
@@ -59,7 +59,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bottomSheetConfigureIcon"
             app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/bottomSheetDelete"
