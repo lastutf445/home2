@@ -34,8 +34,8 @@ public class SplashScreen extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        super.onStart();
         handler.postDelayed(transition, 1000);
+        super.onStart();
     }
 
     @Override

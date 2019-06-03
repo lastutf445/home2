@@ -51,7 +51,11 @@ public class Dashboard extends NavigationFragment {
         view.findViewById(R.id.dashboardCreateWidget).setOnClickListener(c);
         view.findViewById(R.id.dashboardMoveWidgets).setOnClickListener(c);
         view.findViewById(R.id.dashboardRemoveWidgets).setOnClickListener(c);
-        reload();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (!hidden) reload();
     }
 
     @Override

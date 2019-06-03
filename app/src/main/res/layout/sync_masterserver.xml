@@ -101,8 +101,9 @@
                 android:digits="0123456789."
                 android:ems="10"
                 android:hint="@string/IPAddress"
-                android:inputType="number"
-                android:singleLine="true" />
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:textSize="@dimen/inter18sp" />
 
             <EditText
                 android:id="@+id/masterServerPort"
@@ -114,7 +115,8 @@
                 android:ems="10"
                 android:hint="@string/port"
                 android:inputType="number"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="@dimen/inter18sp" />
         </LinearLayout>
 
         <LinearLayout

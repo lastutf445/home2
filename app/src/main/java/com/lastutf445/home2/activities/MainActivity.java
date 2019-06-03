@@ -12,7 +12,12 @@ import com.lastutf445.home2.fragments.Dashboard;
 import com.lastutf445.home2.fragments.Menu;
 import com.lastutf445.home2.fragments.Messages;
 import com.lastutf445.home2.fragments.Notifications;
-import com.lastutf445.home2.loaders.*;
+import com.lastutf445.home2.loaders.CryptoLoader;
+import com.lastutf445.home2.loaders.DataLoader;
+import com.lastutf445.home2.loaders.FragmentsLoader;
+import com.lastutf445.home2.loaders.ModulesLoader;
+import com.lastutf445.home2.loaders.NotificationsLoader;
+import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
 
@@ -37,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        Sync.callTriggers();
+        Sync.updateNetworkState2();
         super.onResume();
     }
 

@@ -103,7 +103,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/inter8"
-                android:layout_marginBottom="@dimen/inter16"
+                android:layout_marginBottom="@dimen/inter24"
                 android:ems="10"
                 android:hint="@string/accountPasswordOld"
                 android:inputType="textPassword"
