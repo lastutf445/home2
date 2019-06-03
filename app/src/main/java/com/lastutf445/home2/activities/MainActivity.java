@@ -2,6 +2,8 @@ package com.lastutf445.home2.activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,6 +65,23 @@ public class MainActivity extends AppCompatActivity {
         if (!FragmentsLoader.pop(active)) {
             super.onBackPressed();
         }
+    }
+
+    public static void hideKeyboard() {
+        AppCompatActivity activity = instance.get();
+
+        if (activity == null) {
+            return;
+        }
+
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE);
+        View view = activity.getCurrentFocus();
+
+        if (view == null) {
+            view = new View(activity);
+        }
+
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void init() {

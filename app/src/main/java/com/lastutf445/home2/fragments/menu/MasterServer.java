@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.network.Sync;
@@ -183,6 +184,13 @@ public class MasterServer extends NavigationFragment {
         } catch (Exception e) {
             //e.printStackTrace();
             NotificationsLoader.makeToast("Unexpected error", true);
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (hidden) {
+            MainActivity.hideKeyboard();
         }
     }
 

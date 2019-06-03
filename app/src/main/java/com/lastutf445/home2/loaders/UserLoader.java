@@ -52,7 +52,7 @@ public final class UserLoader {
 
         for (String key: ops) {
             if (DataLoader.getSyncTime(key) >= lastSync) {
-                Log.d("LOGTAG", "should to be synced: " + key + " " + DataLoader.getSyncTime(key));
+                Log.d("LOGTAG", "should be synced: " + key + " " + DataLoader.getSyncTime(key));
                 UserLoader.addToSyncUserDataQueue(key);
             } else {
                 Log.d("LOGTAG", "not needed to be synced: " + key + " " + DataLoader.getSyncTime(key));

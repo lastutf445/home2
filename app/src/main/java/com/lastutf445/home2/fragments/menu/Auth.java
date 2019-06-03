@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.fragments.dialog.Processing;
 import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
@@ -96,6 +97,13 @@ public class Auth extends NavigationFragment {
 
         toParent.putBoolean("reload", true);
         getActivity().onBackPressed();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (hidden) {
+            MainActivity.hideKeyboard();
+        }
     }
 
     @Override

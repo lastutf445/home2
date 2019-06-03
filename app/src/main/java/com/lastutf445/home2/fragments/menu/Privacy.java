@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.util.NavigationFragment;
@@ -75,6 +76,13 @@ public class Privacy extends NavigationFragment {
 
     private void generateAES() {
 
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (hidden) {
+            MainActivity.hideKeyboard();
+        }
     }
 
     @Override

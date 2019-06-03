@@ -10,6 +10,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.fragments.dialog.Processing;
 import com.lastutf445.home2.loaders.FragmentsLoader;
@@ -59,6 +60,13 @@ public abstract class Configure extends NavigationFragment {
     protected void reload() {
         if (render != null) {
             render.reload(view, module);
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (hidden) {
+            MainActivity.hideKeyboard();
         }
     }
 

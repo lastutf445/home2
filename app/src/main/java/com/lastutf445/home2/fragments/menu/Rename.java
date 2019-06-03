@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.util.NavigationFragment;
 
 public class Rename extends NavigationFragment {
@@ -52,6 +53,13 @@ public class Rename extends NavigationFragment {
         ((TextView) view.findViewById(R.id.renameOld)).setText(old);
         ((EditText) view.findViewById(R.id.renameNew)).setHint(hint);
         renameNew = view.findViewById(R.id.renameNew);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (hidden) {
+            MainActivity.hideKeyboard();
+        }
     }
 
     public void setTitle(String title) {

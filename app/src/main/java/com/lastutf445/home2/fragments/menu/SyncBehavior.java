@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
@@ -134,6 +135,12 @@ public class SyncBehavior extends NavigationFragment {
                 DataLoader.set("SyncPingInterval", pingInterval);
             }
 
+            View focused = getActivity().getCurrentFocus();
+
+            if (focused != null) {
+                focused.clearFocus();
+            }
+
             DataLoader.save();
             reload();
 
@@ -142,6 +149,13 @@ public class SyncBehavior extends NavigationFragment {
         } catch (NumberFormatException e) {
             NotificationsLoader.makeToast("Unexpected error", true);
             //e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (hidden) {
+            MainActivity.hideKeyboard();
         }
     }
 
