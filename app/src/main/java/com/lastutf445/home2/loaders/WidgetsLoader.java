@@ -651,6 +651,12 @@ public class WidgetsLoader {
         }
     }
 
+    public static void defaceWithoutRemoveFromFree(@NonNull Module module) {
+        int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
+        callBottomSheetConnector(module, false);
+        update(id);
+    }
+
     public static void onModuleLinkChanged(@NonNull Module module, boolean linked) {
         int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
 

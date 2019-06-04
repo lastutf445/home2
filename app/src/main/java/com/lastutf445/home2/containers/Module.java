@@ -135,6 +135,10 @@ public class Module extends JSONPayload {
         save();
     }
 
+    public void setSyncingWithoutSave(boolean syncing) {
+        this.syncing = syncing;
+    }
+
     public void setTitle(@Nullable String title) {
         this.title = title;
         WidgetsLoader.onModuleTitleUpdated(this);

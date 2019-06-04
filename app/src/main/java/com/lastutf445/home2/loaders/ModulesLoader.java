@@ -328,8 +328,9 @@ public class ModulesLoader {
                 Module module = modules.valueAt(i);
                 if (module != null) {
                     module.wipe();
-                    module.setSyncing(false);
-                    WidgetsLoader.onModuleLinkChanged(module, false);
+                    module.setSyncingWithoutSave(false);
+                    saveState(module);
+                    WidgetsLoader.defaceWithoutRemoveFromFree(module);
                 }
             }
         }
