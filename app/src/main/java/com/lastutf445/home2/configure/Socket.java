@@ -3,6 +3,7 @@ package com.lastutf445.home2.configure;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 public class Socket extends Configure {
+
+    private boolean rendered = false;
 
     @Nullable
     @Override
@@ -58,10 +61,21 @@ public class Socket extends Configure {
             }
         };
 
+        View.OnFocusChangeListener f = new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    Log.d("LOGTAG", "rendered = true");
+                    rendered = true;
+                }
+            }
+        };
+
         view.findViewById(R.id.socketON).setOnClickListener(c);
         view.findViewById(R.id.socketDisableAfterInit).setOnClickListener(c);
         view.findViewById(R.id.socketDisableWhenIdle).setOnClickListener(c);
         view.findViewById(R.id.socketActiveStateTimeoutSave).setOnClickListener(c);
+        view.findViewById(R.id.socketActiveStateTimeout).setOnFocusChangeListener(f);
 
         setRender(new Configure.Render() {
             @Override
@@ -116,14 +130,21 @@ public class Socket extends Configure {
                             module.getBoolean("disableWhenIdle", false)
                     );
 
-                    timeout.setText(
-                            String.valueOf(module.getInt("activeStateTimeout", 0))
-                    );
+                    if (!save.isEnabled()) {
+                        rendered = false;
+                    }
+
+                    Log.d("LOGTAG", "rendered == " + rendered);
+
+                    if (!rendered) {
+                        timeout.clearFocus();
+                        timeout.setText(
+                                String.valueOf(module.getInt("activeStateTimeout", 0))
+                        );
+                    }
                 }
             }
         });
-
-        reload();
     }
 
     private void switchState() {

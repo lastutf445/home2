@@ -34,7 +34,7 @@
                 style="@style/StyledSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/specialModule" />
+                android:text="@string/configureModuleSettings" />
 
             <LinearLayout
                 android:id="@+id/socketON"
@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:clickable="false"
-                    android:text="@string/specialSocketIsOn" />
+                    android:text="@string/configureSocketIsOn" />
             </LinearLayout>
 
             <LinearLayout
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:clickable="false"
-                    android:text="@string/specialSocketDisableAfterInit" />
+                    android:text="@string/configureSocketDisableAfterInit" />
             </LinearLayout>
 
             <TextView
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:clickable="false"
-                    android:text="@string/specialSocketDisableWhenIdle" />
+                    android:text="@string/configureSocketDisableWhenIdle" />
             </LinearLayout>
 
             <LinearLayout
@@ -108,7 +108,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/specialSocketActiveStateTimeout"
+                    android:text="@string/configureSocketActiveStateTimeout"
                     android:textColor="#333"
                     android:textSize="@dimen/inter14sp" />
 
@@ -131,7 +131,7 @@
                 style="@style/StyledButtonIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/specialSocketActiveStateTimeoutSave"
+                android:text="@string/configureSocketActiveStateTimeoutSave"
                 android:textColor="#00796B"
                 android:textSize="@dimen/inter14sp" />
 

@@ -2,6 +2,7 @@ package com.lastutf445.home2.configure;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import java.util.Iterator;
 public class Humidity extends Configure {
 
     private NumberFormat formatter;
+    private boolean rendered = false;
 
     @Nullable
     @Override
@@ -49,15 +51,26 @@ public class Humidity extends Configure {
                     case R.id.humidityRefresh:
                         refreshState();
                         break;
-                    case R.id.humidityRefreshRateSave:
+                    case R.id.humidityRefreshPeriodSave:
                         saveRefresh();
                         break;
                 }
             }
         };
 
+        View.OnFocusChangeListener f = new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    Log.d("LOGTAG", "rendered = true");
+                    rendered = true;
+                }
+            }
+        };
+
         view.findViewById(R.id.humidityRefresh).setOnClickListener(c);
-        view.findViewById(R.id.humidityRefreshRateSave).setOnClickListener(c);
+        view.findViewById(R.id.humidityRefreshPeriodSave).setOnClickListener(c);
+        view.findViewById(R.id.humidityRefreshPeriod).setOnFocusChangeListener(f);
 
         setRender(new Configure.Render() {
             @Override
@@ -80,22 +93,31 @@ public class Humidity extends Configure {
                 }
 
                 Switch refresh = view.findViewById(R.id.humidityRefreshSwitch);
-                Button save = view.findViewById(R.id.humidityRefreshRateSave);
-                EditText refreshRate = view.findViewById(R.id.humidityRefreshRate);
+                Button save = view.findViewById(R.id.humidityRefreshPeriodSave);
+                EditText refreshPeriod = view.findViewById(R.id.humidityRefreshPeriod);
 
                 refresh.setChecked(module.getBoolean("refresh", false));
 
-                if (module.has("refreshRate")) {
+                if (module.has("refreshPeriod")) {
                     view.findViewById(R.id.humidityModulesSettings).setVisibility(View.VISIBLE);
-                    view.findViewById(R.id.humidityRefreshRateWrapper).setVisibility(View.VISIBLE);
-                    view.findViewById(R.id.humidityRefreshRateSave).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.humidityRefreshPeriodWrapper).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.humidityRefreshPeriodSave).setVisibility(View.VISIBLE);
                     save.setEnabled(refresh.isChecked());
 
-                    refreshRate.setText(
-                            String.valueOf(module.getInt("refreshRate", 0))
-                    );
+                    if (!save.isEnabled()) {
+                        rendered = false;
+                    }
 
-                    refreshRate.setEnabled(save.isEnabled());
+                    Log.d("LOGTAG", "rendered == " + rendered);
+
+                    if (!rendered) {
+                        refreshPeriod.clearFocus();
+                        refreshPeriod.setText(
+                                String.valueOf(module.getInt("refreshPeriod", 0))
+                        );
+                    }
+
+                    refreshPeriod.setEnabled(save.isEnabled());
 
                     save.setTextColor(
                             Color.parseColor(save.isEnabled() ? "#00796B" : "#aaaaaa")
@@ -103,13 +125,12 @@ public class Humidity extends Configure {
 
                 } else {
                     view.findViewById(R.id.humidityModulesSettings).setVisibility(View.GONE);
-                    view.findViewById(R.id.humidityRefreshRateWrapper).setVisibility(View.GONE);
-                    view.findViewById(R.id.humidityRefreshRateSave).setVisibility(View.GONE);
+                    view.findViewById(R.id.humidityRefreshPeriodWrapper).setVisibility(View.GONE);
+                    view.findViewById(R.id.humidityRefreshPeriodSave).setVisibility(View.GONE);
+                    rendered = false;
                 }
             }
         });
-
-        reload();
     }
 
     private void refreshState() {
@@ -128,11 +149,11 @@ public class Humidity extends Configure {
     private void saveRefresh() {
         try {
             float timeout = Float.valueOf(
-                    ((EditText) view.findViewById(R.id.humidityRefreshRate)).getText().toString()
+                    ((EditText) view.findViewById(R.id.humidityRefreshPeriod)).getText().toString()
             );
 
             JSONObject ops = new JSONObject();
-            ops.put("refreshRate", timeout);
+            ops.put("refreshPeriod", timeout);
             makeEditRequest(ops);
             return;
 
@@ -159,7 +180,7 @@ public class Humidity extends Configure {
                             return false;
                         }
                         break;
-                    case "refreshRate":
+                    case "refreshPeriod":
                         if (!(val instanceof Integer)) {
                             return false;
                         }

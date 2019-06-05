@@ -71,6 +71,12 @@ public abstract class Configure extends NavigationFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        reload();
+    }
+
+    @Override
     public final void onDestroy() {
         WidgetsLoader.delBottomSheetConnector(connectorId);
         super.onDestroy();

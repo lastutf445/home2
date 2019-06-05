@@ -86,8 +86,6 @@ public class LightRGB extends Configure {
                 }
             }
         });
-
-        reload();
     }
 
     private void switchState() {

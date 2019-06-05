@@ -34,7 +34,7 @@
                 style="@style/StyledSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/specialSensors" />
+                android:text="@string/configureSensors" />
 
             <LinearLayout
                 style="@style/StyledButtonIcon"
@@ -70,7 +70,7 @@
                 style="@style/StyledSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/specialModule" />
+                android:text="@string/configureModuleSettings" />
 
             <LinearLayout
                 android:id="@+id/tempRefresh"
@@ -86,11 +86,11 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:clickable="false"
-                    android:text="@string/specialTemperatureRefresh" />
+                    android:text="@string/configureTemperatureRefresh" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/tempRefreshRateWrapper"
+                android:id="@+id/tempRefreshPeriodWrapper"
                 style="@style/StyledButtonIcon"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -102,12 +102,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/specialTemperatureRefreshRate"
+                    android:text="@string/configureTemperatureRefreshPeriod"
                     android:textColor="#333"
                     android:textSize="@dimen/inter14sp" />
 
                 <EditText
-                    android:id="@+id/tempRefreshRate"
+                    android:id="@+id/tempRefreshPeriod"
                     android:layout_width="@dimen/inter80"
                     android:layout_height="wrap_content"
                     android:digits="1234567890"
@@ -116,16 +116,15 @@
                     android:inputType="number"
                     android:maxLength="4"
                     android:singleLine="true"
-                    android:textAlignment="textEnd"
                     android:textSize="@dimen/inter18sp" />
             </LinearLayout>
 
             <Button
-                android:id="@+id/tempRefreshRateSave"
+                android:id="@+id/tempRefreshPeriodSave"
                 style="@style/StyledButtonIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/specialTemperatureRefreshRateSave"
+                android:text="@string/configureTemperatureRefreshPeriodSave"
                 android:textColor="#00796B"
                 android:textSize="@dimen/inter14sp" />
 

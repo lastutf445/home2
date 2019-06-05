@@ -2,6 +2,7 @@ package com.lastutf445.home2.configure;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import java.util.Iterator;
 public class Temperature extends Configure {
 
     private NumberFormat formatter;
+    private boolean rendered = false;
 
     @Nullable
     @Override
@@ -49,15 +51,26 @@ public class Temperature extends Configure {
                     case R.id.tempRefresh:
                         refreshState();
                         break;
-                    case R.id.tempRefreshRateSave:
+                    case R.id.tempRefreshPeriodSave:
                         saveRefresh();
                         break;
                 }
             }
         };
 
+        View.OnFocusChangeListener f = new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    Log.d("LOGTAG", "rendered = true");
+                    rendered = true;
+                }
+            }
+        };
+
         view.findViewById(R.id.tempRefresh).setOnClickListener(c);
-        view.findViewById(R.id.tempRefreshRateSave).setOnClickListener(c);
+        view.findViewById(R.id.tempRefreshPeriodSave).setOnClickListener(c);
+        view.findViewById(R.id.tempRefreshPeriod).setOnFocusChangeListener(f);
 
         setRender(new Configure.Render() {
             @Override
@@ -80,22 +93,31 @@ public class Temperature extends Configure {
                 }
 
                 Switch refresh = view.findViewById(R.id.tempRefreshSwitch);
-                Button save = view.findViewById(R.id.tempRefreshRateSave);
-                EditText refreshRate = view.findViewById(R.id.tempRefreshRate);
+                Button save = view.findViewById(R.id.tempRefreshPeriodSave);
+                EditText refreshPeriod = view.findViewById(R.id.tempRefreshPeriod);
 
                 refresh.setChecked(module.getBoolean("refresh", false));
 
-                if (module.has("refreshRate")) {
+                if (module.has("refreshPeriod")) {
                     view.findViewById(R.id.tempModulesSettings).setVisibility(View.VISIBLE);
-                    view.findViewById(R.id.tempRefreshRateWrapper).setVisibility(View.VISIBLE);
-                    view.findViewById(R.id.tempRefreshRateSave).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.tempRefreshPeriodWrapper).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.tempRefreshPeriodSave).setVisibility(View.VISIBLE);
                     save.setEnabled(refresh.isChecked());
 
-                    refreshRate.setText(
-                            String.valueOf(module.getInt("refreshRate", 0))
-                    );
+                    if (!save.isEnabled()) {
+                        rendered = false;
+                    }
 
-                    refreshRate.setEnabled(save.isEnabled());
+                    Log.d("LOGTAG", "rendered == " + rendered);
+
+                    if (!rendered) {
+                        refreshPeriod.clearFocus();
+                        refreshPeriod.setText(
+                                String.valueOf(module.getInt("refreshPeriod", 0))
+                        );
+                    }
+
+                    refreshPeriod.setEnabled(save.isEnabled());
 
                     save.setTextColor(
                             Color.parseColor(save.isEnabled() ? "#00796B" : "#aaaaaa")
@@ -103,13 +125,12 @@ public class Temperature extends Configure {
 
                 } else {
                     view.findViewById(R.id.tempModulesSettings).setVisibility(View.GONE);
-                    view.findViewById(R.id.tempRefreshRateWrapper).setVisibility(View.GONE);
-                    view.findViewById(R.id.tempRefreshRateSave).setVisibility(View.GONE);
+                    view.findViewById(R.id.tempRefreshPeriodWrapper).setVisibility(View.GONE);
+                    view.findViewById(R.id.tempRefreshPeriodSave).setVisibility(View.GONE);
+                    rendered = false;
                 }
             }
         });
-
-        reload();
     }
 
     private void refreshState() {
@@ -128,11 +149,11 @@ public class Temperature extends Configure {
     private void saveRefresh() {
         try {
             float timeout = Float.valueOf(
-                    ((EditText) view.findViewById(R.id.tempRefreshRate)).getText().toString()
+                    ((EditText) view.findViewById(R.id.tempRefreshPeriod)).getText().toString()
             );
 
             JSONObject ops = new JSONObject();
-            ops.put("refreshRate", timeout);
+            ops.put("refreshPeriod", timeout);
             makeEditRequest(ops);
             return;
 
@@ -159,7 +180,7 @@ public class Temperature extends Configure {
                             return false;
                         }
                         break;
-                    case "refreshRate":
+                    case "refreshPeriod":
                         if (!(val instanceof Integer)) {
                             return false;
                         }

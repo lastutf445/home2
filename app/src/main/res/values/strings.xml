@@ -162,28 +162,28 @@
     <string name="saveChanges">Save changes</string>
     <string name="cancel">Cancel</string>
     
-    <string name="specialModule">Module settings</string>
-    <string name="specialSensors">Sensors</string>
+    <string name="configureModuleSettings">Module settings</string>
+    <string name="configureSensors">Sensors</string>
 
-    <string name="specialLightRGBIsLit">Light ON</string>
-    <string name="specialLightRGBPickColor">Choose color</string>
+    <string name="configureLightRGBIsLit">Light ON</string>
+    <string name="configureLightRGBPickColor">Choose color</string>
     <string name="red">Red</string>
     <string name="green">Green</string>
     <string name="blue">Blue</string>
 
-    <string name="specialSocketIsOn">Socket ON</string>
-    <string name="specialSocketDisableAfterInit">Disable after init</string>
-    <string name="specialSocketDisableWhenIdle">Disable when idle</string>
-    <string name="specialSocketActiveStateTimeout">Active state timeout (min)</string>
-    <string name="specialSocketActiveStateTimeoutSave">Save timeout</string>
+    <string name="configureSocketIsOn">Socket ON</string>
+    <string name="configureSocketDisableAfterInit">Disable after init</string>
+    <string name="configureSocketDisableWhenIdle">Disable when idle</string>
+    <string name="configureSocketActiveStateTimeout">Active state timeout (min)</string>
+    <string name="configureSocketActiveStateTimeoutSave">Save timeout</string>
 
-    <string name="specialTemperatureRefresh">Refresh</string>
-    <string name="specialTemperatureRefreshRate">Refresh rate (min)</string>
-    <string name="specialTemperatureRefreshRateSave">Save refresh rate</string>
+    <string name="configureTemperatureRefresh">Refresh</string>
+    <string name="configureTemperatureRefreshPeriod">Refresh period (min)</string>
+    <string name="configureTemperatureRefreshPeriodSave">Save refresh period</string>
 
-    <string name="specialHumidityRefresh">@string/specialTemperatureRefresh</string>
-    <string name="specialHumidityRefreshRate">@string/specialTemperatureRefreshRate</string>
-    <string name="specialHumidityRefreshRateSave">@string/specialTemperatureRefreshRateSave</string>
+    <string name="configureHumidityRefresh">@string/configureTemperatureRefresh</string>
+    <string name="configureHumidityRefreshPeriod">@string/configureTemperatureRefreshPeriod</string>
+    <string name="configureHumidityRefreshPeriodSave">@string/configureTemperatureRefreshPeriodSave</string>
 
     <string name="notTested">not tested</string>
     <string name="notAvailable">Not available</string>
