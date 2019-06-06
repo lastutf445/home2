@@ -113,8 +113,9 @@ public final class UserLoader {
     }
 
     public static void logout() {
-        ModulesLoader.wipeModules();
-        DataLoader.flushTables();
+        //ModulesLoader.wipeModules();
+        //DataLoader.flushTables();
+        DataLoader.flushSyncable();
         flushSyncUserDataQueue();
         lastSync = 0;
         DataLoader.save();

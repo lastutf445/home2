@@ -34,12 +34,13 @@ public class DataLoader {
     private static final HashMap<String, Long> sync = new HashMap<>();
     private static final HashSet<String> syncable = new HashSet<>();
 
-    private static void setDefault() {
+    private static void setDefault(boolean syncableOnly) {
         // authentication
-        ops.put("Session", null);
+        /*if (!syncableOnly)*/ ops.put("Session", null); // excluding this
         ops.put("Username", null);
-        ops.put("BasicAccount", false);
+        /*if (!syncableOnly)*/ ops.put("BasicAccount", false);
         ops.put("AESBytes", 16);
+        ops.put("AESKey", null);
         // notifications
         ops.put("NotificationsEnabled", true);
         ops.put("SuppressModulesStateSync", false);
@@ -47,18 +48,18 @@ public class DataLoader {
         ops.put("SuppressUserDataSync", false);
         ops.put("SuppressUserDataSyncFailed", false);
         // master server
-        ops.put("MasterServer", false);
-        ops.put("MasterServerAddress", null);
-        ops.put("MasterServerPort", null);
+        if (!syncableOnly) ops.put("MasterServer", false);
+        if (!syncableOnly) ops.put("MasterServerAddress", null);
+        if (!syncableOnly) ops.put("MasterServerPort", null);
         // proxy server
-        ops.put("ExternalConnection", false);
-        ops.put("ExternalAddress", null);
-        ops.put("ExternalPort", null);
+        if (!syncableOnly) ops.put("ExternalConnection", false);
+        if (!syncableOnly) ops.put("ExternalAddress", null);
+        if (!syncableOnly) ops.put("ExternalPort", null);
         // synchronization
-        ops.put("SyncPersistentConnection", false);
-        ops.put("SyncHomeNetwork", null);
-        ops.put("lastSyncModules", 0);
-        ops.put("lastSyncUser", 0);
+        ops.put("SyncPersistentConnection", true);
+        if (!syncableOnly) ops.put("SyncHomeNetwork", null);
+        /*if (!syncableOnly)*/ ops.put("lastSyncModules", 0); // excluding this
+        /*if (!syncableOnly)*/ ops.put("lastSyncUser", 0);
         // sync behavior
         ops.put("SyncClientPort", 44501);
         ops.put("SyncPingAttempts", 3);
@@ -78,7 +79,7 @@ public class DataLoader {
         sync.clear();
         ops.clear();
 
-        setDefault();
+        setDefault(false);
         connect();
         load();
     }
@@ -251,8 +252,10 @@ public class DataLoader {
         }
     }
 
-    public static void flushTables() {
-        db.execSQL("DROP TABLE IF EXISTS core");
+    public static void flushSyncable() {
+        setDefault(true);
+        save();
+
         db.execSQL("DROP TABLE IF EXISTS syncUserData");
         kill();
         init(appContext, appResources);
