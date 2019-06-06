@@ -20,7 +20,7 @@
         <TextView
             android:id="@+id/lightRGBTitle"
             style="@style/ConfigureTitle"
-            android:text="@string/defaultTitleLightRGB" />
+            android:text="@string/defaultTitleLight" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                     android:layout_weight="1"
                     android:background="@null"
                     android:clickable="false"
-                    android:text="@string/configureLightRGBIsLit" />
+                    android:text="@string/configureLightIsLit" />
             </LinearLayout>
 
             <Button
@@ -58,7 +58,7 @@
                 style="@style/StyledButtonIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/configureLightRGBPickColor" />
+                android:text="@string/configureLightChooseColor" />
 
             <Space
                 android:layout_width="match_parent"

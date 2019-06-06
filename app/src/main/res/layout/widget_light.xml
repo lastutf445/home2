@@ -10,7 +10,7 @@
         style="@style/WidgetTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/defaultTitleLightRGB"
+        android:text="@string/defaultTitleLight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -19,7 +19,7 @@
         style="@style/WidgetSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/modulesTypeLightRGB"
+        android:text="@string/modulesTypeLight"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/widgetTitle"
         app:layout_constraintTop_toBottomOf="@+id/widgetTitle" />

@@ -16,7 +16,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +32,7 @@ public class DataLoader {
     private static Resources appResources;
     private static final HashMap<String, Object> ops = new HashMap<>();
     private static final HashMap<String, Long> sync = new HashMap<>();
+    private static final HashSet<String> syncable = new HashSet<>();
 
     private static void setDefault() {
         // authentication
@@ -68,12 +71,40 @@ public class DataLoader {
         appContext = context;
         appResources = resources;
 
+        if (syncable.isEmpty()) {
+            fillSyncable();
+        }
+
         sync.clear();
         ops.clear();
 
         setDefault();
         connect();
         load();
+    }
+
+    private static void fillSyncable() {
+        String[] toSync = {
+                "Username",
+                "AESBytes",
+                "NotificationsEnabled",
+                "SuppressModulesStateSync",
+                "SuppressModulesStateSyncFailed",
+                "SuppressUserDataSync",
+                "SuppressUserDataSyncFailed",
+                "SyncPersistentConnection",
+                "SyncClientPort",
+                "SyncPingAttempts",
+                "SyncPingInterval",
+                "SyncDiscoveryPort",
+                "SyncDiscoveryTimeout"
+        };
+
+        syncable.addAll(Arrays.asList(toSync));
+    }
+
+    public static boolean isSyncable(String key) {
+        return syncable.contains(key);
     }
 
     public static Context getAppContext() {
@@ -248,12 +279,12 @@ public class DataLoader {
                 case "SuppressModulesStateSyncFailed":
                 case "SuppressUserDataSync":
                 case "SuppressUserDataSyncFailed":
-                immediatelySync();
+                syncImmediately();
             }
         }
     }
 
-    private static void immediatelySync() {
+    private static void syncImmediately() {
         if (!getBoolean("NotificationsEnabled", false)) {
             NotificationsLoader.removeAll();
 

@@ -1,6 +1,7 @@
 package com.lastutf445.home2.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static WeakReference<MainActivity> instance;
     private NavigationFragment active;
+    private Handler handler;
 
     private Dashboard dashboard;
     private Messages messages;
@@ -44,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        Sync.updateNetworkState2();
-        super.onResume();
+    protected void onPostResume() {
+        super.onPostResume();
+        handler.postDelayed(new WakeUp(), 800);
     }
 
     @Override
@@ -86,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         Thread.currentThread().setPriority(8);
+
+        handler = new Handler();
 
         DataLoader.init(
                 getApplicationContext(),
@@ -160,5 +164,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static MainActivity getInstance() {
         return instance != null ? instance.get() : null;
+    }
+
+    private static class WakeUp implements Runnable {
+        @Override
+        public void run() {
+            Sync.updateNetworkState2();
+        }
     }
 }

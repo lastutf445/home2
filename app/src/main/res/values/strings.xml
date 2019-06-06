@@ -165,8 +165,8 @@
     <string name="configureModuleSettings">Module settings</string>
     <string name="configureSensors">Sensors</string>
 
-    <string name="configureLightRGBIsLit">Light ON</string>
-    <string name="configureLightRGBPickColor">Choose color</string>
+    <string name="configureLightIsLit">Light ON</string>
+    <string name="configureLightChooseColor">Choose color</string>
     <string name="red">Red</string>
     <string name="green">Green</string>
     <string name="blue">Blue</string>
@@ -278,13 +278,13 @@
 
     <string name="defaultTitleTemperature">Temperature</string>
     <string name="defaultTitleHumidity">Humidity</string>
-    <string name="defaultTitleLightRGB">LightRGB</string>
+    <string name="defaultTitleLight">Light</string>
     <string name="defaultTitleSocket">Socket</string>
     <string name="defaultTitleTitle">Title</string>
     <string name="defaultTitleUnknownModule">@string/unknownModule</string>
 
     <string name="modulesTypeTemperature">Temperature sensor</string>
     <string name="modulesTypeHumidity">Humidity sensor</string>
-    <string name="modulesTypeLightRGB">LightRGB module</string>
+    <string name="modulesTypeLight">Light module</string>
     <string name="modulesTypeSocket">Socket module</string>
 </resources>

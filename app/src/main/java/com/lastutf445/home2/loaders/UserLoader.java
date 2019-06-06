@@ -51,6 +51,7 @@ public final class UserLoader {
         Set<String> ops = DataLoader.getKeys();
 
         for (String key: ops) {
+            if (!DataLoader.isSyncable(key)) continue;
             if (DataLoader.getSyncTime(key) >= lastSync) {
                 Log.d("LOGTAG", "should be synced: " + key + " " + DataLoader.getSyncTime(key));
                 UserLoader.addToSyncUserDataQueue(key);

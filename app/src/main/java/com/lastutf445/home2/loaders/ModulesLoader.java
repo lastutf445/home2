@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.configure.Humidity;
-import com.lastutf445.home2.configure.LightRGB;
+import com.lastutf445.home2.configure.Light;
 import com.lastutf445.home2.configure.Socket;
 import com.lastutf445.home2.configure.Temperature;
 import com.lastutf445.home2.containers.Module;
@@ -227,8 +227,8 @@ public class ModulesLoader {
                 return Temperature.validateState(ops, values);
             case "humidity":
                 return Humidity.validateState(ops, values);
-            case "lightrgb":
-                return LightRGB.validateState(ops, values);
+            case "light":
+                return Light.validateState(ops, values);
             case "socket":
                 return Socket.validateState(ops, values);
             default:
@@ -276,8 +276,8 @@ public class ModulesLoader {
             case "humidity":
                 child = new Humidity();
                 break;
-            case "lightrgb":
-                child = new LightRGB();
+            case "light":
+                child = new Light();
                 break;
             case "socket":
                 child = new Socket();
@@ -327,8 +327,8 @@ public class ModulesLoader {
             for (int i = 0; i < modules.size(); ++i) {
                 Module module = modules.valueAt(i);
                 if (module != null) {
-                    module.wipe();
                     module.setSyncingWithoutSave(false);
+                    module.wipe();
                     saveState(module);
                     WidgetsLoader.defaceWithoutRemoveFromFree(module);
                 }

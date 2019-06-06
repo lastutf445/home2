@@ -3,6 +3,7 @@ package com.lastutf445.home2.fragments.menu;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -22,7 +25,9 @@ import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
+import com.lastutf445.home2.loaders.WidgetsLoader;
 import com.lastutf445.home2.network.Sync;
+import com.lastutf445.home2.util.Configure;
 import com.lastutf445.home2.util.NavigationFragment;
 import com.lastutf445.home2.util.Ping;
 import com.lastutf445.home2.util.SimpleAnimator;
@@ -34,6 +39,7 @@ import java.lang.ref.WeakReference;
 public class Module extends NavigationFragment {
 
     private com.lastutf445.home2.containers.Module module;
+    private Configure.Connector connector;
     private int pos;
 
     private Updater updater;
@@ -49,6 +55,21 @@ public class Module extends NavigationFragment {
     @Override
     protected void init() {
         if (module == null) return;
+
+        connector = (new Configure()).new Connector() {
+            @Override
+            public void onModuleStateUpdated() {
+                updater.sendEmptyMessage(-4);
+            }
+
+            @Override
+            public void onModuleRemoved() {}
+
+            @Override
+            public int getSerial() {
+                return module.getSerial();
+            }
+        };
 
         View.OnClickListener c = new View.OnClickListener() {
             @Override
@@ -81,6 +102,7 @@ public class Module extends NavigationFragment {
         updater = new Updater(view, module);
 
         ModulesLoader.setModuleUpdater(module.getSerial(), updater);
+        WidgetsLoader.setBottomSheetConnector(connector, 1);
         reload();
     }
 
@@ -107,6 +129,8 @@ public class Module extends NavigationFragment {
         ((Switch) view.findViewById(R.id.moduleSyncCheckBox)).setChecked(
                 module.getSyncing()
         );
+
+        updater.sendEmptyMessage(-4);
     }
 
     public void setModule(@NonNull com.lastutf445.home2.containers.Module module, int pos) {
@@ -229,6 +253,8 @@ public class Module extends NavigationFragment {
             toParent.putInt("updated", pos);
             reload();
         }
+
+        WidgetsLoader.setBottomSheetConnector(connector, 1);
     }
 
     @Override
@@ -254,6 +280,9 @@ public class Module extends NavigationFragment {
         @Override
         public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
+                case -4:
+                    reload2();
+                    break;
                 case -3:
                     subscribeStatusUpdate();
                     break;
@@ -266,6 +295,35 @@ public class Module extends NavigationFragment {
                 case 0:
                     unlockSyncButton(msg.getData());
                     break;
+            }
+        }
+
+        private void reload2() {
+            com.lastutf445.home2.containers.Module module = weakModule.get();
+            View view = weakView.get();
+            if (view == null) return;
+
+            if (module.getOps().length() + module.getVals().length() > 1) {
+                view.findViewById(R.id.moduleConfigure).setClickable(true);
+
+                ((Button) view.findViewById(R.id.moduleConfigureButton)).setTextColor(
+                        Color.parseColor("#333333")
+                );
+
+                ((ImageView) view.findViewById(R.id.moduleConfigureIcon)).setColorFilter(
+                        Color.parseColor("#333333")
+                );
+
+            } else {
+                view.findViewById(R.id.moduleConfigure).setClickable(false);
+
+                ((Button) view.findViewById(R.id.moduleConfigureButton)).setTextColor(
+                        Color.parseColor("#999999")
+                );
+
+                ((ImageView) view.findViewById(R.id.moduleConfigureIcon)).setColorFilter(
+                        Color.parseColor("#999999")
+                );
             }
         }
 

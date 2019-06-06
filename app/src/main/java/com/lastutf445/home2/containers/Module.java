@@ -70,8 +70,8 @@ public class Module extends JSONPayload {
                 return res.getString(R.string.modulesTypeTemperature);
             case "humidity":
                 return res.getString(R.string.modulesTypeHumidity);
-            case "lightrgb":
-                return res.getString(R.string.modulesTypeLightRGB);
+            case "light":
+                return res.getString(R.string.modulesTypeLight);
             case "socket":
                 return res.getString(R.string.modulesTypeSocket);
             default:
@@ -92,8 +92,8 @@ public class Module extends JSONPayload {
                 return res.getString(R.string.defaultTitleTemperature);
             case "humidity":
                 return res.getString(R.string.defaultTitleHumidity);
-            case "lightrgb":
-                return res.getString(R.string.defaultTitleLightRGB);
+            case "light":
+                return res.getString(R.string.defaultTitleLight);
             case "socket":
                 return res.getString(R.string.defaultTitleSocket);
             default:
@@ -111,7 +111,7 @@ public class Module extends JSONPayload {
                 return R.drawable.thermometer;
             case "humidity":
                 return R.drawable.water_outline;
-            case "lightrgb":
+            case "light":
                 return R.drawable.light_bulb;
             case "socket":
                 return R.drawable.power_plug;

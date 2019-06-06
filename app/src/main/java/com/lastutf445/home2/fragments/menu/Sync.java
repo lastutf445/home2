@@ -79,7 +79,7 @@ public class Sync extends NavigationFragment {
 
                     case R.id.syncPersistentConnection:
                         Switch switcher = view.findViewById(R.id.syncPersistentConnectionSwitch);
-                        DataLoader.setWithoutSync("SyncPersistentConnection", !switcher.isChecked());
+                        DataLoader.set("SyncPersistentConnection", !switcher.isChecked());
                         switcher.setChecked(!switcher.isChecked());
                         break;
                 }

@@ -24,7 +24,7 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
-public abstract class Configure extends NavigationFragment {
+public class Configure extends NavigationFragment {
 
     protected Render render;
     protected Module module;

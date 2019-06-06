@@ -172,7 +172,7 @@ public class WidgetsLoader {
                 renderHumidity(widget, inflater, content);
                 break;
             case "lightrgb":
-                renderLightRGB(widget, inflater, content);
+                renderLight(widget, inflater, content);
                 break;
             case "socket":
                 renderSocket(widget, inflater, content);
@@ -212,8 +212,8 @@ public class WidgetsLoader {
         renderSimpleWidget(widget, R.layout.widget_humidity, inflater, content);
     }
 
-    private static void renderLightRGB(@NonNull Widget widget, @NonNull LayoutInflater inflater, @NonNull LinearLayout content) {
-        renderSimpleWidget(widget, R.layout.widget_lightrgb, inflater, content);
+    private static void renderLight(@NonNull Widget widget, @NonNull LayoutInflater inflater, @NonNull LinearLayout content) {
+        renderSimpleWidget(widget, R.layout.widget_light, inflater, content);
     }
 
     private static void renderSocket(@NonNull Widget widget, @NonNull LayoutInflater inflater, @NonNull LinearLayout content) {
@@ -279,8 +279,8 @@ public class WidgetsLoader {
             case "humidity":
                 updateHumidity(widget, module);
                 break;
-            case "lightrgb":
-                updateLightRGB(widget, module);
+            case "light":
+                updateLight(widget, module);
                 break;
             case "socket":
                 updateSocket(widget, module);
@@ -351,7 +351,7 @@ public class WidgetsLoader {
         }
     }
 
-    private static void updateLightRGB(@NonNull Widget widget, @Nullable Module module) {
+    private static void updateLight(@NonNull Widget widget, @Nullable Module module) {
         if (widget.getView() == null || module == null) return;
         updateSimpleWidget(
                 widget.getView(),
@@ -774,7 +774,7 @@ public class WidgetsLoader {
                 Module module = ModulesLoader.getModule(bottomSheetWidgetSerial);
                 lastUpdated(module);
 
-                if (module != null) {
+                if (module != null && module.getOps().length() + module.getVals().length() > 1) {
                     bottomSheet.findViewById(R.id.bottomSheetConfigure).setClickable(true);
 
                     ((Button) bottomSheet.findViewById(R.id.bottomSheetConfigureButton)).setTextColor(
