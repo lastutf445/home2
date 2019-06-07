@@ -289,6 +289,8 @@ public class ModulesLoader {
                     DataLoader.getAppResources().getString(R.string.notificationUnsupportedTitle),
                     true
             );
+
+            return false;
         }
 
         child.setModule(module);

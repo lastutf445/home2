@@ -34,7 +34,12 @@ public class Widgets extends NavigationFragment {
     @Override
     protected void init() {
         content = view.findViewById(R.id.widgetsContent);
-        content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()));
+        content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
 
         View.OnClickListener c = new View.OnClickListener() {
             @Override

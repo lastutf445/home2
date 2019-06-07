@@ -1,59 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/textView12"
-        style="@style/StyledTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/widgetsTitle"
-        android:textColor="#00796B" />
-
-    <TextView
-        android:id="@+id/textView23"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:lineSpacingExtra="@dimen/inter8sp"
-        android:paddingStart="@dimen/stdPadding"
-        android:paddingEnd="@dimen/stdPadding"
-        android:text="@string/widgetsSubtitle"
-        android:textSize="@dimen/inter14sp" />
+    android:fillViewport="true">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/stdPadding"
-        android:layout_marginTop="@dimen/inter24"
-        android:layout_marginEnd="@dimen/stdPadding"
-        android:layout_marginBottom="@dimen/inter24"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/widgetsRestore"
-            style="@style/StyledBasicButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/restore"
-            android:textColor="#444" />
-
-        <Button
-            android:id="@+id/widgetsSave"
-            style="@style/StyledBasicButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/saveChanges"
-            android:textColor="#AD1457" />
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/widgetsContent"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/widgets_item" />
-</LinearLayout>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView12"
+            style="@style/StyledTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/widgetsTitle"
+            android:textColor="#00796B" />
+
+        <TextView
+            android:id="@+id/textView23"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="@dimen/inter8sp"
+            android:paddingStart="@dimen/stdPadding"
+            android:paddingEnd="@dimen/stdPadding"
+            android:text="@string/widgetsSubtitle"
+            android:textSize="@dimen/inter14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/stdPadding"
+            android:layout_marginTop="@dimen/inter24"
+            android:layout_marginEnd="@dimen/stdPadding"
+            android:layout_marginBottom="@dimen/inter24"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/widgetsRestore"
+                style="@style/StyledBasicButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/restore"
+                android:textColor="#444" />
+
+            <Button
+                android:id="@+id/widgetsSave"
+                style="@style/StyledBasicButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/saveChanges"
+                android:textColor="#AD1457" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/widgetsContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/widgets_item" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

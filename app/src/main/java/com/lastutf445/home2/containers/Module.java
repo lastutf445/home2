@@ -132,7 +132,7 @@ public class Module extends JSONPayload {
     public void setSyncing(boolean syncing) {
         this.syncing = syncing;
         //ModulesLoader.onModuleSyncingChanged(this, syncing);
-        save();
+        save(0);
     }
 
     public void setSyncingWithoutSave(boolean syncing) {
@@ -141,8 +141,7 @@ public class Module extends JSONPayload {
 
     public void setTitle(@Nullable String title) {
         this.title = title;
-        WidgetsLoader.onModuleTitleUpdated(this);
-        save();
+        save(1);
     }
 
     public void mergeStates(@Nullable String type, @Nullable JSONObject ops, @Nullable JSONObject values) {
@@ -177,9 +176,8 @@ public class Module extends JSONPayload {
             // todo: transaction reverse?
         }
 
-        WidgetsLoader.onModuleStateUpdated(this);
         set("lastUpdated", System.currentTimeMillis());
-        save();
+        save(2);
     }
 
     public void wipe() {
@@ -190,13 +188,22 @@ public class Module extends JSONPayload {
         //save();
     }
 
-    public void save() {
+    public void save(int updateMode) {
         AsyncSaveTask task = new AsyncSaveTask(this);
+        task.updateMode = updateMode;
         task.execute();
     }
 
     private static class AsyncSaveTask extends AsyncTask<Void, Void, Void> {
         private Module module;
+        private int updateMode;
+
+        /**
+         * UPDATE MODES:
+         * 0 - don't update
+         * 1 - update title
+         * 2 - update state
+         */
 
         public AsyncSaveTask(@NonNull Module module) {
             this.module = module;
@@ -206,6 +213,16 @@ public class Module extends JSONPayload {
         @Override
         protected Void doInBackground(Void... voids) {
             ModulesLoader.saveState(module);
+
+            switch (updateMode) {
+                case 1:
+                    WidgetsLoader.onModuleTitleUpdated(module);
+                    break;
+                case 2:
+                    WidgetsLoader.onModuleStateUpdated(module);
+                    break;
+            }
+
             return null;
         }
     }
