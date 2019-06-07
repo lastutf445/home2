@@ -251,7 +251,8 @@ public class ModulesDiscovery extends NavigationFragment {
 
                 NotificationsLoader.makeToast("Added " + added + " modules", true);
                 toParent.putBoolean("reload", true);
-                getActivity().onBackPressed();
+                //getActivity().onBackPressed();
+                adapter.notifyDataSetChanged();
             }
         });
 

@@ -105,6 +105,9 @@
     <string name="modulesMergeTitle">Add all modules</string>
     <string name="modulesMergeMessage">Your modules list will be merged by this</string>
 
+    <string name="modulesDeleteAllTitle">Delete selected modules</string>
+    <string name="modulesDeleteAllMessage">Are you sure you want to continue?</string>
+
     <string name="syncThreads">Sync threads</string>
     <string name="syncOther">Other options</string>
     <string name="syncAdvanced">Advanced</string>

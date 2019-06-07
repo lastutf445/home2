@@ -68,6 +68,7 @@ public final class Menu extends NavigationFragment {
                         Modules modules = new Modules();
                         modules.setModules(ModulesLoader.getModules(), false);
                         modules.enableAddButton();
+                        modules.setRemovable(true);
                         child = modules;
                         break;
                     case R.id.menuSync:
