@@ -171,7 +171,7 @@ public class WidgetsLoader {
             case "humidity":
                 renderHumidity(widget, inflater, content);
                 break;
-            case "lightrgb":
+            case "light":
                 renderLight(widget, inflater, content);
                 break;
             case "socket":
