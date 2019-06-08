@@ -645,6 +645,15 @@ public class WidgetsLoader {
             db.endTransaction();
             load();
 
+            LinearLayout content = weakContent.get();
+
+            if (content != null) {
+                for (int i = 0; i < widgets.size(); ++i) {
+                    Widget widget = widgets.valueAt(i);
+                    widget.setView(content.getChildAt(i));
+                }
+            }
+
             return true;
 
         } catch (SQLiteException e) {

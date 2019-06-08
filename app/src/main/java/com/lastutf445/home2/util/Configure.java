@@ -192,7 +192,7 @@ public class Configure extends NavigationFragment {
                                 new JSONObject()
                         );
                     } else {
-                        Log.d("LOGTAG", "validation failed");
+                        Log.d("LOGTAG", "configure: validation failed");
                         fail(null);
                         return;
                     }

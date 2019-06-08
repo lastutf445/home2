@@ -3,7 +3,6 @@ package com.lastutf445.home2.configure;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +64,7 @@ public class Socket extends Configure {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    Log.d("LOGTAG", "rendered = true");
+                    //Log.d("LOGTAG", "rendered = true");
                     rendered = true;
                 }
             }
@@ -134,7 +133,7 @@ public class Socket extends Configure {
                         rendered = false;
                     }
 
-                    Log.d("LOGTAG", "rendered == " + rendered);
+                    //Log.d("LOGTAG", "rendered == " + rendered);
 
                     if (!rendered) {
                         timeout.clearFocus();

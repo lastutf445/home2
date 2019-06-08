@@ -119,11 +119,11 @@ public class ModulesLoader {
 
         if (oldModule != null) {
             syncing = oldModule.getSyncing() ? 1 : 0;
-            removeModule(oldModule);
+            //removeModule(oldModule);
         }
 
         module.set("lastUpdated", System.currentTimeMillis());
-        module.setSyncing(syncing > 0);
+        module.setSyncingWithoutSave(syncing > 0);
 
         SQLiteDatabase db = DataLoader.getDb();
         ContentValues cv = new ContentValues();
