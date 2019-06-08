@@ -2,13 +2,14 @@ package com.lastutf445.home2.fragments.menu;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,11 +24,11 @@ import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.util.NavigationFragment;
-import com.lastutf445.home2.util.SimpleAnimator;
 
 public class Modules extends NavigationFragment {
 
     private SparseArray<com.lastutf445.home2.containers.Module> modules;
+    private FloatingActionButton modulesDiscovery;
     private FloatingActionButton selectAllButton;
     private boolean returnSerial = false;
     private ModulesAdapter adapter;
@@ -49,7 +50,9 @@ public class Modules extends NavigationFragment {
 
         content = view.findViewById(R.id.modulesContent);
         content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()));
+        modulesDiscovery = view.findViewById(R.id.modulesDiscovery);
         selectAllButton = view.findViewById(R.id.modulesSelectAll);
+        selectAllButton.hide();
 
         View.OnClickListener c = new View.OnClickListener() {
             @Override
@@ -98,8 +101,8 @@ public class Modules extends NavigationFragment {
             }
         };
 
-        if (!hasAddButton) view.findViewById(R.id.modulesDiscovery).setVisibility(View.GONE);
-        view.findViewById(R.id.modulesDiscovery).setOnClickListener(e);
+        if (!hasAddButton) modulesDiscovery.hide();
+        modulesDiscovery.setOnClickListener(e);
         selectAllButton.setOnClickListener(e);
 
         adapter = new ModulesAdapter(getLayoutInflater(), returnSerial ? d : c);
@@ -113,34 +116,35 @@ public class Modules extends NavigationFragment {
                 if (selected) {
                     if (adapter.getSelected().size() == 1) {
                         adapter.setSelectMode(true);
-                        selectAllButton.setEnabled(true);
-                        SimpleAnimator.fadeIn(selectAllButton, 200);
+                        selectAllButton.show();
+                        //selectAllButton.setEnabled(true);
 
-                        ((FloatingActionButton) view.findViewById(R.id.modulesDiscovery)).setImageDrawable(
-                                getResources().getDrawable(R.drawable.delete)
+                        modulesDiscovery.setImageResource(
+                                R.drawable.delete
+                        );
+
+                        modulesDiscovery.setBackgroundTintList(
+                                ColorStateList.valueOf(
+                                        Color.parseColor("#C2185B")
+                                )
                         );
                     }
 
                 } else if (adapter.getSelected().size() == 0) {
                     adapter.setSelectMode(false);
-                    ((FloatingActionButton) view.findViewById(R.id.modulesDiscovery)).setImageDrawable(
-                            getResources().getDrawable(R.drawable.add)
+
+                    modulesDiscovery.setImageResource(
+                            R.drawable.add
                     );
 
-                    selectAllButton.setEnabled(false);
-                    SimpleAnimator.fadeOut(selectAllButton, 200, new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {}
+                    modulesDiscovery.setBackgroundTintList(
+                            ColorStateList.valueOf(
+                                    DataLoader.getAppResources().getColor(R.color.colorPrimary)
+                            )
+                    );
 
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            //selectAllButton.setVisibility(View.GONE);
-                            selectAllButton.setSystemUiVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {}
-                    });
+                    selectAllButton.hide();
+                    //selectAllButton.setEnabled(false);
                 }
             }
         });

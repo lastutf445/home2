@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="FABIconSize">28dp</dimen>
     <dimen name="loginFieldWidth">380dp</dimen>
     <dimen name="processingDialogWidth">400dp</dimen>
     <dimen name="peekColorDialogColorHeight">280dp</dimen>

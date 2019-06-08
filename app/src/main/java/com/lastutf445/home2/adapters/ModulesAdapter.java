@@ -31,14 +31,16 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
 
     private onItemSelectedCallback onItemSelectedCallback;
     private SparseArray<Module> data = new SparseArray<>();
+    @NonNull
     private HashSet<Integer> selected = new HashSet<>();
     private View.OnClickListener listener;
     private LayoutInflater inflater;
     private RecyclerView content;
 
+    @NonNull
     private View.OnLongClickListener longListener = new View.OnLongClickListener() {
         @Override
-        public boolean onLongClick(View v) {
+        public boolean onLongClick(@NonNull View v) {
             ViewHolder viewHolder = (ViewHolder) content.getChildViewHolder(v);
             boolean selected = viewHolder.invertSelection();
 
@@ -54,6 +56,7 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
         }
     };
 
+    @NonNull
     private View.OnClickListener wrapperListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -214,6 +217,7 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
         return pos >= 0 && pos < data.size() ? data.valueAt(pos) : null;
     }
 
+    @NonNull
     public HashSet<Integer> getSelected() {
         return selected;
     }

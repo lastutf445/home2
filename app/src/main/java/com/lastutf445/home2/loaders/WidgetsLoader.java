@@ -360,18 +360,19 @@ public class WidgetsLoader {
                 null
         );
 
-        try {
-            int color = Color.parseColor("#333333");
+        int color = Color.parseColor(module.has("lit") ? "#333333" : "#aaaaaa");
 
+        try {
             if (module.getBoolean("lit", false)) {
                 color = Color.parseColor(module.getString("color", "#008577"));
             }
 
-            ((ImageView) widget.getView().findViewById(R.id.widgetValue)).setColorFilter(color, PorterDuff.Mode.SRC_IN);
-
         } catch (Exception e) {
+            color = Color.parseColor("#aaaaaa");
             e.printStackTrace();
         }
+
+        ((ImageView) widget.getView().findViewById(R.id.widgetValue)).setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
 
     private static void updateSocket(@NonNull Widget widget, @Nullable Module module) {
@@ -384,18 +385,19 @@ public class WidgetsLoader {
                 null
         );
 
-        try {
-            int color = Color.parseColor("#aaaaaa");
+        int color = Color.parseColor(module.has("enabled") ? "#333333" : "#aaaaaa");
 
+        try {
             if (module.getBoolean("enabled", false)) {
                 color = DataLoader.getAppResources().getColor(R.color.colorPrimary);
             }
 
-            ((ImageView) widget.getView().findViewById(R.id.widgetValue)).setColorFilter(color, PorterDuff.Mode.SRC_IN);
-
         } catch (Exception e) {
+            color = Color.parseColor("#aaaaaa");
             e.printStackTrace();
         }
+
+        ((ImageView) widget.getView().findViewById(R.id.widgetValue)).setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
 
     private static void updateTitle(@NonNull Widget widget) {
@@ -649,12 +651,6 @@ public class WidgetsLoader {
             db.endTransaction();
             return false;
         }
-    }
-
-    public static void defaceWithoutRemoveFromFree(@NonNull Module module) {
-        int id = serials.get(module.getSerial(), Integer.MAX_VALUE);
-        callBottomSheetConnector(module, false);
-        update(id);
     }
 
     public static void onModuleLinkChanged(@NonNull Module module, boolean linked) {

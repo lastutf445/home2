@@ -100,14 +100,9 @@ public class Auth extends NavigationFragment {
     }
 
     @Override
-    public void onHiddenChanged(boolean hidden) {
-        if (hidden) {
-            MainActivity.hideKeyboard();
-        }
-    }
-
-    @Override
     public void onDestroy() {
+        MainActivity.hideKeyboard();
+
         try {
             Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
             Sync.removeSyncProvider(Sync.PROVIDER_CREDENTIALS);

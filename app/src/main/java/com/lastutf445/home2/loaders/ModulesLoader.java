@@ -324,27 +324,6 @@ public class ModulesLoader {
         }
     }
 
-    public static void wipeModules() {
-        synchronized (modules) {
-            for (int i = 0; i < modules.size(); ++i) {
-                Module module = modules.valueAt(i);
-                if (module != null) {
-                    module.setSyncingWithoutSave(false);
-                    module.wipe();
-                    saveState(module);
-                    WidgetsLoader.defaceWithoutRemoveFromFree(module);
-                }
-            }
-        }
-
-        if (syncModulesState != null) {
-            syncModulesState.lastSync = 0;
-        }
-        if (updater != null) {
-            updater.serial = -1;
-        }
-    }
-
     private static class ModuleUpdater extends SyncProvider {
         private volatile WeakReference<Handler> weakHandler;
         private volatile boolean subscribe, syncTainted;

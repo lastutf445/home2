@@ -93,6 +93,7 @@
 
     <style name="StyledFAB" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="fabCustomSize">@dimen/inter48</item>
+        <item name="maxImageSize">@dimen/FABIconSize</item>
         <item name="elevation">0dp</item>
     </style>
 

@@ -29,15 +29,16 @@
             android:layout_marginEnd="@dimen/stdPadding"
             android:clickable="true"
             android:focusable="true"
-            android:tint="@color/colorPrimary"
-            android:visibility="gone"
-            app:backgroundTint="@android:color/transparent"
+            android:tint="#009688"
+            app:backgroundTint="#fafafa"
             app:borderWidth="0dp"
             app:hoveredFocusedTranslationZ="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/modulesDiscovery"
             app:layout_constraintEnd_toStartOf="@+id/modulesDiscovery"
             app:layout_constraintTop_toTopOf="@+id/modulesDiscovery"
+            app:maxImageSize="@dimen/inter24"
             app:pressedTranslationZ="0dp"
+            app:rippleColor="#6026A69A"
             app:srcCompat="@drawable/select_all" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
