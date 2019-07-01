@@ -53,6 +53,14 @@
             android:text="@string/notifications" />
 
         <Button
+            android:id="@+id/menuScenarios"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/assignment"
+            android:text="@string/scenarios" />
+
+        <Button
             android:id="@+id/menuModules"
             style="@style/StyledButtonIcon"
             android:layout_width="match_parent"

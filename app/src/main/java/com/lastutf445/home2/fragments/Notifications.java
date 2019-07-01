@@ -43,6 +43,21 @@ public class Notifications extends NavigationFragment {
         content = view.findViewById(R.id.notificationsContent);
         content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()));
 
+        View.OnClickListener c = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NotificationsLoader.removeAll();
+            }
+        };
+
+        view.findViewById(R.id.notificationsClearAll).setOnClickListener(c);
+
+        adapter = new NotificationsAdapter(getLayoutInflater(), content, getActivity());
+        adapter.setData(NotificationsLoader.getNotifications());
+        updater = new Updater(view, adapter);
+        content.setAdapter(adapter);
+        adapter.initCallback();
+
         queueInterface = new NotificationsLoader.QueueInterface() {
             @Override
             public void makeStatusNotification(int status, boolean update) {
@@ -69,22 +84,7 @@ public class Notifications extends NavigationFragment {
             }
         };
 
-        View.OnClickListener c = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NotificationsLoader.removeAll();
-            }
-        };
-
-        view.findViewById(R.id.notificationsClearAll).setOnClickListener(c);
-
-        adapter = new NotificationsAdapter(getLayoutInflater(), content, getActivity());
-        adapter.setData(NotificationsLoader.getNotifications());
         NotificationsLoader.setCallback(queueInterface);
-        updater = new Updater(view, adapter);
-        content.setAdapter(adapter);
-        adapter.initCallback();
-
         updater.sendEmptyMessage(-1);
     }
 

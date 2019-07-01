@@ -17,8 +17,8 @@
         <item name="android:paddingStart">@dimen/stdPadding</item>
         <item name="android:paddingEnd">@dimen/stdPadding</item>
         <item name="android:minHeight">@dimen/stdHeight</item>
+        <item name="android:textSize">@dimen/inter14sp</item>
         <item name="android:textColor">#333</item>
-        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="StyledButtonIcon" parent="@style/StyledBasicButton">
@@ -33,7 +33,7 @@
     </style>
 
     <style name="StyledTitle">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/inter18sp</item>
         <item name="android:paddingTop">38dp</item>
         <item name="android:paddingStart">@dimen/stdPadding</item>
         <item name="android:paddingEnd">@dimen/stdPadding</item>
@@ -47,7 +47,7 @@
         <item name="android:paddingEnd">@dimen/stdPadding</item>
         <item name="android:paddingTop">@dimen/stdPadding</item>
         <item name="android:paddingBottom">@dimen/inter8</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/inter14sp</item>
         <item name="android:textColor">#999</item>
     </style>
 
@@ -58,8 +58,8 @@
         <item name="android:paddingEnd">@dimen/stdPadding</item>
         <item name="android:paddingTop">@dimen/inter16</item>
         <item name="android:lineSpacingExtra">12sp</item>
+        <item name="android:textSize">@dimen/inter14sp</item>
         <item name="android:textColor">#777</item>
-        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="StyledSwitch" parent="Base.Widget.AppCompat.CompoundButton.Switch">
@@ -69,7 +69,7 @@
         <item name="android:paddingStart">@dimen/stdPadding</item>
         <item name="android:paddingEnd">@dimen/inter24</item>
         <item name="android:clickable">false</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/inter14sp</item>
         <item name="android:textColor">#333</item>
     </style>
 
@@ -85,15 +85,15 @@
         <item name="android:button">@null</item>
         <item name="android:paddingStart">@dimen/stdPadding</item>
         <item name="android:paddingEnd">@dimen/stdPadding</item>
-        <item name="android:textSize">@dimen/inter14sp</item>
         <item name="android:clickable">false</item>
+        <item name="android:textSize">@dimen/inter14sp</item>
         <item name="android:textColor">#333</item>
         <item name="android:height">@dimen/stdHeight</item>
     </style>
 
     <style name="StyledFAB" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="fabCustomSize">@dimen/inter48</item>
-        <item name="maxImageSize">@dimen/FABIconSize</item>
+        <item name="maxImageSize">@dimen/iconSize</item>
         <item name="elevation">0dp</item>
     </style>
 
@@ -101,14 +101,14 @@
         <item name="android:textAlignment">center</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:clickable">false</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/inter14sp</item>
     </style>
 
     <style name="StyledRadio" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:layout_height">@dimen/stdHeight</item>
         <item name="android:paddingStart">@dimen/inter16</item>
         <item name="android:paddingEnd">@dimen/inter16</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/inter14sp</item>
     </style>
 
     <style name="ConfigureIcon">
@@ -126,19 +126,19 @@
         <item name="android:layout_marginBottom">@dimen/configureBottom</item>
         <item name="android:fontFamily">monospace</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/inter18sp</item>
     </style>
 
     <style name="StyledKey">
         <item name="android:layout_marginTop">@dimen/inter16</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/inter14sp</item>
         <item name="android:textColor">#555</item>
     </style>
 
     <style name="StyledValue">
         <item name="android:layout_marginStart">8dp</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/inter14sp</item>
         <item name="android:textColor">#555</item>
     </style>
 

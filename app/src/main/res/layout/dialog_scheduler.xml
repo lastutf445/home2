@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="5dp">
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/inter8"
+        android:paddingBottom="@dimen/inter8">
+
+        <Button
+            android:id="@+id/schedulerOnce"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/once" />
+
+        <Button
+            android:id="@+id/schedulerEveryday"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/everyday" />
+
+        <Button
+            android:id="@+id/schedulerMon2Fri"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mon2fri" />
+
+        <Button
+            android:id="@+id/schedulerCustom"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/custom" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

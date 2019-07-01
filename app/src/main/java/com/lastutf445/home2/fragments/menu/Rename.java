@@ -49,6 +49,11 @@ public class Rename extends NavigationFragment {
             }
         });
 
+        reload();
+    }
+
+    @Override
+    protected void reload() {
         ((TextView) view.findViewById(R.id.renameTitle)).setText(title);
         ((TextView) view.findViewById(R.id.renameOld)).setText(old);
         ((EditText) view.findViewById(R.id.renameNew)).setHint(hint);

@@ -26,11 +26,14 @@ import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayDeque;
 
 public class MainActivity extends AppCompatActivity {
 
     private static WeakReference<MainActivity> instance;
+    private ArrayDeque<Integer> stack;
     private NavigationFragment active;
+    private BottomNavigationView nav;
     private Handler handler;
 
     private Dashboard dashboard;
@@ -65,30 +68,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (!FragmentsLoader.pop(active)) {
-            super.onBackPressed();
+
+            if (stack.size() > 1) {
+                stack.pollLast();
+                nav.setSelectedItemId(stack.getLast());
+
+            } else {
+                super.onBackPressed();
+            }
         }
-    }
-
-    public static void hideKeyboard() {
-        AppCompatActivity activity = instance.get();
-
-        if (activity == null) {
-            return;
-        }
-
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE);
-        View view = activity.getCurrentFocus();
-
-        if (view == null) {
-            view = new View(activity);
-        }
-
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void init() {
         Thread.currentThread().setPriority(8);
 
+        stack = new ArrayDeque<>();
         handler = new Handler();
 
         DataLoader.init(
@@ -119,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentsLoader.addFragment(notifications);
         FragmentsLoader.addFragment(menu);
 
-        final BottomNavigationView nav = findViewById(R.id.nav);
+        nav = findViewById(R.id.nav);
         NotificationsLoader.init(nav);
         Sync.init();
 
@@ -131,23 +125,30 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 NavigationFragment root;
+                int id;
 
                 switch (item.getItemId()) {
                     case R.id.nav_dashboard:
+                        id = R.id.nav_dashboard;
                         root = dashboard;
                         break;
                     case R.id.nav_messages:
+                        id = R.id.nav_messages;
                         root = messages;
                         break;
                     case R.id.nav_notifications:
+                        id = R.id.nav_notifications;
                         root = notifications;
                         break;
                     default:
+                        id = R.id.nav_menu;
                         root = menu;
                         break;
                 }
 
                 active = root;
+                stack.remove(id);
+                stack.addLast(id);
 
                 FragmentsLoader.changeFragment(
                         FragmentsLoader.getTop(root)
@@ -160,10 +161,33 @@ public class MainActivity extends AppCompatActivity {
         nav.setSelectedItemId(R.id.nav_dashboard);
         nav.setOnNavigationItemSelectedListener(c);
         FragmentsLoader.changeFragment(dashboard, false, false);
+        stack.addLast(R.id.nav_dashboard);
     }
 
     public static MainActivity getInstance() {
         return instance != null ? instance.get() : null;
+    }
+
+    public static void hideKeyboard() {
+        AppCompatActivity activity = instance.get();
+
+        if (activity == null) {
+            return;
+        }
+
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE);
+        View view = activity.getCurrentFocus();
+
+        if (view == null) {
+            view = new View(activity);
+        }
+
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public Handler getHandler() {
+        // helps me for debugging and testing
+        return handler;
     }
 
     private static class WakeUp implements Runnable {

@@ -13,7 +13,7 @@ import com.lastutf445.home2.R;
 
 public class NavigationFragment extends Fragment {
 
-    protected NavigationFragment parent, child;
+    private NavigationFragment parent, child;
     @NonNull
     protected Bundle toParent = new Bundle();
     protected View view;
@@ -50,5 +50,9 @@ public class NavigationFragment extends Fragment {
 
     public NavigationFragment getParent() {
         return parent;
+    }
+
+    public boolean onBackPressed() {
+        return true;
     }
 }

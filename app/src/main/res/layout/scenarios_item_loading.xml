@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/scenarioLoaderFace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/scenarioLoaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/stdPadding"
+            android:layout_marginEnd="@dimen/stdPadding"
+            android:text="@string/scenariosLoading"
+            android:textSize="@dimen/inter14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/scenarioLoaderProgressBar"
+            app:layout_constraintEnd_toStartOf="@+id/scenarioLoaderProgressBar"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/scenarioLoaderProgressBar" />
+
+        <ProgressBar
+            android:id="@+id/scenarioLoaderProgressBar"
+            style="@style/StyledSpinner"
+            android:layout_width="@dimen/inter32"
+            android:layout_height="@dimen/inter32"
+            android:layout_marginTop="@dimen/inter24"
+            android:layout_marginEnd="@dimen/stdPadding"
+            android:layout_marginBottom="@dimen/inter24"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/scenarioLoaderTitle"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/scenarioLoaderRetry"
+        style="@style/StyledBasicButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:alpha="0"
+        android:clickable="false"
+        android:text="@string/retry" />
+</FrameLayout>

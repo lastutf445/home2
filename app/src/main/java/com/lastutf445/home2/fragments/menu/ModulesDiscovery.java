@@ -176,6 +176,7 @@ public class ModulesDiscovery extends NavigationFragment {
         );
 
         adapter.setShowSerials(true);
+        adapter.setColorSerials(true);
         updater.setAdapter(adapter);
         content.setAdapter(adapter);
     }
@@ -376,7 +377,7 @@ public class ModulesDiscovery extends NavigationFragment {
 
     private static class Discoverer extends SyncProvider {
         private WeakReference<Handler> weakHandler;
-        private int timeout = 0;
+        private long timeout = 0;
         private boolean waiting;
 
         Discoverer(@NonNull Handler handler) throws JSONException {
@@ -391,15 +392,16 @@ public class ModulesDiscovery extends NavigationFragment {
             weakHandler = new WeakReference<>(handler);
         }
 
-        public void setup() {
-            timeout = DataLoader.getInt("SyncDiscoveryTimeout", 3);
+        void setup() {
+            timeout = System.currentTimeMillis();
+            timeout += DataLoader.getInt("SyncDiscoveryTimeout", 3) * 1000;
             waiting = false;
         }
 
         @Override
         public boolean isWaiting() {
             if (waiting) {
-                if (timeout-- <= 1) {
+                if (timeout < System.currentTimeMillis()) {
                     finish(0);
                 }
                 return true;
@@ -417,7 +419,7 @@ public class ModulesDiscovery extends NavigationFragment {
                     finish(R.string.disconnected);
                     break;
                 case 1:
-                    if (timeout-- <= 1) {
+                    if (timeout < System.currentTimeMillis()) {
                         finish(0);
                     }
 

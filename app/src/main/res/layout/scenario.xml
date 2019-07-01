@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fafafa"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            app:elevation="0dp"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior">
+
+
+            <TextView
+                android:id="@+id/textView63"
+                style="@style/StyledTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/scenarioContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/scenarioAddModule"
+            style="@style/StyledFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/inter32"
+            android:layout_marginBottom="@dimen/stdPadding"
+            android:clickable="true"
+            android:elevation="3dp"
+            android:focusable="true"
+            android:tint="#fff"
+            android:translationZ="3dp"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabCustomSize="@dimen/inter56"
+            app:layout_anchor="@id/scenarioContent"
+            app:layout_anchorGravity="end|bottom"
+            app:srcCompat="@drawable/add" />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:id="@+id/scenarioNoContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView67"
+            style="@style/StyledTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView66"
+                style="@style/StyledNoContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/noContent" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/scenarioShadow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="#60000000"
+        android:clickable="false"
+        android:orientation="vertical"></LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/scenarioBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fafafa"
+        android:orientation="vertical"
+        android:translationZ="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/scenarioTitle"
+                style="@style/StyledTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/scenariosDefaultTitle"
+                android:textColor="#00796B"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/scenarioSave"
+                android:layout_width="@dimen/inter48"
+                android:layout_height="@dimen/inter48"
+                android:layout_marginEnd="@dimen/inter16"
+                android:background="?android:selectableItemBackground"
+                android:tint="#666"
+                app:layout_constraintBottom_toBottomOf="@+id/scenarioSwitchBar"
+                app:layout_constraintEnd_toStartOf="@+id/scenarioSwitchBar"
+                app:layout_constraintTop_toTopOf="@+id/scenarioSwitchBar"
+                app:srcCompat="@drawable/lock_open" />
+
+            <ImageButton
+                android:id="@+id/scenarioSwitchBar"
+                android:layout_width="@dimen/inter48"
+                android:layout_height="@dimen/inter48"
+                android:layout_marginEnd="@dimen/stdPadding"
+                android:background="?android:selectableItemBackground"
+                android:tint="#666"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/scenarioTitle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/expand_more" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/scenarioButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/inter16">
+
+                <Button
+                    android:id="@+id/scenarioExecute"
+                    style="@style/StyledButtonIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:drawableStart="@drawable/play_arrow"
+                    android:drawableTint="#00897B"
+                    android:text="@string/execute" />
+
+                <Button
+                    android:id="@+id/scenarioRename"
+                    style="@style/StyledButtonIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/edit"
+                    android:drawableTint="#666"
+                    android:text="@string/moduleEditTitle" />
+
+                <Button
+                    android:id="@+id/scenarioSchedule"
+                    style="@style/StyledButtonIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/schedule"
+                    android:drawableTint="#666"
+                    android:text="@string/schedule" />
+
+                <Button
+                    android:id="@+id/scenarioDelete"
+                    style="@style/StyledButtonIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/delete"
+                    android:drawableTint="#AD1457"
+                    android:text="@string/delete"
+                    android:textColor="#AD1457" />
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+</FrameLayout>

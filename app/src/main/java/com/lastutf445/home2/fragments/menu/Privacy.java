@@ -21,6 +21,7 @@ import java.lang.ref.WeakReference;
 
 public class Privacy extends NavigationFragment {
 
+    private RadioGroup.OnCheckedChangeListener d;
     private RadioGroup radioGroup;
     private Updater updater;
 
@@ -34,14 +35,6 @@ public class Privacy extends NavigationFragment {
 
     @Override
     protected void init() {
-        updater = new Updater(view);
-        radioGroup = view.findViewById(R.id.accountKeyLength);
-
-        radioGroup.check(
-                DataLoader.getInt("AESBytes", 16) == 16 ? R.id.accountKey128 :
-                        R.id.accountKey256
-        );
-
         View.OnClickListener c = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,25 +46,33 @@ public class Privacy extends NavigationFragment {
             }
         };
 
-        radioGroup.setOnCheckedChangeListener(
-                new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-                        switch (checkedId) {
-                            case R.id.accountKey128:
-                                DataLoader.set("AESBytes", 16);
-                                break;
-                            case R.id.accountKey256:
-                                DataLoader.set("AESBytes", 32);
-                                break;
-                        }
-
-                        DataLoader.save();
-                    }
+        d = new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.accountKey128:
+                        DataLoader.set("AESBytes", 16);
+                        break;
+                    case R.id.accountKey256:
+                        DataLoader.set("AESBytes", 32);
+                        break;
                 }
+
+                DataLoader.save();
+            }
+        };
+
+        updater = new Updater(view, d);
+        radioGroup = view.findViewById(R.id.accountKeyLength);
+        UserLoader.setSettingsHandler(updater);
+
+        radioGroup.check(
+                DataLoader.getInt("AESBytes", 16) == 16 ? R.id.accountKey128 :
+                        R.id.accountKey256
         );
 
         view.findViewById(R.id.accountGenAES).setOnClickListener(c);
+        radioGroup.setOnCheckedChangeListener(d);
     }
 
     private void generateAES() {
@@ -92,10 +93,12 @@ public class Privacy extends NavigationFragment {
     }
 
     private static class Updater extends Handler {
+        private WeakReference<RadioGroup.OnCheckedChangeListener> weakD;
         private WeakReference<View> weakView;
 
-        public Updater(View view) {
+        public Updater(View view, RadioGroup.OnCheckedChangeListener d) {
             weakView = new WeakReference<>(view);
+            weakD = new WeakReference<>(d);
         }
 
         @Override
@@ -107,11 +110,19 @@ public class Privacy extends NavigationFragment {
             View view = weakView.get();
 
             if (view != null) {
+                RadioGroup radioGroup = view.findViewById(R.id.accountKeyLength);
+                radioGroup.setOnCheckedChangeListener(null);
 
-                ((RadioGroup) view.findViewById(R.id.accountKeyLength)).check(
+                radioGroup.check(
                         DataLoader.getInt("AESBytes", 16) == 16 ? R.id.accountKey128 :
                                 R.id.accountKey256
                 );
+
+                RadioGroup.OnCheckedChangeListener d = weakD.get();
+
+                if (d != null) {
+                    radioGroup.setOnCheckedChangeListener(d);
+                }
             }
         }
     }

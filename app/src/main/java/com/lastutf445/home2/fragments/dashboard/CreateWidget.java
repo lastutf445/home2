@@ -92,7 +92,9 @@ public class CreateWidget extends NavigationFragment {
         v.findViewById(R.id.createTitleApply).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = ((EditText) view.findViewById(R.id.createTitleTitle)).getText().toString();
+                EditText et = view.findViewById(R.id.createTitleTitle);
+                String s = et.getText().toString();
+
                 if (s.length() != 0) {
                     try {
                         JSONObject json = new JSONObject();
@@ -104,8 +106,10 @@ public class CreateWidget extends NavigationFragment {
                             NotificationsLoader.makeToast("Unexpected error", true);
                         } else {
                             NotificationsLoader.makeToast("Created", true);
-                            //getActivity().onBackPressed();
-                            reload();
+                            MainActivity.hideKeyboard();
+                            et.clearFocus();
+                            et.setText("");
+                            //reload();
                         }
 
                     } catch (JSONException e) {
@@ -154,7 +158,8 @@ public class CreateWidget extends NavigationFragment {
 
                         } else {
                             NotificationsLoader.makeToast("Created", true);
-                            //getActivity().onBackPressed();
+                            ((TextView) view.findViewById(R.id.createModuleTitle)).setText(R.string.unknownModule);
+                            ((TextView) view.findViewById(R.id.createModuleSerial)).setText(R.string.undefined);
                             reload();
                         }
 

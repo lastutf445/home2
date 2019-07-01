@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/inter16">
+
+    <LinearLayout
+        android:id="@+id/schedulerRepeatCustomMon"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            style="@style/StyledCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Monday" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/schedulerRepeatCustomTue"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            style="@style/StyledCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tuesday" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/schedulerRepeatCustomWed"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            style="@style/StyledCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wednesday" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/schedulerRepeatCustomThu"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            style="@style/StyledCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thursday" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/schedulerRepeatCustomFri"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            style="@style/StyledCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Friday" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/schedulerRepeatCustomSat"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            style="@style/StyledCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Saturday" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/schedulerRepeatCustomSun"
+        style="@style/StyledTransparentButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            style="@style/StyledCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sunday" />
+    </LinearLayout>
+
+</LinearLayout>

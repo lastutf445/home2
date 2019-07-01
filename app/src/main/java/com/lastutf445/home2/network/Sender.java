@@ -50,7 +50,7 @@ public class Sender {
      *  0 - Unknown exception
      *  1 - Sent successfully
      *  2 - MasterServer required
-     *  3 - No Internet connection
+     *  3 - No connection
      *  4 - Encryption error
      */
 
@@ -324,7 +324,8 @@ public class Sender {
         } catch (IOException e) {
             //e.printStackTrace();
             Log.d("LOGTAG", "Unable to create socket");
-            return 0;
+            //return 0;
+            return 3;
         }
     }
 

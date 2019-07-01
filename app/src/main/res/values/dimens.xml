@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="FABIconSize">24dp</dimen>
+    <dimen name="iconSize">24dp</dimen>
     <dimen name="loginFieldWidth">270dp</dimen>
     <dimen name="processingDialogWidth">324dp</dimen>
     <dimen name="peekColorDialogColorHeight">192dp</dimen>
@@ -13,9 +13,11 @@
     <dimen name="inter4">4dp</dimen>
     <dimen name="inter8">8dp</dimen>
     <dimen name="inter16">16dp</dimen>
+    <dimen name="inter16s">16dp</dimen>
     <dimen name="inter24">24dp</dimen>
     <dimen name="inter32">32dp</dimen>
     <dimen name="inter48">48dp</dimen>
+    <dimen name="inter56">56dp</dimen>
     <dimen name="inter64">64dp</dimen>
     <dimen name="inter80">80dp</dimen>
     <dimen name="inter128">128dp</dimen>

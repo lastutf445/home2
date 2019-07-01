@@ -8,6 +8,7 @@
     <string name="dashboard">Dashboard</string>
     <string name="messages">Messages</string>
     <string name="notifications">Notifications</string>
+    <string name="scenarios">Scenarios</string>
     <string name="modules">Modules</string>
     <string name="sync">Sync</string>
     <string name="about">About</string>
@@ -81,6 +82,34 @@
     <string name="suppressModulesStateSyncFailed">Modules state sync failed</string>
     <string name="suppressUserDataSync">User data syncing</string>
     <string name="suppressUserDataSyncFailed">User data sync failed</string>
+
+    <string name="scenariosDefaultTitle">New scenario</string>
+    <string name="scenariosLoading">Loading scenarios&#8230;</string>
+    <string name="scenariosCreate">Create scenario</string>
+
+    <string name="scenariosUnsavedTitle">@string/unsavedMode</string>
+    <string name="scenariosUnsavedMessage">Current state won\'t be saved</string>
+
+    <string name="scenariosDeleteTitle">Delete scenario</string>
+    <string name="scenariosDeleteMessage">It\'s irreversible operation, are you sure?</string>
+
+    <string name="scenarioRenameTitle">Scenario title</string>
+    <string name="scenarioUnknownModuleError">Non-existent module detected, aborted</string>
+    <string name="scenarioLocking">Trying to get the lock&#8230;</string>
+    <string name="scenarioSaving">Saving the scenario&#8230;</string>
+
+    <string name="once">Once</string>
+    <string name="everyday">Everyday</string>
+    <string name="mon2fri">Mon to Fri</string>
+    <string name="custom">Custom</string>
+
+    <string name="status2">Status</string>
+    <string name="enabled2">Enabled</string>
+    <string name="options">Options</string>
+    <string name="time">Time</string>
+    <string name="repeat">Repeat</string>
+    <string name="executing">Executing&#8230;</string>
+    <string name="deleting">Deleting&#8230;</string>
 
     <string name="moduleEditTitle">Edit title</string>
     <string name="moduleConfigure">Configure</string>
@@ -164,7 +193,12 @@
     <string name="checkConnection">Check connection</string>
     <string name="saveChanges">Save changes</string>
     <string name="cancel">Cancel</string>
-    
+    <string name="execute">Execute</string>
+    <string name="schedule">Schedule</string>
+    <string name="unlock">Unlock</string>
+    <string name="retry">Retry</string>
+    <string name="exit">Exit</string>
+
     <string name="configureModuleSettings">Module settings</string>
     <string name="configureSensors">Sensors</string>
 
@@ -252,6 +286,7 @@
     <string name="encryptionError">Encryption error</string>
     <string name="authenticationRequired">Auth required</string>
     <string name="masterServerRequired">Master Server required</string>
+    <string name="unableToLock">Unable to lock</string>
 
     <string name="processing">Processing&#8230;</string>
     <string name="waitingForAConnection">Waiting for a connection&#8230;</string>

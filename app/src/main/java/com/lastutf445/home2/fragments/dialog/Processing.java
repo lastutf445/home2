@@ -60,6 +60,10 @@ public class Processing extends DialogFragment {
         }
     }
 
+    public boolean isInactive() {
+        return !(getDialog() != null && getDialog().isShowing() && !isRemoving());
+    }
+
     @Override
     public void onDismiss(DialogInterface dialog) {
         if (d != null) d.onDismiss(dialog);

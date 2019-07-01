@@ -23,13 +23,15 @@ import com.lastutf445.home2.util.SimpleAnimator;
 
 import java.util.HashSet;
 
-public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHolder>  {
+public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHolder> {
 
+    private boolean colorSerials = false;
     private boolean showSerials = false;
     private boolean selectMode = false;
     private boolean removable = false;
 
     private onItemSelectedCallback onItemSelectedCallback;
+    @NonNull
     private SparseArray<Module> data = new SparseArray<>();
     @NonNull
     private HashSet<Integer> selected = new HashSet<>();
@@ -75,10 +77,10 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView icon;
         private CheckBox checkbox;
         private TextView serial;
         private TextView title;
-        private ImageView icon;
         private Module module;
 
         public ViewHolder(@NonNull View view) {
@@ -105,7 +107,7 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
                 serial.setText(String.valueOf(module.getSerial()));
                 Module oldModule = ModulesLoader.getModule(module.getSerial());
 
-                if (oldModule != null) {
+                if (colorSerials && oldModule != null) {
                     serial.setTextColor(DataLoader.getAppResources().getColor(R.color.colorPrimary));
 
                 } else {
@@ -139,7 +141,6 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
                 }
             }
 
-            //checkbox.setVisibility(selectMode ? View.VISIBLE : View.GONE);
             checkbox.setChecked(checked);
             icon.setImageResource(module.getIcon());
             title.setText(module.getTitle());
@@ -157,7 +158,7 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
         }
     }
 
-    public void setData(SparseArray<Module> data) {
+    public void setData(@NonNull SparseArray<Module> data) {
         this.data = data;
         notifyDataSetChanged();
     }
@@ -166,15 +167,19 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
         this.showSerials = showSerials;
     }
 
+    public void setColorSerials(boolean colorSerials) {
+        this.colorSerials = colorSerials;
+    }
+
     public void setRemovable(boolean removable) {
         this.removable = removable;
     }
 
-    public void setOnItemSelectedCallback(ModulesAdapter.onItemSelectedCallback onItemSelectedCallback) {
+    public void setOnItemSelectedCallback(@NonNull ModulesAdapter.onItemSelectedCallback onItemSelectedCallback) {
         this.onItemSelectedCallback = onItemSelectedCallback;
     }
 
-    public void setContent(RecyclerView content) {
+    public void setContent(@NonNull RecyclerView content) {
         this.content = content;
     }
 

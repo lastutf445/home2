@@ -95,6 +95,10 @@ public final class FragmentsLoader {
         NavigationFragment parent = top.getParent();
 
         if (parent != top) {
+            if (!top.onBackPressed()) {
+                return true;
+            }
+
             removeFragment(top);
             changeFragment(parent, true, false);
         }
