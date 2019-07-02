@@ -151,7 +151,9 @@ public class MainActivity extends AppCompatActivity {
                 stack.addLast(id);
 
                 FragmentsLoader.changeFragment(
-                        FragmentsLoader.getTop(root)
+                        FragmentsLoader.getTop(root),
+                        FragmentsLoader.getPrimaryNavigationFragment(),
+                        false, false
                 );
 
                 return true;
@@ -160,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
         nav.setSelectedItemId(R.id.nav_dashboard);
         nav.setOnNavigationItemSelectedListener(c);
-        FragmentsLoader.changeFragment(dashboard, false, false);
+        FragmentsLoader.changeFragment(dashboard, null, false, false);
         stack.addLast(R.id.nav_dashboard);
     }
 

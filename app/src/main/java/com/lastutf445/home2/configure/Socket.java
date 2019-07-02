@@ -235,6 +235,11 @@ public class Socket extends Configure {
                         return false;
                 }
             }
+
+            if (ops.has("activeStateTimeout") && ops.getInt("activeStateTimeout") <= 0) {
+                return false;
+            }
+
             Iterator<String> it2 = values.keys();
             while (it2.hasNext()) {
                 String key = it2.next();

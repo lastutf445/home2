@@ -35,6 +35,7 @@ public class ScenarioScheduler extends NavigationFragment {
 
     private TextView etTime;
     private TextView etRepeat;
+    private Switch swActive;
 
     private ScenarioViewer.SchedulerSettingsProvider p;
     private SchedulerRepeat schedulerRepeat;
@@ -107,9 +108,8 @@ public class ScenarioScheduler extends NavigationFragment {
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.schedulerActive:
-                        Switch enabled = ((Switch) ((ViewGroup) v).getChildAt(0));
-                        enabled.setChecked(!enabled.isChecked());
-                        active = enabled.isChecked();
+                        swActive.setChecked(!swActive.isChecked());
+                        active = swActive.isChecked();
                         sendToParent();
                         break;
                     case R.id.schedulerTime:
@@ -127,6 +127,7 @@ public class ScenarioScheduler extends NavigationFragment {
 
         etTime = view.findViewById(R.id.schedulerTime);
         etRepeat = view.findViewById(R.id.schedulerRepeat);
+        swActive = view.findViewById(R.id.schedulerActiveSwitcher);
 
         view.findViewById(R.id.schedulerActive).setOnClickListener(c);
         view.findViewById(R.id.schedulerTimePicker).setOnClickListener(c);
@@ -141,7 +142,7 @@ public class ScenarioScheduler extends NavigationFragment {
     @Override
     protected void reload() {
         etTime.setText(dateFormat.format(calendar.getTime()));
-        ((Switch) view.findViewById(R.id.schedulerActiveSwitcher)).setChecked(active);
+        swActive.setChecked(active);
         String repeatFormat;
 
         switch (repeatMode) {
@@ -213,8 +214,8 @@ public class ScenarioScheduler extends NavigationFragment {
     public void deactivated() {
         active = false;
 
-        if (view != null) {
-            ((Switch) view.findViewById(R.id.schedulerActiveSwitcher)).setChecked(false);
+        if (swActive != null) {
+            swActive.setChecked(false);
         }
     }
 

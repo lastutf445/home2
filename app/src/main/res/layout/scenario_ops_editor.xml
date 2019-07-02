@@ -1,6 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView70"
+            style="@style/StyledTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/opsNoContent"
+                style="@style/StyledNoContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/noContent" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            app:elevation="0dp">
+
+            <TextView
+                android:id="@+id/textView69"
+                style="@style/StyledTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/scenarioOpsEditor"
+                android:textColor="#00796B" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/opsContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:listitem="@layout/scenario_ops_item">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <LinearLayout
+            android:id="@+id/opsInvisibleLayer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/inter64"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            app:layout_anchor="@+id/opsEdit"
+            app:layout_anchorGravity="center_horizontal">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/opsAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/inter24"
+                android:clickable="true"
+                android:focusable="true"
+                android:tint="#fff"
+                android:visibility="invisible"
+                app:backgroundTint="#FFA000"
+                app:fabCustomSize="@dimen/inter48"
+                app:srcCompat="@drawable/add" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/opsApply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/inter24"
+                android:clickable="true"
+                android:focusable="true"
+                android:tint="#fff"
+                android:visibility="invisible"
+                app:backgroundTint="#43A047"
+                app:fabCustomSize="@dimen/inter48"
+                app:srcCompat="@drawable/done" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/opsReload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/inter48"
+                android:clickable="true"
+                android:focusable="true"
+                android:tint="#fff"
+                android:visibility="invisible"
+                app:backgroundTint="#00838F"
+                app:fabCustomSize="@dimen/inter48"
+                app:srcCompat="@drawable/refresh" />
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/opsEdit"
+            style="@style/StyledFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="@dimen/inter32"
+            android:layout_marginBottom="@dimen/stdPadding"
+            android:clickable="true"
+            android:elevation="3dp"
+            android:focusable="true"
+            android:tint="#fff"
+            android:translationZ="3dp"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabCustomSize="@dimen/inter56"
+            app:srcCompat="@drawable/edit" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</FrameLayout>

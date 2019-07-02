@@ -193,6 +193,11 @@ public class Temperature extends Configure {
                         return false;
                 }
             }
+
+            if (ops.has("refreshPeriod") && ops.getInt("refreshPeriod") <= 0) {
+                return false;
+            }
+
             Iterator<String> it2 = values.keys();
             while (it2.hasNext()) {
                 String key = it2.next();

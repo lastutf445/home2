@@ -21,7 +21,7 @@ public final class FragmentsLoader {
     }
 
     public static void addFragment(@NonNull NavigationFragment fragment) {
-        manager.beginTransaction().add(contentId, fragment).hide(fragment).commitNow();
+        manager.beginTransaction().add(contentId, fragment).hide(fragment).commitAllowingStateLoss();
         fragment.setParent(fragment);
     }
 
@@ -29,46 +29,36 @@ public final class FragmentsLoader {
         addFragment(fragment);
         parent.setChild(fragment);
         fragment.setParent(parent);
-        changeFragment(fragment, false, true);
+        changeFragment(fragment, parent, false, true);
     }
 
-    public static void changeFragment(@NonNull NavigationFragment fragment, boolean animRemove, boolean animAdd) {
+    public static void changeFragment(@NonNull NavigationFragment fragment, @Nullable NavigationFragment previous, boolean animRemove, boolean animAdd) {
         FragmentTransaction ft = manager.beginTransaction();
 
-        if (manager.getPrimaryNavigationFragment() != null) {
+        if (previous != null) {
             if (animRemove) {
                 ft.setCustomAnimations(R.anim.fragment_remove, R.anim.fragment_remove);
-            }
-            else if (animAdd) {
+
+            } else if (animAdd) {
                 ft.setCustomAnimations(R.anim.fragment_hide, R.anim.fragment_hide);
             }
 
-            ft.hide(manager.getPrimaryNavigationFragment()).commitAllowingStateLoss();
+            ft.hide(previous).commitAllowingStateLoss();
             ft = manager.beginTransaction();
         }
 
         if (animAdd) {
             ft.setCustomAnimations(R.anim.fragment_add, R.anim.fragment_add);
-        }
-        else if (animRemove) {
+
+        } else if (animRemove) {
             ft.setCustomAnimations(R.anim.fragment_restore, R.anim.fragment_restore);
         }
 
         ft.show(fragment);
-        ft.setPrimaryNavigationFragment(fragment).commitAllowingStateLoss();
-    }
 
-    public static void changeFragment(@NonNull NavigationFragment fragment) {
-        FragmentTransaction ft = manager.beginTransaction();
-
-        if (manager.getPrimaryNavigationFragment() != null) {
-            ft.setCustomAnimations(R.anim.fragment_erase, R.anim.fragment_erase);
-            ft.hide(manager.getPrimaryNavigationFragment()).commitAllowingStateLoss();
-            ft = manager.beginTransaction();
+        if (!fragment.isRemoving() && !fragment.isDetached()) {
+            ft.setPrimaryNavigationFragment(fragment).commitAllowingStateLoss();
         }
-
-        ft.show(fragment);
-        ft.setPrimaryNavigationFragment(fragment).commitAllowingStateLoss();
     }
 
     @Nullable
@@ -80,6 +70,12 @@ public final class FragmentsLoader {
         manager.beginTransaction().setCustomAnimations(R.anim.fragment_remove, R.anim.fragment_remove).remove(fragment).commitAllowingStateLoss();
         fragment.getParent().onResult(fragment.getResult());
         fragment.getParent().setChild(null);
+        fragment.setParent(null);
+        fragment.setChild(null);
+    }
+
+    public static void removeFragment2(@NonNull NavigationFragment fragment) {
+        manager.beginTransaction().remove(fragment).commitAllowingStateLoss();
         fragment.setParent(null);
         fragment.setChild(null);
     }
@@ -100,7 +96,8 @@ public final class FragmentsLoader {
             }
 
             removeFragment(top);
-            changeFragment(parent, true, false);
+            changeFragment(parent, top, true, false);
+            parent.onPostResult(top.getResult());
         }
 
         return parent != top;
@@ -122,6 +119,6 @@ public final class FragmentsLoader {
             t.remove(i);
         }
 
-        t.commitNow();
+        t.commitAllowingStateLoss();
     }
 }

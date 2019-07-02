@@ -36,6 +36,8 @@ public class NavigationFragment extends Fragment {
 
     public void onResult(Bundle data) {}
 
+    public void onPostResult(Bundle data) {}
+
     public void setChild(NavigationFragment child) {
         this.child = child;
     }

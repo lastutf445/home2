@@ -91,6 +91,10 @@ public class Scenarios extends NavigationFragment {
                             }
                         }
                 );
+
+                if (adapter.getItemCount() == 1) {
+                    noContent.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -101,6 +105,10 @@ public class Scenarios extends NavigationFragment {
             @Override
             public void onDelete(int id) {
                 adapter.deleteData(id);
+
+                if (adapter.getItemCount() == 0) {
+                    noContent.setVisibility(View.VISIBLE);
+                }
             }
         };
 

@@ -52,6 +52,8 @@ import java.util.Map;
 
 public class ScenarioViewer extends NavigationFragment {
 
+    private SparseArray<Module> modulesList, banned;
+
     private boolean editMode = false, creatorMode = false, isExpanded = false;
     private boolean pendingLock = false, hasUnsavedChanges = false;
     private SparseArray<Module> scenarioData;
@@ -78,8 +80,10 @@ public class ScenarioViewer extends NavigationFragment {
 
     private Scenarios.Connector connector;
     private SchedulerSettingsProvider provider;
+    private ScenarioOpsEditor editor;
     private AsyncSaveState saveState;
     private Scenario scenarioSource;
+    private Modules modules;
     private Updater updater;
 
     @Nullable
@@ -125,6 +129,11 @@ public class ScenarioViewer extends NavigationFragment {
 
                         } else {
                             cancelSaving();
+                            if (!isLocked && !editMode && !creatorMode) {
+                                ScenariosLoader.unlock();
+                            }
+                            ScenariosLoader.execute(false);
+                            ScenariosLoader.delete(false);
                         }
 
                         dialog.cancel();
@@ -132,29 +141,26 @@ public class ScenarioViewer extends NavigationFragment {
                 }
         );
 
-        scheduler = new ScenarioScheduler();
-        scheduler.setProvider(
-                provider = new SchedulerSettingsProvider() {
-                    @Override
-                    public void apply(boolean active, long time, @NonNull BitSet repeat) {
-                        if (schedulerActive != active) {
-                            hasUnsavedChanges = true;
-                        }
-
-                        if (schedulerTime != time) {
-                            hasUnsavedChanges = true;
-                        }
-
-                        if (!schedulerRepeat.equals(repeat)) {
-                            hasUnsavedChanges = true;
-                        }
-
-                        schedulerActive = active;
-                        schedulerTime = time;
-                        schedulerRepeat = repeat;
-                    }
+        provider = new SchedulerSettingsProvider() {
+            @Override
+            public void apply(boolean active, long time, @NonNull BitSet repeat) {
+                if (schedulerActive != active) {
+                    hasUnsavedChanges = true;
                 }
-        );
+
+                if (schedulerTime != time) {
+                    hasUnsavedChanges = true;
+                }
+
+                if (!schedulerRepeat.equals(repeat)) {
+                    hasUnsavedChanges = true;
+                }
+
+                schedulerActive = active;
+                schedulerTime = time;
+                schedulerRepeat = repeat;
+            }
+        };
 
         if (scenarioData == null) {
             scenarioId = -1;
@@ -164,6 +170,13 @@ public class ScenarioViewer extends NavigationFragment {
         if (scenarioTitle == null || scenarioTitle.length() == 0) {
             scenarioTitle = DataLoader.getAppResources().getString(R.string.scenariosDefaultTitle);
         }
+
+        if (schedulerTime <= 0) {
+            schedulerTime = System.currentTimeMillis();
+        }
+
+        modulesList = ModulesLoader.getModules().clone();
+        banned = new SparseArray<>();
 
         View.OnClickListener c = new View.OnClickListener() {
             @Override
@@ -309,7 +322,10 @@ public class ScenarioViewer extends NavigationFragment {
         reloadUi();
 
         if (!hasBeenLoaded && processing.isInactive()) {
-            processing.show(getChildFragmentManager(), "processing");
+            //processing.show(getChildFragmentManager(), "processing");
+            getChildFragmentManager().beginTransaction().add(
+                    processing, "processing"
+            ).commitAllowingStateLoss();
         }
     }
 
@@ -374,8 +390,28 @@ public class ScenarioViewer extends NavigationFragment {
 
         for (int i = 0; i < data.size(); ++i) {
             scenarioData.put(
-                    i, ScenarioItem2Module(data.get(i))
+                    data.get(i).getSerial(),
+                    ScenarioItem2Module(data.get(i))
             );
+        }
+
+        modulesList = ModulesLoader.getModules().clone();
+        banned = new SparseArray<>();
+
+        for (int i = 0; i < scenarioData.size(); ++i) {
+            Module module = scenarioData.valueAt(i);
+            modulesList.remove(module.getSerial());
+            banned.put(module.getSerial(), module);
+        }
+
+        if (editor != null && editor.getSerial() != -1) {
+            editor.setModule(
+                    scenarioData.get(
+                            editor.getSerial()
+                    )
+            );
+
+            editor.reloadData();
         }
     }
 
@@ -424,9 +460,9 @@ public class ScenarioViewer extends NavigationFragment {
 
     private void openOpsEditor(View v) {
         int pos = content.getChildLayoutPosition(v);
-        Log.d("LOGTAG", "ops pos: " + pos);
-
-        ScenarioOpsEditor editor = new ScenarioOpsEditor();
+        editor = new ScenarioOpsEditor();
+        editor.setCreatorMode(false);
+        editor.setEditMode(editMode || creatorMode);
         editor.setModule(scenarioData.valueAt(pos));
         FragmentsLoader.addChild(editor, this);
     }
@@ -453,8 +489,53 @@ public class ScenarioViewer extends NavigationFragment {
     }
 
     private void addModule() {
-        Modules modules = new Modules();
-        modules.setModules(ModulesLoader.getModules(), true);
+        modules = new Modules();
+        modules.setModules(modulesList, true);
+        modules.setConnector(new Modules.NoPopConnector() {
+            @Override
+            public void onPop(int serial) {
+                Log.d("LOGTAG", "serial: " + serial);
+                Module module = ModulesLoader.getModule(serial);
+
+                if (module == null) {
+                    NotificationsLoader.makeToast("Unexpected error", true);
+                    return;
+                }
+
+                try {
+                    final Module dummyModule = new Module(
+                            module.getSerial(),
+                            module.getType(),
+                            "",
+                            Sync.DEFAULT_PORT,
+                            module.getTitle(),
+                            new JSONObject(),
+                            new JSONObject(),
+                            false
+                    );
+
+                    editor = new ScenarioOpsEditor();
+                    editor.setModule(dummyModule);
+                    editor.setCreatorMode(true);
+                    editor.setEditMode(false);
+                    FragmentsLoader.addChild(editor, modules);
+                    editor.setParent(ScenarioViewer.this);
+                    ScenarioViewer.this.setChild(editor);
+
+                    updater.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            FragmentsLoader.removeFragment2(modules);
+                        }
+                    }, 150);
+
+                } catch (IOException e) {
+                    NotificationsLoader.makeToast("Unexpected error", true);
+                    e.printStackTrace();
+                }
+            }
+        });
+
         FragmentsLoader.addChild(modules, this);
     }
 
@@ -477,9 +558,9 @@ public class ScenarioViewer extends NavigationFragment {
                 DataLoader.getAppResources().getString(R.string.scenarioLocking)
         );
 
-        //if (processing.isInactive()) {
+        if (processing.isInactive()) {
             processing.show(getChildFragmentManager(), "processing");
-        //}
+        }
 
         ScenariosLoader.lock(creatorMode);
         pendingLock = true;
@@ -503,7 +584,10 @@ public class ScenarioViewer extends NavigationFragment {
                 DataLoader.getAppResources().getString(R.string.scenarioSaving)
         );
 
-        processing.show(getChildFragmentManager(), "processing");
+        if (processing.isInactive()) {
+            processing.show(getChildFragmentManager(), "processing");
+        }
+
         saveState = new AsyncSaveState(this);
         saveState.execute();
     }
@@ -561,6 +645,8 @@ public class ScenarioViewer extends NavigationFragment {
             return;
         }
 
+        scheduler = new ScenarioScheduler();
+        scheduler.setProvider(provider);
         scheduler.setup(schedulerActive, schedulerTime, schedulerRepeat);
         FragmentsLoader.addChild(scheduler, this);
         switchBar();
@@ -571,6 +657,10 @@ public class ScenarioViewer extends NavigationFragment {
         if (isLocked && !(editMode || creatorMode)) {
             NotificationsLoader.makeToast("The scenario is locked", true);
             return;
+        }
+
+        if (creatorMode && adapter.getItemCount() == 0) {
+            getActivity().onBackPressed();
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -635,6 +725,7 @@ public class ScenarioViewer extends NavigationFragment {
 
     private void onDelete() {
         if (connector != null) {
+            hasUnsavedChanges = false;
             connector.onDelete(
                     scenarioId
             );
@@ -650,6 +741,10 @@ public class ScenarioViewer extends NavigationFragment {
     @Override
     public boolean onBackPressed() {
         if (hasUnsavedChanges) {
+            if (creatorMode && scenarioData.size() == 0) {
+                return true;
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     getActivity()
             );
@@ -682,9 +777,12 @@ public class ScenarioViewer extends NavigationFragment {
 
     @Override
     public void onResult(Bundle data) {
-        if (data.containsKey("serial")) {
-            Log.d("LOGTAG", "serial: " + data.getInt("serial"));
-            Module module = ModulesLoader.getModule(data.getInt("serial"));
+        if (data.containsKey("serial") && data.containsKey("ops")) {
+            Module module = modulesList.get(data.getInt("serial"));
+
+            if (module == null) {
+                module = banned.get(data.getInt("serial"));
+            }
 
             if (module == null) {
                 NotificationsLoader.makeToast("Unexpected error", true);
@@ -692,30 +790,56 @@ public class ScenarioViewer extends NavigationFragment {
             }
 
             try {
-                Module dummyModule = new Module(
+                JSONObject ops = new JSONObject(data.getString("ops"));
+                int pos = adapter.getData().indexOfKey(module.getSerial());
+
+                if (modulesList.get(module.getSerial()) != null) {
+                    modulesList.remove(module.getSerial());
+                    banned.put(module.getSerial(), module);
+
+                } else if (ops.length() == 0) {
+                    banned.remove(module.getSerial());
+                    modulesList.put(module.getSerial(), module);
+
+                    if (pos >= 0) {
+                        adapter.getData().removeAt(pos);
+                        adapter.delete(pos);
+                    }
+
+                    if (adapter.getItemCount() == 0) {
+                        scenarioNoContent.setVisibility(View.VISIBLE);
+                    }
+                    return;
+
+                }
+
+                Module cookedModule = new Module(
                         module.getSerial(),
                         module.getType(),
                         "",
                         Sync.DEFAULT_PORT,
                         module.getTitle(),
-                        new JSONObject(),
+                        ops,
                         new JSONObject(),
                         false
                 );
 
-                scenarioData.put(
-                        scenarioData.size(),
-                        dummyModule
+                adapter.pushData2(
+                        cookedModule
                 );
 
-                adapter.notifyItemInserted(scenarioData.size() - 1);
-                scenarioNoContent.setVisibility(View.GONE);
                 hasUnsavedChanges = true;
+                scenarioNoContent.setVisibility(View.GONE);
 
             } catch (IOException e) {
                 NotificationsLoader.makeToast("Unexpected error", true);
                 e.printStackTrace();
+
+            } catch (JSONException e) {
+                NotificationsLoader.makeToast("Unexpected error", true);
+                e.printStackTrace();
             }
+
         }
     }
 
@@ -811,12 +935,15 @@ public class ScenarioViewer extends NavigationFragment {
                 }
             }
 
-            // possible (or not) tricky case: deactivated by executor and activated by user at the same time
             if (data.getInt("status") == Sync.SCENARIO_EDITED && data.containsKey("deactivatedSID")) {
-                if (viewer.scenarioId == data.getInt("deactivatedSID") && viewer.schedulerActive && (viewer.editMode || viewer.creatorMode)) {
+                if (viewer.scenarioId == data.getInt("deactivatedSID")) {
                     viewer.scenarioSource.setActive(false);
                     viewer.schedulerActive = false;
-                    viewer.scheduler.deactivated();
+
+                    if (viewer.scheduler != null) {
+                        viewer.scheduler.deactivated();
+                    }
+
                     NotificationsLoader.makeToast("Scenario has been executed, deactivated", true);
                 }
             }
@@ -863,7 +990,7 @@ public class ScenarioViewer extends NavigationFragment {
 
                         while (it.hasNext()) {
                             String key = it.next();
-                            ops.put(key, raw_ops.get("ops"));
+                            ops.put(key, raw_ops.get(key));
                         }
 
                         body.add(new Scenario.Item(
@@ -965,6 +1092,7 @@ public class ScenarioViewer extends NavigationFragment {
                 scenario.setActive(viewer.schedulerActive);
                 scenario.setTime(viewer.schedulerTime);
                 scenario.setRepeat(viewer.schedulerRepeat);
+                viewer.scenarioSource = scenario;
 
                 return scenario;
 

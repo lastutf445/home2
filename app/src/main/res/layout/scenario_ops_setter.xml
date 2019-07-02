@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView75"
+        style="@style/StyledKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stdPadding"
+        android:layout_marginTop="@dimen/inter16"
+        android:text="@string/scenarioOpSetterKey"
+        android:textSize="@dimen/inter14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/opKey"
+        style="@style/StyledValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/unknownTitle"
+        app:layout_constraintBottom_toBottomOf="@+id/textView75"
+        app:layout_constraintStart_toEndOf="@+id/textView75"
+        app:layout_constraintTop_toTopOf="@+id/textView75" />
+
+    <EditText
+        android:id="@+id/opValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stdPadding"
+        android:layout_marginTop="@dimen/inter16"
+        android:layout_marginEnd="@dimen/stdPadding"
+        android:ems="10"
+        android:maxLength="60"
+        android:singleLine="true"
+        android:textSize="@dimen/inter18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView75" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

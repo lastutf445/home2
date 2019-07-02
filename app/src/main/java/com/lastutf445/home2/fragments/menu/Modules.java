@@ -31,6 +31,7 @@ public class Modules extends NavigationFragment {
     private FloatingActionButton modulesDiscovery;
     private FloatingActionButton selectAllButton;
     private boolean returnSerial = false;
+    private NoPopConnector connector;
     private ModulesAdapter adapter;
     private RecyclerView content;
     private boolean hasAddButton;
@@ -70,7 +71,13 @@ public class Modules extends NavigationFragment {
             @Override
             public void onClick(@NonNull View v) {
                 toParent.putInt("serial", adapter.getModule(content.getChildLayoutPosition(v)).getSerial());
-                getActivity().onBackPressed();
+
+                if (connector != null) {
+                    connector.onPop(toParent.getInt("serial"));
+
+                } else {
+                    getActivity().onBackPressed();
+                }
             }
         };
 
@@ -219,6 +226,10 @@ public class Modules extends NavigationFragment {
         this.removable = removable;
     }
 
+    public void setConnector(NoPopConnector connector) {
+        this.connector = connector;
+    }
+
     @Override
     public void onResult(@NonNull Bundle data) {
         if (data.containsKey("deleted")) {
@@ -230,5 +241,9 @@ public class Modules extends NavigationFragment {
         if (data.containsKey("updated")) {
             update(data.getInt("updated"));
         }
+    }
+
+    public interface NoPopConnector {
+        void onPop(int serial);
     }
 }

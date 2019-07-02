@@ -110,6 +110,23 @@
     <string name="repeat">Repeat</string>
     <string name="executing">Executing&#8230;</string>
     <string name="deleting">Deleting&#8230;</string>
+    <string name="verifying">Verifying&#8230;</string>
+
+    <string name="scenarioOpsEditor">Options editor</string>
+    <string name="scenariosOpCreatorTitle">Choose an option</string>
+    <string name="scenarioOpGetterTitle">Info</string>
+    <string name="scenarioOpSetterTitle">Set a value</string>
+    <string name="scenarioOpSetterKey">Key:</string>
+    <string name="scenarioOpSetterType">Type:</string>
+    <string name="scenarioOpSetterValue">Value:</string>
+
+    <string name="scenarioOpsEditorDeleteTitle">Delete option</string>
+    <string name="scenarioOpsEditorDeleteMessage">Are you sure?</string>
+
+    <string name="scenarioOpsEditorReloadTitle">Reload editor</string>
+    <string name="scenarioOpsEditorReloadMessage">All unsaved changes will be erased</string>
+    <string name="reload">Reload</string>
+    <string name="ok">OK</string>
 
     <string name="moduleEditTitle">Edit title</string>
     <string name="moduleConfigure">Configure</string>

@@ -2,16 +2,16 @@ package com.lastutf445.home2.util;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.util.TypedValue;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
-
-import com.lastutf445.home2.loaders.DataLoader;
 
 public class SimpleAnimator {
 
@@ -115,10 +115,13 @@ public class SimpleAnimator {
         anim.start();
     }
 
-    public static float dp2float(int dp) {
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp,
-                DataLoader.getAppResources().getDisplayMetrics()
-        );
+    public static void drawableTint(@NonNull Button button, int color) {
+        Drawable[] drawables = button.getCompoundDrawablesRelative();
+
+        for (Drawable i : drawables) {
+            if(i != null) {
+                i.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+            }
+        }
     }
 }

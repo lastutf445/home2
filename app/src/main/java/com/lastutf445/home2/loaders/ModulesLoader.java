@@ -219,6 +219,23 @@ public class ModulesLoader {
         }
     }
 
+    public static boolean validateOps(@NonNull String type, @NonNull JSONObject ops) {
+        JSONObject values = new JSONObject();
+
+        switch (type) {
+            case "temperature":
+                return Temperature.validateState(ops, values);
+            case "humidity":
+                return Humidity.validateState(ops, values);
+            case "light":
+                return Light.validateState(ops, values);
+            case "socket":
+                return Socket.validateState(ops, values);
+            default:
+                return false;
+        }
+    }
+
     public static boolean validateState(@NonNull Module module, @NonNull String type, @NonNull JSONObject ops, @NonNull JSONObject values) {
         if (!module.getType().equals(type)) return false;
 

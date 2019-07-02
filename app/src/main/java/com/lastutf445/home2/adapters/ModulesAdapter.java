@@ -213,6 +213,17 @@ public class ModulesAdapter extends RecyclerView.Adapter<ModulesAdapter.ViewHold
         notifyItemInserted(data.indexOfKey(module.getSerial()));
     }
 
+    public void pushData2(@NonNull Module module) {
+        boolean override = data.get(module.getSerial()) != null;
+        data.put(module.getSerial(), module);
+
+        if (override) {
+            notifyItemChanged(data.indexOfKey(module.getSerial()));
+        } else {
+            notifyItemInserted(data.indexOfKey(module.getSerial()));
+        }
+    }
+
     public SparseArray<Module> getData() {
         return data;
     }
