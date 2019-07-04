@@ -82,13 +82,13 @@
             app:layout_constraintTop_toBottomOf="@+id/authPassword" />
 
         <Button
-            android:id="@+id/authEnterBasic"
+            android:id="@+id/authEnterByEmail"
             style="@style/StyledBasicButton"
             android:layout_width="0dp"
             android:layout_height="@dimen/inter48"
             android:layout_marginTop="@dimen/inter24"
             android:fontFamily="sans-serif"
-            android:text="@string/authEnterBasic"
+            android:text="@string/authEnterByEmail"
             android:textAllCaps="true"
             android:textColor="#999"
             android:textSize="@dimen/inter12sp"

@@ -19,7 +19,7 @@
     <string name="authLogin">Login</string>
     <string name="authPassword">Password</string>
     <string name="authEnter">Enter</string>
-    <string name="authEnterBasic">Enter fake account</string>
+    <string name="authEnterByEmail">Enter by email</string>
 
     <string name="authRequestingPubKey">Requesting public key&#8230;</string>
     <string name="authInvalidPubKey">Invalid public key, aborted</string>
@@ -39,13 +39,29 @@
     <string name="accountEncryption">Encryption</string>
     <string name="accountEncryptionAESGen">Generate new AES key</string>
     <string name="accountEncryptionAESKeyLength">AES key length</string>
-    <string name="accountEncryptionAESKeyLengthDesc">Remember to log in again if changes are synced to apply the selected key length</string>
+    <string name="accountEncryptionAESKeyDesc">Simple rule: longer - more safety. 256 bits is used to work with classified documents</string>
     <string name="accountEncryptionAES16">128 bits</string>
     <string name="accountEncryptionAES32">256 bits</string>
-    <string name="accountPassword">Password management</string>
-    <string name="accountPasswordOld">Current password</string>
+    <string name="accountCredentials">Credentials management</string>
+    <string name="accountPassword">Change password</string>
+    <string name="accountLogin">Change login</string>
+
+    <string name="credentialsEditor">Credentials editor</string>
+    <string name="accountPasswordCheck">Current password</string>
     <string name="accountPasswordNew">New password</string>
-    <string name="accountPasswordEmulate">Note that password change isn\'t implemented in this version because it can annoy many people during testing at Samsung IT School</string>
+    <string name="accountLoginNew">New login</string>
+
+    <string name="credentialsPasswordDesc">It needs your current password to check if it\'s not the real you. Strong password must be at least 8 characters long, include numbers and special characters such as \'#\', etc</string>
+    <string name="credentialsLoginDesc">It needs your current password to check if it\'s not the real you. Login should be a simple string containing only Latin alphabet and numbers</string>
+    <string name="credentialsPasswordCheckFailed">Please, check your current password</string>
+    <string name="credentialsLoginIsTaken">Login is already taken</string>
+
+    <string name="emailDesc">You will receive a one-time code via email. It must be entered in a special field in the next step</string>
+    <string name="email">Enter your email</string>
+    <string name="emailReceiveACode">Receive a code</string>
+
+    <string name="emailCode">Enter the one-time code</string>
+    <string name="emailCodeResend">Resend the code</string>
 
     <string name="createWidget">Create a new widget</string>
     <string name="moveWidgets">Move elements</string>

@@ -46,6 +46,8 @@ public class Sync {
     public static final int PROVIDER_USER_DATA_STARTER = -12;
     public static final int PROVIDER_SCENARIOS_LOADER = -13;
     public static final int PROVIDER_SCENARIOS_VERIFIER = -14;
+    public static final int PROVIDER_CREDENTIALS_EDITOR = -15;
+    public static final int PROVIDER_ENTER_BY_EMAIL = -16;
 
     public static final int FRAGMENT_DASHBOARD_TRIGGER = 0;
     public static final int MENU_SYNC_TRIGGER = 1;
@@ -73,6 +75,7 @@ public class Sync {
     public static final int SYNC_UNSUBSCRIBE = 20;
     public static final int SCENARIO_DELETED = 21;
     public static final int SCENARIO_EDITED = 22;
+    public static final int LOGIN_IS_ALREADY_TAKEN = 23;
 
     private static ConnectivityManager connectivityManager;
     private static WifiManager wifiManager;

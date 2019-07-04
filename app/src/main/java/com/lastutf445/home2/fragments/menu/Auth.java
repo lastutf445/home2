@@ -18,6 +18,7 @@ import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.fragments.dialog.Processing;
 import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
+import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
@@ -62,15 +63,15 @@ public class Auth extends NavigationFragment {
                     case R.id.authEnter:
                         enter();
                         break;
-                    case R.id.authEnterBasic:
-                        enterBasic();
+                    case R.id.authEnterByEmail:
+                        enterByEmail();
                         break;
                 }
             }
         };
 
         view.findViewById(R.id.authEnter).setOnClickListener(c);
-        view.findViewById(R.id.authEnterBasic).setOnClickListener(c);
+        view.findViewById(R.id.authEnterByEmail).setOnClickListener(c);
     }
 
     private void enter() {
@@ -87,7 +88,11 @@ public class Auth extends NavigationFragment {
         }
     }
 
-    private void enterBasic() {
+    private void enterByEmail() {
+        EnterByEmail restoreAccess = new EnterByEmail();
+        FragmentsLoader.addChild(restoreAccess, this);
+
+        /*
         UserLoader.authBasic();
 
         NotificationsLoader.makeToast(
@@ -96,7 +101,7 @@ public class Auth extends NavigationFragment {
         );
 
         toParent.putBoolean("reload", true);
-        getActivity().onBackPressed();
+        getActivity().onBackPressed();*/
     }
 
     @Override

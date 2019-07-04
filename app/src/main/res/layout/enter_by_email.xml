@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView58"
+            style="@style/StyledTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/authEnterByEmail"
+            android:textColor="#00796B" />
+
+        <LinearLayout
+            android:id="@+id/emailFirstWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="0dp"
+            android:paddingBottom="@dimen/inter16"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/emailDesc"
+                style="@style/StyledDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/emailDesc" />
+
+            <EditText
+                android:id="@+id/emailField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/stdPadding"
+                android:layout_marginTop="@dimen/inter24"
+                android:layout_marginEnd="@dimen/stdPadding"
+                android:ems="10"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress"
+                android:maxLength="60"
+                android:textSize="@dimen/inter18sp" />
+
+            <Button
+                android:id="@+id/emailSend"
+                style="@style/StyledButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/stdPadding"
+                android:layout_marginTop="@dimen/inter16"
+                android:layout_marginEnd="@dimen/stdPadding"
+                android:drawableStart="@drawable/mail"
+                android:drawablePadding="@dimen/inter16"
+                android:drawableTint="@color/colorPrimary"
+                android:paddingStart="@dimen/inter16"
+                android:paddingEnd="@dimen/inter16"
+                android:text="@string/emailReceiveACode"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/emailSecondWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="0dp"
+            android:paddingBottom="@dimen/inter16"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/emailValue"
+                style="@style/StyledDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="lastutf445@outlook.com" />
+
+            <EditText
+                android:id="@+id/codeField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/stdPadding"
+                android:layout_marginTop="@dimen/inter16"
+                android:layout_marginEnd="@dimen/stdPadding"
+                android:digits="0123456789"
+                android:ems="10"
+                android:hint="@string/emailCode"
+                android:inputType="number"
+                android:maxLength="6"
+                android:textSize="@dimen/inter18sp" />
+
+            <Button
+                android:id="@+id/emailCodeReceiveAgain"
+                style="@style/StyledButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/stdPadding"
+                android:layout_marginTop="@dimen/inter16"
+                android:layout_marginEnd="@dimen/stdPadding"
+                android:drawableStart="@drawable/mail"
+                android:drawablePadding="@dimen/inter16"
+                android:drawableTint="#666"
+                android:paddingStart="@dimen/inter16"
+                android:paddingEnd="@dimen/inter16"
+                android:text="@string/emailCodeResend"
+                android:textAllCaps="true"
+                android:textColor="#333" />
+
+            <Button
+                android:id="@+id/emailCodeSend"
+                style="@style/StyledButtonIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/stdPadding"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="@dimen/stdPadding"
+                android:drawableStart="@drawable/done"
+                android:drawablePadding="@dimen/inter16"
+                android:drawableTint="@color/colorPrimary"
+                android:paddingStart="@dimen/inter16"
+                android:paddingEnd="@dimen/inter16"
+                android:text="@string/apply"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary" />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/inter32" />
+
+    </LinearLayout>
+
+</ScrollView>
