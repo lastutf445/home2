@@ -661,6 +661,7 @@ public class ScenarioViewer extends NavigationFragment {
 
         if (creatorMode && adapter.getItemCount() == 0) {
             getActivity().onBackPressed();
+            return;
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(

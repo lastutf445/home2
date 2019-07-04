@@ -25,6 +25,15 @@
     <string name="authInvalidPubKey">Invalid public key, aborted</string>
     <string name="authSendingCredentials">Sending credentials&#8230;</string>
     <string name="authInvalidCredentials">Invalid login or password</string>
+    <string name="authRequestingCode">Requesting code&#8230;</string>
+    <string name="authSendingCode">Sending code&#8230;</string>
+    <string name="authNoEmailMatches">User with this email doesn\'t exist</string>
+    <string name="authRequestingCodeTimeout">Please, wait until timeout ends</string>
+    <string name="authNoMoreRequests">You have reached the limit of requests</string>
+    <string name="authNoMoreRequests2">Enter by password to reset the counter</string>
+    <string name="altAuthDisabled">Authentication via one-time code disabled</string>
+    <string name="authCodeSent">Code sent</string>
+    <string name="authCodeIncorrect">Incorrect code</string>
 
     <string name="accountTitle">Account</string>
     <string name="accountUsername">Edit account name</string>
@@ -38,6 +47,8 @@
 
     <string name="accountEncryption">Encryption</string>
     <string name="accountEncryptionAESGen">Generate new AES key</string>
+    <string name="keyChanging">Changing AES key&#8230;</string>
+
     <string name="accountEncryptionAESKeyLength">AES key length</string>
     <string name="accountEncryptionAESKeyDesc">Simple rule: longer - more safety. 256 bits is used to work with classified documents</string>
     <string name="accountEncryptionAES16">128 bits</string>
@@ -46,22 +57,31 @@
     <string name="accountPassword">Change password</string>
     <string name="accountLogin">Change login</string>
 
+    <string name="altAuth">Alternative authentication</string>
+    <string name="altAuthEnabled">Allow entering by one-time code</string>
+    <string name="altAuthEmail">Change email</string>
+    <string name="closeSessions">Close all sessions</string>
+    <string name="closingSessions">Terminating sessions&#8230;</string>
+
     <string name="credentialsEditor">Credentials editor</string>
     <string name="accountPasswordCheck">Current password</string>
     <string name="accountPasswordNew">New password</string>
     <string name="accountLoginNew">New login</string>
+    <string name="accountEmailNew">New email</string>
 
     <string name="credentialsPasswordDesc">It needs your current password to check if it\'s not the real you. Strong password must be at least 8 characters long, include numbers and special characters such as \'#\', etc</string>
     <string name="credentialsLoginDesc">It needs your current password to check if it\'s not the real you. Login should be a simple string containing only Latin alphabet and numbers</string>
     <string name="credentialsPasswordCheckFailed">Please, check your current password</string>
     <string name="credentialsLoginIsTaken">Login is already taken</string>
+    <string name="credentialsEmailDesc">Email is used to enter into account via one-time code. So, you don\'t need to remember your login and password</string>
+    <string name="credentialsEmailIsTaken">Email is already taken</string>
 
-    <string name="emailDesc">You will receive a one-time code via email. It must be entered in a special field in the next step</string>
+    <string name="emailDesc">You will receive a one-time code via email. It must be entered in a special field in the next step within 15 minutes</string>
     <string name="email">Enter your email</string>
     <string name="emailReceiveACode">Receive a code</string>
 
-    <string name="emailCode">Enter the one-time code</string>
-    <string name="emailCodeResend">Resend the code</string>
+    <string name="emailCode">Enter a one-time code</string>
+    <string name="emailCodeResend">Resend a code</string>
 
     <string name="createWidget">Create a new widget</string>
     <string name="moveWidgets">Move elements</string>

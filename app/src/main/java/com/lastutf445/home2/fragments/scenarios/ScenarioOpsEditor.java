@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.adapters.ScenariosOpsAdapter;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.fragments.dialog.Processing;
@@ -478,6 +479,13 @@ public class ScenarioOpsEditor extends NavigationFragment {
 
     public int getSerial() {
         return module != null ? module.getSerial() : -1;
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (hidden) {
+            MainActivity.hideKeyboard();
+        }
     }
 
     @Override

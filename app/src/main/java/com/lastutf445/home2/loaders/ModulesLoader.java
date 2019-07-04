@@ -347,7 +347,7 @@ public class ModulesLoader {
         private volatile int serial;
 
         public ModuleUpdater() throws JSONException {
-            super(Sync.PROVIDER_DASHBOARD, "nothing", new JSONObject(), null, 0);
+            super(Sync.PROVIDER_DASHBOARD, "nothing", new JSONObject(), null, 0, false);
             serial = -1;
         }
 
@@ -526,8 +526,8 @@ public class ModulesLoader {
                     "syncModulesState",
                     new JSONObject(),
                     null,
-                    0
-            );
+                    0,
+                    false);
 
             lastSync = DataLoader.getLong("lastSyncModules", 0);
             group = Sync.SYNC_MODULES_STATE;

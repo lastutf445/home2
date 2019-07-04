@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.lastutf445.home2.loaders.CryptoLoader;
+import com.lastutf445.home2.loaders.NotificationsLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,8 +82,12 @@ public class Receiver {
                 String decrypted = CryptoLoader.AESDecrypt(raw_data);
 
                 if (decrypted == null) {
+                    NotificationsLoader.makeStatusNotification(Sync.MALFORMED_AES, true);
                     Log.d("LOGTAG", "decrypt error");
                     return;
+
+                } else {
+                    NotificationsLoader.removeById(Sync.MALFORMED_AES);
                 }
 
                 data = new JSONObject(decrypted);
@@ -94,17 +99,22 @@ public class Receiver {
             int source = json.getInt("id");
             Log.d("LOGTAG", "result, id " + source + ": " + data.toString());
 
-            new AsyncTask<Result, Void,  Void>() {
-                @Nullable
-                @Override
-                protected Void doInBackground(Result... results) {
-                    if (results[0] != null) {
-                        Sync.callProvider(results[0].getSource(), results[0].getData());
-                    }
+            if (Sync.isProviderEmergency(source)) {
+                Sync.callProvider(source, data);
 
-                    return null;
-                }
-            }.execute(new Result(source, data));
+            } else {
+                new AsyncTask<Result, Void, Void>() {
+                    @Nullable
+                    @Override
+                    protected Void doInBackground(Result... results) {
+                        if (results[0] != null) {
+                            Sync.callProvider(results[0].getSource(), results[0].getData());
+                        }
+
+                        return null;
+                    }
+                }.execute(new Result(source, data));
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

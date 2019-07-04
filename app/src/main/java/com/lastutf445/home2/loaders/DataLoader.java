@@ -41,6 +41,7 @@ public class DataLoader {
         /*if (!syncableOnly)*/ ops.put("BasicAccount", false);
         ops.put("AESBytes", 16);
         ops.put("AESKey", null);
+        ops.put("AllowAltAuth", true);
         // notifications
         ops.put("NotificationsEnabled", true);
         ops.put("SuppressModulesStateSync", false);
@@ -88,6 +89,7 @@ public class DataLoader {
         String[] toSync = {
                 "Username",
                 "AESBytes",
+                "AllowAltAuth",
                 "NotificationsEnabled",
                 "SuppressModulesStateSync",
                 "SuppressModulesStateSyncFailed",

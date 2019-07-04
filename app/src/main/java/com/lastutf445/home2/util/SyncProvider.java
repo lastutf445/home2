@@ -13,14 +13,16 @@ public class SyncProvider {
     protected boolean encrypted = true;
     protected JSONObject query;
     protected InetAddress ip;
+    private boolean emergency;
     protected String act;
 
-    public SyncProvider(int source, String act, JSONObject data, InetAddress ip, int port) throws JSONException {
+    public SyncProvider(int source, String act, JSONObject data, InetAddress ip, int port, boolean emergency) throws JSONException {
         this.source = source;
         this.act = act;
         this.ip = ip;
         this.port = port;
         this.query = new JSONObject();
+        this.emergency = emergency;
 
         query.put("id", source);
         query.put("act", act);
@@ -69,6 +71,10 @@ public class SyncProvider {
 
     public void setData(JSONObject data) throws JSONException {
         query.put("data", data);
+    }
+
+    final public boolean getEmergencyStatus() {
+        return emergency;
     }
 
     public boolean getEncrypted() {

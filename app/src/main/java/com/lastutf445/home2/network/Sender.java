@@ -85,6 +85,10 @@ public class Sender {
 
                 for (int i = 0; i < local.size(); ++i) {
                     SyncProvider current = local.valueAt(i);
+                    if (Sync.getEmergency() > 0 && !current.getEmergencyStatus()) {
+                        continue;
+                    }
+
                     long time = System.currentTimeMillis();
                     long last = current.getLastAccess();
 
@@ -153,7 +157,6 @@ public class Sender {
             publish(-1);
         }
     };
-
     private synchronized static int mSend(@NonNull SyncProvider provider, long time) {
         int status = makeConnection(
                 DataLoader.getString("MasterServerAddress", "false"),
@@ -417,8 +420,8 @@ public class Sender {
                     "hello",
                     new JSONObject(),
                     null,
-                    0
-            );
+                    0,
+                    false);
         }
 
         @Override

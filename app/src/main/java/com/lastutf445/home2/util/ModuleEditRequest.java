@@ -24,7 +24,7 @@ public class ModuleEditRequest extends SyncProvider {
     private int serial;
 
     public ModuleEditRequest(@NonNull Module module, @NonNull Handler handler) throws JSONException {
-        super(Sync.PROVIDER_MODULE_EDIT_REQUEST, "moduleEditRequest", new JSONObject(), module.getIp(), module.getPort());
+        super(Sync.PROVIDER_MODULE_EDIT_REQUEST, "moduleEditRequest", new JSONObject(), module.getIp(), module.getPort(), false);
         weakHandler = new WeakReference<>(handler);
         serial = module.getSerial();
         type = module.getType();

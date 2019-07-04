@@ -46,7 +46,7 @@ public class CredentialsEditor extends NavigationFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.menu_privacy_credentials_editor, container, false);
+        view = inflater.inflate(R.layout.credentials_editor, container, false);
         init();
         return view;
     }
@@ -78,6 +78,7 @@ public class CredentialsEditor extends NavigationFragment {
             public void onClick(View v) {
                 String t = value.getText().toString().trim();
                 String p = password.getText().toString().trim();
+                MainActivity.hideKeyboard();
 
                 if (pwdNeeded) {
                     if (p.length() == 0) {
@@ -255,8 +256,8 @@ public class CredentialsEditor extends NavigationFragment {
                     "credentialsEditor",
                     new JSONObject(),
                     null,
-                    Sync.DEFAULT_PORT
-            );
+                    Sync.DEFAULT_PORT,
+                    false);
 
             weakUpdater = new WeakReference<>(updater);
         }

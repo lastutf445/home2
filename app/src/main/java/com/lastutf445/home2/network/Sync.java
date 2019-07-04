@@ -48,6 +48,8 @@ public class Sync {
     public static final int PROVIDER_SCENARIOS_VERIFIER = -14;
     public static final int PROVIDER_CREDENTIALS_EDITOR = -15;
     public static final int PROVIDER_ENTER_BY_EMAIL = -16;
+    public static final int PROVIDER_KEY_CHANGER = -17;
+    public static final int PROVIDER_TERMINATE_SESSIONS = -18;
 
     public static final int FRAGMENT_DASHBOARD_TRIGGER = 0;
     public static final int MENU_SYNC_TRIGGER = 1;
@@ -76,6 +78,10 @@ public class Sync {
     public static final int SCENARIO_DELETED = 21;
     public static final int SCENARIO_EDITED = 22;
     public static final int LOGIN_IS_ALREADY_TAKEN = 23;
+    public static final int CODE_REQUEST_TIMEOUT = 24;
+    public static final int NO_MORE_CODE_REQUESTS = 25;
+    public static final int UNKNOWN_ACCESS_CODE = 26;
+    public static final int ALT_AUTH_DISABLED = 27;
 
     private static ConnectivityManager connectivityManager;
     private static WifiManager wifiManager;
@@ -88,6 +94,7 @@ public class Sync {
 
     private static final SparseArray<SyncProvider> syncing = new SparseArray<>();
     private static final HashSet<Integer> removed = new HashSet<>();
+    private volatile static int emergency = 0;
 
     public static void init() {
         Log.d("LOGTAG", "sync initialization...");
@@ -209,6 +216,10 @@ public class Sync {
         return networkState;
     }
 
+    public static int getEmergency() {
+        return emergency;
+    }
+
     @NonNull
     public static SparseArray<SyncProvider> getSyncing() {
         return syncing;
@@ -219,11 +230,23 @@ public class Sync {
         return removed;
     }
 
+    public static boolean hasSyncProvider(int source) {
+        synchronized (syncing) {
+            synchronized (removed) {
+                return syncing.get(source, null) != null && !removed.contains(source);
+            }
+        }
+    }
+
     public static void addSyncProvider(@NonNull SyncProvider provider) {
         synchronized (syncing) {
             synchronized (removed) {
-                removed.remove(provider.getSource());
+                if (syncing.get(provider.getSource(), null) == null && provider.getEmergencyStatus()) {
+                    ++emergency;
+                }
+
                 syncing.put(provider.getSource(), provider);
+                removed.remove(provider.getSource());
             }
         }
     }
@@ -236,8 +259,20 @@ public class Sync {
         }
     }
 
+    public static boolean isProviderEmergency(int source) {
+        synchronized (syncing) {
+            SyncProvider provider = syncing.get(source);
+            if (provider == null) return false;
+            return provider.getEmergencyStatus();
+        }
+    }
+
     public static void removeSyncProvider(int source) {
         synchronized (removed) {
+            if (isProviderEmergency(source)) {
+                --emergency;
+            }
+
             removed.add(source);
         }
     }

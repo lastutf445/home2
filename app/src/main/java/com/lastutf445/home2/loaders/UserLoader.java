@@ -1,7 +1,9 @@
 package com.lastutf445.home2.loaders;
 
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -62,7 +64,7 @@ public final class UserLoader {
     }
 
     public static boolean isAuthenticated() {
-        return DataLoader.getString("Session", null) != null || DataLoader.getBoolean("BasicAccount", false);
+        return DataLoader.getString("Session", null) != null;
     }
 
     @NonNull
@@ -90,8 +92,6 @@ public final class UserLoader {
                 handler
         );
 
-        //Sender.killConnection();
-
         if (!CryptoLoader.isPublicKeyValid()) {
             handler.sendEmptyMessage(1);
             getPublicKey(auth);
@@ -99,17 +99,6 @@ public final class UserLoader {
         } else {
             auth.sendCredentials();
         }
-    }
-
-    public static void authBasic() {
-        DataLoader.setWithoutSync("BasicAccount", true);
-
-        DataLoader.setWithoutSync(
-                "Username",
-                DataLoader.getAppResources().getString(R.string.usernameDefault)
-        );
-
-        DataLoader.save();
     }
 
     public static void logout() {
@@ -182,7 +171,7 @@ public final class UserLoader {
         }
     }
 
-    private final static class GetPublicKey extends SyncProvider {
+    public final static class GetPublicKey extends SyncProvider {
         private Callback callback;
 
         public GetPublicKey(@NonNull Callback callback) throws JSONException {
@@ -191,8 +180,8 @@ public final class UserLoader {
                     "getPublicKey",
                     new JSONObject(),
                     null,
-                    Sync.DEFAULT_PORT
-            );
+                    Sync.DEFAULT_PORT,
+                    false);
 
             encrypted = false;
             this.callback = callback;
@@ -226,7 +215,7 @@ public final class UserLoader {
             }
         }
 
-        interface Callback {
+        public interface Callback {
             void onValid(@NonNull String modulus, @NonNull String pubExp);
             void onInvalid();
             void onPostPublish(int statusCode);
@@ -248,8 +237,8 @@ public final class UserLoader {
                     "auth",
                     data,
                     null,
-                    Sync.DEFAULT_PORT
-            );
+                    Sync.DEFAULT_PORT,
+                    false);
 
             this.callback = callback;
         }
@@ -264,6 +253,161 @@ public final class UserLoader {
             if (!data.has("status")) return;
             Sync.removeSyncProvider(Sync.PROVIDER_CREDENTIALS);
             callback.onStatusReceived(data);
+        }
+    }
+
+    public final static class KeyChanger extends SyncProvider {
+        private WeakReference<Handler> weakHandler;
+        private String key;
+
+        public KeyChanger(@NonNull Handler handler, @NonNull String key) throws JSONException {
+            super(
+                    Sync.PROVIDER_KEY_CHANGER,
+                    "keyChange",
+                    new JSONObject(),
+                    null,
+                    Sync.DEFAULT_PORT,
+                    true
+            );
+
+            weakHandler = new WeakReference<>(handler);
+            JSONObject data = new JSONObject();
+            data.put("key", key);
+            query.put("data", data);
+            this.key = key;
+        }
+
+        @Override
+        public void onPostPublish(int statusCode) {
+            if (statusCode < 0 || statusCode == 1) return;
+            Handler handler = weakHandler.get();
+            Bundle data = new Bundle();
+            int status;
+
+            if (handler == null) return;
+
+            switch (statusCode) {
+                case 2:
+                    status = R.string.masterServerRequired;
+                    break;
+                case 3:
+                    status = R.string.disconnected;
+                    break;
+                case 4:
+                    status = R.string.encryptionError;
+                    break;
+                default:
+                    status = R.string.unexpectedError;
+                    break;
+            }
+
+            data.putInt("status", status);
+
+            Message msg = handler.obtainMessage(0);
+            msg.setData(data);
+            handler.sendMessage(msg);
+        }
+
+        @Override
+        public void onReceive(JSONObject data) {
+            if (!data.has("status")) return;
+            Handler handler = weakHandler.get();
+
+            try {
+                if (data.getInt("status") == Sync.OK) {
+                    DataLoader.setWithoutSync("AESKey", key);
+                    CryptoLoader.setAESKey(key);
+                    DataLoader.save();
+
+                    //Sync.removeSyncProvider(Sync.PROVIDER_KEY_CHANGER);
+
+                    if (handler != null) {
+                        handler.sendEmptyMessage(1);
+                    }
+
+                } else if (handler != null) {
+                    handler.sendEmptyMessage(0);
+                }
+
+            } catch (JSONException e) {
+                //e.printStackTrace();
+
+                if (handler != null) {
+                    handler.sendEmptyMessage(0);
+                }
+            }
+        }
+    }
+
+    public final static class CloseSessions extends SyncProvider {
+        private WeakReference<Handler> weakHandler;
+
+        public CloseSessions(@NonNull Handler handler) throws JSONException {
+            super(
+                    Sync.PROVIDER_TERMINATE_SESSIONS,
+                    "closeSessions",
+                    new JSONObject(),
+                    null,
+                    Sync.DEFAULT_PORT,
+                    false
+            );
+
+            weakHandler = new WeakReference<>(handler);
+        }
+
+        @Override
+        public void onPostPublish(int statusCode) {
+            if (statusCode < 0 || statusCode == 1) return;
+            Handler handler = weakHandler.get();
+            Bundle data = new Bundle();
+            int status;
+
+            if (handler == null) return;
+
+            switch (statusCode) {
+                case 2:
+                    status = R.string.masterServerRequired;
+                    break;
+                case 3:
+                    status = R.string.disconnected;
+                    break;
+                case 4:
+                    status = R.string.encryptionError;
+                    break;
+                default:
+                    status = R.string.unexpectedError;
+                    break;
+            }
+
+            data.putInt("status", status);
+
+            Message msg = handler.obtainMessage(0);
+            msg.setData(data);
+            handler.sendMessage(msg);
+        }
+
+        @Override
+        public void onReceive(JSONObject data) {
+            if (!data.has("status")) return;
+            Handler handler = weakHandler.get();
+
+            try {
+                if (data.getInt("status") == Sync.OK) {
+                    if (handler != null) {
+                        handler.sendEmptyMessage(2);
+                    }
+
+                } else if (handler != null) {
+                    handler.sendEmptyMessage(0);
+                }
+
+            } catch (JSONException e) {
+                //e.printStackTrace();
+
+                if (handler != null) {
+                    handler.sendEmptyMessage(0);
+                }
+            }
         }
     }
 
@@ -318,7 +462,7 @@ public final class UserLoader {
             }
 
             JSONObject data = new JSONObject();
-            key = CryptoLoader.createAESKey();
+            key = CryptoLoader.createMaxAESKey();
 
             try {
                 data.put("login", login);
@@ -396,7 +540,7 @@ public final class UserLoader {
         private boolean reconnected;
 
         public UserDataSync() throws JSONException {
-            super(Sync.PROVIDER_USER_DATA_STARTER, "syncUserData", new JSONObject(), null, 0);
+            super(Sync.PROVIDER_USER_DATA_STARTER, "syncUserData", new JSONObject(), null, 0, false);
             lastSync = DataLoader.getLong("lastSyncUser", 0);
             group = Sync.SYNC_USER_DATA;
         }
@@ -485,7 +629,7 @@ public final class UserLoader {
         private final JSONObject request = new JSONObject();
 
         public UserDataSyncTransport() throws JSONException {
-            super(Sync.PROVIDER_USER_DATA_TRANSPORT, "syncUserDataTransport", new JSONObject(), null, 0);
+            super(Sync.PROVIDER_USER_DATA_TRANSPORT, "syncUserDataTransport", new JSONObject(), null, 0, false);
             group = Sync.SYNC_USER_DATA;
         }
 

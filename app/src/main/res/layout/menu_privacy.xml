@@ -109,6 +109,68 @@
 
         <Space
             android:layout_width="match_parent"
+            android:layout_height="@dimen/inter16" />
+
+        <TextView
+            android:id="@+id/textView77"
+            style="@style/StyledSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/altAuth" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/inter8" />
+
+        <LinearLayout
+            android:id="@+id/allowAltAuth"
+            style="@style/StyledTransparentButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Switch
+                android:id="@+id/allowAltAuthSwitch"
+                style="@style/StyledSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/altAuthEnabled" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/changeEmail"
+            style="@style/StyledButtonIcon.Chevron"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/altAuthEmail" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/inter16" />
+
+        <TextView
+            android:id="@+id/textView78"
+            style="@style/StyledSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncAdvanced" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/inter8" />
+
+        <Button
+            android:id="@+id/closeSessions"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/exit"
+            android:drawableTint="#AD1457"
+            android:text="@string/closeSessions"
+            android:textColor="#AD1457" />
+
+        <Space
+            android:layout_width="match_parent"
             android:layout_height="@dimen/inter32" />
 
     </LinearLayout>

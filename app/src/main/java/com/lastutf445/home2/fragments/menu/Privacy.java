@@ -1,24 +1,33 @@
 package com.lastutf445.home2.fragments.menu;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.activities.MainActivity;
+import com.lastutf445.home2.fragments.dialog.Processing;
+import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
+import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
+
+import org.json.JSONException;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -28,7 +37,13 @@ public class Privacy extends NavigationFragment {
     private RadioGroup.OnCheckedChangeListener d;
     private ArrayList<Character> alphabet;
     private RadioGroup radioGroup;
+    private Switch allowAltAuth;
     private Updater updater;
+
+    private boolean startedChangingAESKey = false;
+    private UserLoader.KeyChanger keyChanger;
+    private Processing processing;
+    private String key;
 
     @Nullable
     @Override
@@ -52,6 +67,15 @@ public class Privacy extends NavigationFragment {
                         break;
                     case R.id.accountLogin:
                         login();
+                        break;
+                    case R.id.allowAltAuth:
+                        altAuth();
+                        break;
+                    case R.id.changeEmail:
+                        email();
+                        break;
+                    case R.id.closeSessions:
+                        closeSessions();
                         break;
                 }
             }
@@ -78,23 +102,71 @@ public class Privacy extends NavigationFragment {
             alphabet.add(i);
         }
 
-        updater = new Updater(view, d);
+        updater = new Updater(this);
         radioGroup = view.findViewById(R.id.accountKeyLength);
+        allowAltAuth = view.findViewById(R.id.allowAltAuthSwitch);
         UserLoader.setSettingsHandler(updater);
+
+        processing = new Processing();
+        processing.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Sync.removeSyncProvider(Sync.PROVIDER_TERMINATE_SESSIONS);
+
+                if (startedChangingAESKey) {
+                    Sync.removeSyncProvider(Sync.PROVIDER_KEY_CHANGER);
+                }
+
+                if (dialog != null) {
+                    dialog.cancel();
+                }
+            }
+        });
 
         radioGroup.check(
                 DataLoader.getInt("AESBytes", 16) == 16 ? R.id.accountKey128 :
                         R.id.accountKey256
         );
 
+        allowAltAuth.setChecked(
+                DataLoader.getBoolean("AllowAltAuth", true)
+        );
+
         view.findViewById(R.id.accountGenAES).setOnClickListener(c);
         view.findViewById(R.id.accountPassword).setOnClickListener(c);
         view.findViewById(R.id.accountLogin).setOnClickListener(c);
+        view.findViewById(R.id.allowAltAuth).setOnClickListener(c);
+        view.findViewById(R.id.changeEmail).setOnClickListener(c);
+        view.findViewById(R.id.closeSessions).setOnClickListener(c);
         radioGroup.setOnCheckedChangeListener(d);
     }
 
     private void generateAES() {
+        try {
+            if (Sync.hasSyncProvider(Sync.PROVIDER_KEY_CHANGER)) {
+                NotificationsLoader.makeToast("Key is already changing now, please wait", true);
+                return;
+            }
 
+            key = CryptoLoader.createAESKey();
+            keyChanger = new UserLoader.KeyChanger(updater, key);
+            Sync.addSyncProvider(keyChanger);
+            startedChangingAESKey = true;
+
+            processing.setTitle(
+                    DataLoader.getAppResources().getString(
+                            R.string.keyChanging
+                    )
+            );
+
+            getChildFragmentManager().beginTransaction()
+                    .add(processing, "processing")
+                    .show(processing).commitAllowingStateLoss();
+
+        } catch (JSONException e) {
+            NotificationsLoader.makeToast("Unexpected error", true);
+            //e.printStackTrace();
+        }
     }
 
     private void password() {
@@ -163,6 +235,57 @@ public class Privacy extends NavigationFragment {
         FragmentsLoader.addChild(editor, this);
     }
 
+    private void altAuth() {
+        boolean state = !allowAltAuth.isChecked();
+        allowAltAuth.setChecked(state);
+        DataLoader.set("AllowAltAuth", state);
+    }
+
+    private void email() {
+        final CredentialsEditor editor = new CredentialsEditor();
+        editor.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        editor.setDesc(R.string.credentialsEmailDesc);
+        editor.setHint(R.string.accountEmailNew);
+        editor.setField("email");
+        editor.setPwdNeeded(true);
+
+        editor.setVerifier(new CredentialsEditor.Verifier() {
+            @Override
+            public void onSend(@NonNull String value) {
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches()) {
+                    NotificationsLoader.makeToast("Invalid email", true);
+                    return;
+                }
+
+                editor.send();
+            }
+        });
+
+        FragmentsLoader.addChild(editor, this);
+    }
+
+    private void closeSessions() {
+        try {
+            Sync.addSyncProvider(
+                    new UserLoader.CloseSessions(updater)
+            );
+
+            processing.setTitle(
+                    DataLoader.getAppResources().getString(
+                            R.string.closingSessions
+                    )
+            );
+
+            getChildFragmentManager().beginTransaction()
+                    .add(processing, "processing")
+                    .show(processing).commitAllowingStateLoss();
+
+        } catch (JSONException e) {
+            NotificationsLoader.makeToast("Unexpected error", true);
+            //e.printStackTrace();
+        }
+    }
+
     @Override
     public void onHiddenChanged(boolean hidden) {
         if (hidden) {
@@ -176,22 +299,47 @@ public class Privacy extends NavigationFragment {
         UserLoader.setSettingsHandler(updater);
     }
 
-    private static class Updater extends Handler {
-        private WeakReference<RadioGroup.OnCheckedChangeListener> weakD;
-        private WeakReference<View> weakView;
+    @Override
+    public void onDestroy() {
+        Sync.removeSyncProvider(Sync.PROVIDER_KEY_CHANGER);
+        Sync.removeSyncProvider(Sync.PROVIDER_TERMINATE_SESSIONS);
+        super.onDestroy();
+    }
 
-        public Updater(View view, RadioGroup.OnCheckedChangeListener d) {
-            weakView = new WeakReference<>(view);
-            weakD = new WeakReference<>(d);
+    private static class Updater extends Handler {
+        private WeakReference<Privacy> weakPrivacy;
+
+        public Updater(@NonNull Privacy privacy) {
+            weakPrivacy = new WeakReference<>(privacy);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
-            if (msg.what == -1) reload();
+            switch (msg.what) {
+                case -1:
+                    reload();
+                    break;
+                case 0:
+                    end(
+                        msg.getData().getInt(
+                                "status",
+                                R.string.unexpectedError
+                        )
+                    );
+                    break;
+                case 1:
+                    keyChanged();
+                    break;
+                case 2:
+                    terminated();
+                    break;
+            }
         }
 
         private void reload() {
-            View view = weakView.get();
+            Privacy privacy = weakPrivacy.get();
+            if (privacy == null) return;
+            View view = privacy.view;
 
             if (view != null) {
                 RadioGroup radioGroup = view.findViewById(R.id.accountKeyLength);
@@ -202,12 +350,50 @@ public class Privacy extends NavigationFragment {
                                 R.id.accountKey256
                 );
 
-                RadioGroup.OnCheckedChangeListener d = weakD.get();
+                RadioGroup.OnCheckedChangeListener d = privacy.d;
+
+                privacy.allowAltAuth.setChecked(
+                        DataLoader.getBoolean("AllowAltAuth", true)
+                );
 
                 if (d != null) {
                     radioGroup.setOnCheckedChangeListener(d);
                 }
             }
+        }
+
+        private void end(@StringRes int id) {
+            if (id != 0) {
+                NotificationsLoader.makeToast(
+                        DataLoader.getAppResources().getString(id),
+                        true
+                );
+            }
+
+            Privacy privacy = weakPrivacy.get();
+
+            if (privacy != null && privacy.processing != null) {
+                if (!privacy.processing.isInactive()) {
+                    privacy.processing.dismiss();
+                }
+            }
+        }
+
+        private void keyChanged() {
+            Log.d("LOGTAG", "current ley length: " + CryptoLoader.getInstalledAESKeyLength());
+            Sync.removeSyncProvider(Sync.PROVIDER_KEY_CHANGER);
+            Privacy privacy = weakPrivacy.get();
+
+            if (privacy != null) {
+                privacy.startedChangingAESKey = false;
+            }
+
+            end(R.string.success);
+        }
+
+        private void terminated() {
+            Sync.removeSyncProvider(Sync.PROVIDER_TERMINATE_SESSIONS);
+            end(R.string.success);
         }
     }
 }

@@ -63,6 +63,7 @@
                 android:text="@string/emailReceiveACode"
                 android:textAllCaps="true"
                 android:textColor="@color/colorPrimary" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -78,8 +79,7 @@
                 android:id="@+id/emailValue"
                 style="@style/StyledDesc"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="lastutf445@outlook.com" />
+                android:layout_height="wrap_content" />
 
             <EditText
                 android:id="@+id/codeField"

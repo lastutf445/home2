@@ -263,8 +263,8 @@ public final class NotificationsLoader {
                     "notifier",
                     new JSONObject(),
                     null,
-                    0
-            );
+                    0,
+                    false);
         }
 
         @Override

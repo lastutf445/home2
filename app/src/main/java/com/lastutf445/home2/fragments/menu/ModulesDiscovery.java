@@ -386,8 +386,8 @@ public class ModulesDiscovery extends NavigationFragment {
                     "discovery",
                     new JSONObject(),
                     null,
-                    DataLoader.getInt("SyncDiscoveryPort", Sync.DEFAULT_PORT)
-            );
+                    DataLoader.getInt("SyncDiscoveryPort", Sync.DEFAULT_PORT),
+                    false);
 
             weakHandler = new WeakReference<>(handler);
         }

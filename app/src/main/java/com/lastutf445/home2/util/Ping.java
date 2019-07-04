@@ -30,8 +30,8 @@ public class Ping extends SyncProvider {
                 "ping",
                 new JSONObject(),
                 ip,
-                port
-        );
+                port,
+                false);
 
         attempts = DataLoader.getInt("SyncPingAttempts", 3);
         setGroup(Sync.SYNC_PING);

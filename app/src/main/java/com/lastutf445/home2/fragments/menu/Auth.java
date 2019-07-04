@@ -89,19 +89,21 @@ public class Auth extends NavigationFragment {
     }
 
     private void enterByEmail() {
-        EnterByEmail restoreAccess = new EnterByEmail();
+        final EnterByEmail restoreAccess = new EnterByEmail();
+        restoreAccess.setConnector(new EnterByEmail.NoPopConnector() {
+            @Override
+            public void onPop() {
+                toParent.putBoolean("reload", true);
+                getParent().setChild(restoreAccess);
+                restoreAccess.setParent(getParent());
+                restoreAccess.setConnector(null);
+                FragmentsLoader.removeFragment2(Auth.this);
+                getActivity().onBackPressed();
+
+            }
+        });
+
         FragmentsLoader.addChild(restoreAccess, this);
-
-        /*
-        UserLoader.authBasic();
-
-        NotificationsLoader.makeToast(
-                DataLoader.getAppResources().getString(R.string.success),
-                true
-        );
-
-        toParent.putBoolean("reload", true);
-        getActivity().onBackPressed();*/
     }
 
     @Override

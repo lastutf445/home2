@@ -69,14 +69,24 @@ public class CryptoLoader {
         }
     }
 
-    public static String createAESKey() {
-        //Log.d("LOGTAG", "create aes key: " + DataLoader.getInt("AESBytes", 16));
-        // it will work next time, i promise, just not now
+    public static String createMaxAESKey() {
+        return createAESKey(32);
+    }
 
+    public static String createAESKey() {
         int bits = DataLoader.getInt("AESBytes", 16);
+        return createAESKey(bits);
+    }
+
+    public static String createAESKey(int bits) {
         byte[] bytes = new byte[bits];
         secureRandom.nextBytes(bytes);
         return Base64.encodeToString(bytes, Base64.NO_WRAP);
+    }
+
+    public static int getInstalledAESKeyLength() {
+        if (AESKey == null) return 0;
+        return AESKey.getEncoded().length;
     }
 
     public static boolean hasAESKey() {

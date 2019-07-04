@@ -142,8 +142,8 @@ public class ScenariosLoader {
                     "scenarios",
                     new JSONObject(),
                     null,
-                    Sync.DEFAULT_PORT
-            );
+                    Sync.DEFAULT_PORT,
+                    false);
 
             weakUpdater = new WeakReference<>(updater);
             lastScenarioId = -1;
@@ -265,8 +265,8 @@ public class ScenariosLoader {
                     "scenarioVerifier",
                     new JSONObject(),
                     null,
-                    Sync.DEFAULT_PORT
-            );
+                    Sync.DEFAULT_PORT,
+                    false);
 
             this.weakUpdater = new WeakReference<>(updater);
             this.state = null;
