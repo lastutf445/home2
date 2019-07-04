@@ -46,6 +46,7 @@
     <string name="accountUsernameHint">Type your name</string>
 
     <string name="accountEncryption">Encryption</string>
+    <string name="accountEncryptionAESLength">Current AES key length:</string>
     <string name="accountEncryptionAESGen">Generate new AES key</string>
     <string name="keyChanging">Changing AES key&#8230;</string>
 

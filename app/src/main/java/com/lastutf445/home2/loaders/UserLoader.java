@@ -181,7 +181,7 @@ public final class UserLoader {
                     new JSONObject(),
                     null,
                     Sync.DEFAULT_PORT,
-                    false);
+                    true);
 
             encrypted = false;
             this.callback = callback;
@@ -258,7 +258,6 @@ public final class UserLoader {
 
     public final static class KeyChanger extends SyncProvider {
         private WeakReference<Handler> weakHandler;
-        private String key;
 
         public KeyChanger(@NonNull Handler handler, @NonNull String key) throws JSONException {
             super(
@@ -274,7 +273,8 @@ public final class UserLoader {
             JSONObject data = new JSONObject();
             data.put("key", key);
             query.put("data", data);
-            this.key = key;
+
+            Log.d("LOGTAG", "!!! i want to update AES key from: " + CryptoLoader.getInstalledAESKeyLength());
         }
 
         @Override
@@ -315,11 +315,13 @@ public final class UserLoader {
 
             try {
                 if (data.getInt("status") == Sync.OK) {
-                    DataLoader.setWithoutSync("AESKey", key);
-                    CryptoLoader.setAESKey(key);
+                    DataLoader.setWithoutSync("AESKey", data.getString("key"));
+                    CryptoLoader.setAESKey(data.getString("key"));
                     DataLoader.save();
 
-                    //Sync.removeSyncProvider(Sync.PROVIDER_KEY_CHANGER);
+                    Log.d("LOGTAG", "!!! new AES key was set: " + CryptoLoader.getInstalledAESKeyLength());
+                    Sync.removeSyncProvider(Sync.PROVIDER_KEY_CHANGER);
+                    callSettingsHandler();
 
                     if (handler != null) {
                         handler.sendEmptyMessage(1);

@@ -279,6 +279,7 @@ public class DataLoader {
             Log.d("LOGTAG", "we are trying to set " + key + " by " + (value == null ? "null" : value.toString()));
 
             switch (key) {
+                case "AESBytes":
                 case "NotificationsEnabled":
                 case "SuppressModulesStateSync":
                 case "SuppressModulesStateSyncFailed":
@@ -304,6 +305,21 @@ public class DataLoader {
 
         } else if (getBoolean("SuppressUserDataSyncFailed", false)) {
             NotificationsLoader.removeById(Sync.SYNC_USER_DATA_FAILED_EVENT);
+
+        } else if (getInt("AESBytes", 16) != CryptoLoader.getInstalledAESKeyLength()) {
+            if (UserLoader.isAuthenticated()) {
+                try {
+                    Sync.addSyncProvider(
+                            new UserLoader.KeyChanger(
+                                    null,
+                                    CryptoLoader.createAESKey()
+                            )
+                    );
+
+                } catch (JSONException e) {
+                    //e.printStackTrace();
+                }
+            }
         }
     }
 

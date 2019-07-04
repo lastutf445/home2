@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +32,7 @@ import org.json.JSONException;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Privacy extends NavigationFragment {
 
@@ -42,6 +44,7 @@ public class Privacy extends NavigationFragment {
 
     private boolean startedChangingAESKey = false;
     private UserLoader.KeyChanger keyChanger;
+    private TextView accountAESLength;
     private Processing processing;
     private String key;
 
@@ -105,6 +108,7 @@ public class Privacy extends NavigationFragment {
         updater = new Updater(this);
         radioGroup = view.findViewById(R.id.accountKeyLength);
         allowAltAuth = view.findViewById(R.id.allowAltAuthSwitch);
+        accountAESLength = view.findViewById(R.id.accountAESLength);
         UserLoader.setSettingsHandler(updater);
 
         processing = new Processing();
@@ -130,6 +134,15 @@ public class Privacy extends NavigationFragment {
 
         allowAltAuth.setChecked(
                 DataLoader.getBoolean("AllowAltAuth", true)
+        );
+
+        accountAESLength.setText(
+                String.format(
+                        Locale.UK,
+                        "%s %d bits",
+                        DataLoader.getAppResources().getString(R.string.accountEncryptionAESLength),
+                        CryptoLoader.getInstalledAESKeyLength() * 8
+                )
         );
 
         view.findViewById(R.id.accountGenAES).setOnClickListener(c);
@@ -354,6 +367,15 @@ public class Privacy extends NavigationFragment {
 
                 privacy.allowAltAuth.setChecked(
                         DataLoader.getBoolean("AllowAltAuth", true)
+                );
+
+                privacy.accountAESLength.setText(
+                        String.format(
+                                Locale.UK,
+                                "%s %d bits",
+                                DataLoader.getAppResources().getString(R.string.accountEncryptionAESLength),
+                                CryptoLoader.getInstalledAESKeyLength() * 8
+                        )
                 );
 
                 if (d != null) {

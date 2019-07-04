@@ -26,9 +26,17 @@
             android:layout_height="wrap_content"
             android:text="@string/accountEncryption" />
 
+        <TextView
+            android:id="@+id/accountAESLength"
+            style="@style/StyledDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/accountEncryptionAESLength" />
+
         <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/inter8" />
+            android:layout_height="@dimen/inter8"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/accountGenAES"
