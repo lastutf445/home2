@@ -36,6 +36,7 @@
             android:layout_marginStart="@dimen/stdPadding"
             android:layout_marginTop="@dimen/inter16"
             android:text="@string/summary"
+            android:textSize="@dimen/inter14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/moduleTitle" />
 

@@ -85,11 +85,6 @@ public class MainActivity extends AppCompatActivity {
         stack = new ArrayDeque<>();
         handler = new Handler();
 
-        DataLoader.init(
-                getApplicationContext(),
-                getResources()
-        );
-
         CryptoLoader.init();
         ModulesLoader.init();
         UserLoader.init();

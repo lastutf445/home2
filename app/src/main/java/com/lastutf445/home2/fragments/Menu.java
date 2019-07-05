@@ -1,11 +1,13 @@
 package com.lastutf445.home2.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,7 @@ import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.SimpleAnimator;
 
 import java.lang.ref.WeakReference;
 
@@ -107,6 +110,14 @@ public final class Menu extends NavigationFragment {
 
         for (int i: buttons) {
             view.findViewById(i).setOnClickListener(c);
+
+            SimpleAnimator.drawableTint(
+                    (Button) view.findViewById(i),
+                    Color.parseColor(
+                            i == R.id.menuAccount
+                                    ? "#00695C" : "#444444"
+                    )
+            );
         }
 
         updater.sendEmptyMessage(-1);

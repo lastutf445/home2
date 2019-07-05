@@ -104,6 +104,11 @@ public class Module extends NavigationFragment {
         ModulesLoader.setModuleUpdater(module.getSerial(), updater);
         WidgetsLoader.setBottomSheetConnector(connector, 1);
         reload();
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.moduleDelete),
+                Color.parseColor("#AD1457")
+        );
     }
 
     @Override

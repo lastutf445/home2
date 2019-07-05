@@ -48,7 +48,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/pullToRefresh"
-                        android:textAllCaps="false" />
+                        android:textAllCaps="false"
+                        android:textSize="@dimen/inter14sp" />
 
                     <TextView
                         android:id="@+id/modulesDiscoveryNoContent"
@@ -56,6 +57,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/noContent"
+                        android:textSize="@dimen/inter14sp"
                         android:visibility="gone" />
 
                 </FrameLayout>

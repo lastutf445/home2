@@ -1,6 +1,33 @@
 <resources>
     <string name="appName">home2</string>
 
+    <drawable name="introIcon1">@drawable/module</drawable>
+    <string name="introTitle1">@string/appName</string>
+    <string name="introDesc1">To start swipe to left</string>
+
+    <drawable name="introIcon2">@drawable/flash</drawable>
+    <string name="introTitle2">Fast</string>
+    <string name="introDesc2">Developed without third-party heavy components</string>
+
+    <drawable name="introIcon3">@drawable/battery_90</drawable>
+    <string name="introTitle3">Optimized</string>
+    <string name="introDesc3">Say \"No\" to slow accessing and battery leaking</string>
+
+    <drawable name="introIcon4">@drawable/world</drawable>
+    <string name="introTitle4">Global access</string>
+    <string name="introDesc4">Manage your home from any place over Internet</string>
+
+    <drawable name="introIcon5">@drawable/lock</drawable>
+    <string name="introTitle5">Secure</string>
+    <string name="introDesc5">Strong cryptographic algorithms keep your data in safe</string>
+
+    <drawable name="introIcon6">@drawable/github</drawable>
+    <string name="introTitle6">Open source platform</string>
+    <string name="introDesc6">Source code is available on GitHub\nYou can make the app better!</string>
+
+    <drawable name="introIcon7">@drawable/play_arrow</drawable>
+    <string name="introTitle7">Get started</string>
+
     <string name="notAuthenticated">You are not authenticated</string>
     <string name="usernameError">USERNAME ERROR</string>
     <string name="usernameDefault">Default username</string>
@@ -63,6 +90,9 @@
     <string name="altAuthEmail">Change email</string>
     <string name="closeSessions">Close all sessions</string>
     <string name="closingSessions">Terminating sessions&#8230;</string>
+
+    <string name="closeSessionsMessage">Other devices associated to this user will be deauthenticated</string>
+    <string name="closeSessionsContinue">Continue</string>
 
     <string name="credentialsEditor">Credentials editor</string>
     <string name="accountPasswordCheck">Current password</string>

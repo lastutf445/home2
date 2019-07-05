@@ -1,7 +1,6 @@
 package com.lastutf445.home2.fragments.menu;
 
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
@@ -166,9 +166,15 @@ public class ModulesDiscovery extends NavigationFragment {
         view.findViewById(R.id.modulesDiscoveryMerge).setOnClickListener(e);
 
         AppCompatButton button = view.findViewById(R.id.modulesDiscoveryMerge);
-        button.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#999999")));
+        //button.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#999999")));
+        SimpleAnimator.drawableTint(button, Color.parseColor("#999999"));
         button.setTextColor(Color.parseColor("#999999"));
         button.setClickable(false);
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.modulesDiscoveryOverrideCheckbox),
+                Color.parseColor("#333333")
+        );
 
         adapter = new ModulesAdapter(
                 getLayoutInflater(),
@@ -363,7 +369,8 @@ public class ModulesDiscovery extends NavigationFragment {
                         }
 
                         AppCompatButton button = view.findViewById(R.id.modulesDiscoveryMerge);
-                        button.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#333333")));
+                        //button.setCompoundDrawableTintList(ColorStateList.valueOf(Color.parseColor("#333333")));
+                        SimpleAnimator.drawableTint(button, Color.parseColor("#333333"));
                         button.setTextColor(Color.parseColor("#333333"));
                         button.setClickable(true);
                     }

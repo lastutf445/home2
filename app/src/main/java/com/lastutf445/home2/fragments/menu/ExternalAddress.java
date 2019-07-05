@@ -1,6 +1,7 @@
 package com.lastutf445.home2.fragments.menu;
 
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -94,6 +96,21 @@ public class ExternalAddress extends NavigationFragment {
         view.findViewById(R.id.externalAddressEnable).setOnClickListener(c);
         updater = new Updater(view);
         reload();
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.externalAddressCheck),
+                Color.parseColor("#444")
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.externalAddressDisable),
+                DataLoader.getAppResources().getColor(R.color.colorAccent)
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.externalAddressEnable),
+                DataLoader.getAppResources().getColor(R.color.colorPrimary)
+        );
     }
 
     @Override

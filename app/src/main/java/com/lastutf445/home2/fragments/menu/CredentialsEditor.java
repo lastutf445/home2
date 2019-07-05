@@ -7,6 +7,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.SimpleAnimator;
 import com.lastutf445.home2.util.SyncProvider;
 
 import org.json.JSONException;
@@ -98,6 +100,11 @@ public class CredentialsEditor extends NavigationFragment {
         };
 
         view.findViewById(R.id.credentialsSave).setOnClickListener(c);
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.credentialsSave),
+                DataLoader.getAppResources().getColor(R.color.colorPrimary)
+        );
 
         password = view.findViewById(R.id.credentialsPasswordCheck);
         value = view.findViewById(R.id.credentialsValue);

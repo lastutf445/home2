@@ -9,18 +9,22 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.loaders.DataLoader;
 
 public class SplashScreen extends AppCompatActivity {
 
     @NonNull
-    private Handler handler = new Handler();
+    private Handler handler;
 
-    @NonNull
     private Runnable transition = new Runnable() {
-
         @Override
         public void run() {
-            Intent i = new Intent(SplashScreen.this, MainActivity.class);
+            Intent i = new Intent(
+                    SplashScreen.this,
+                    DataLoader.getBoolean("FirstStart", true)
+                            ? IntroduceScreen.class : MainActivity.class
+            );
+
             SplashScreen.this.startActivity(i);
             SplashScreen.this.overridePendingTransition(R.anim.fragment_add, R.anim.fragment_hide);
             SplashScreen.this.finish();
@@ -35,8 +39,15 @@ public class SplashScreen extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        handler.postDelayed(transition, 1000);
         super.onStart();
+
+        DataLoader.init(
+                getApplicationContext(),
+                getResources()
+        );
+
+        handler = new Handler();
+        handler.postDelayed(transition, 1000);
     }
 
     @Override

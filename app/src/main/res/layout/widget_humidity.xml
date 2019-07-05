@@ -7,22 +7,24 @@
 
     <TextView
         android:id="@+id/widgetTitle"
+        style="@style/WidgetTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/defaultTitleHumidity"
+        android:textSize="@dimen/inter14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/WidgetTitle" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/widgetSubtitle"
+        style="@style/WidgetSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/modulesTypeHumidity"
+        android:textSize="@dimen/inter12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/widgetTitle"
-        app:layout_constraintTop_toBottomOf="@+id/widgetTitle"
-        style="@style/WidgetSubtitle" />
+        app:layout_constraintTop_toBottomOf="@+id/widgetTitle" />
 
     <TextView
         android:id="@+id/widgetValue"

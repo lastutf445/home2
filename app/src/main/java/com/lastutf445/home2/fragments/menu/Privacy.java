@@ -1,6 +1,9 @@
 package com.lastutf445.home2.fragments.menu;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -27,6 +31,7 @@ import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.SimpleAnimator;
 
 import org.json.JSONException;
 
@@ -152,6 +157,16 @@ public class Privacy extends NavigationFragment {
         view.findViewById(R.id.changeEmail).setOnClickListener(c);
         view.findViewById(R.id.closeSessions).setOnClickListener(c);
         radioGroup.setOnCheckedChangeListener(d);
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.accountGenAES),
+                Color.parseColor("#666666")
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.closeSessions),
+                Color.parseColor("#AD1457")
+        );
     }
 
     private void generateAES() {
@@ -278,25 +293,47 @@ public class Privacy extends NavigationFragment {
     }
 
     private void closeSessions() {
-        try {
-            Sync.addSyncProvider(
-                    new UserLoader.CloseSessions(updater)
-            );
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity()
+        );
 
-            processing.setTitle(
-                    DataLoader.getAppResources().getString(
-                            R.string.closingSessions
-                    )
-            );
+        Resources res = DataLoader.getAppResources();
+        builder.setTitle(res.getString(R.string.closeSessions));
+        builder.setMessage(res.getString(R.string.closeSessionsMessage));
 
-            getChildFragmentManager().beginTransaction()
-                    .add(processing, "processing")
-                    .show(processing).commitAllowingStateLoss();
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(@NonNull DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
 
-        } catch (JSONException e) {
-            NotificationsLoader.makeToast("Unexpected error", true);
-            //e.printStackTrace();
-        }
+        builder.setPositiveButton(R.string.closeSessionsContinue, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    Sync.addSyncProvider(
+                            new UserLoader.CloseSessions(updater)
+                    );
+
+                    processing.setTitle(
+                            DataLoader.getAppResources().getString(
+                                    R.string.closingSessions
+                            )
+                    );
+
+                    getChildFragmentManager().beginTransaction()
+                            .add(processing, "processing")
+                            .show(processing).commitAllowingStateLoss();
+
+                } catch (JSONException e) {
+                    NotificationsLoader.makeToast("Unexpected error", true);
+                    //e.printStackTrace();
+                }
+            }
+        });
+
+        builder.create().show();
     }
 
     @Override

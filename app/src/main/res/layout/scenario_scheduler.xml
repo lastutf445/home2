@@ -11,15 +11,6 @@
         android:background="#eee"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView68"
-            style="@style/StyledTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/schedule"
-            android:textColor="#00796B"
-            android:visibility="gone" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -29,7 +20,7 @@
                 style="@style/StyledKey"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="@dimen/configureTop"
                 android:text="00:00"
                 android:textSize="36sp"
                 app:layout_constraintEnd_toEndOf="parent"

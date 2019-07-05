@@ -3,12 +3,14 @@ package com.lastutf445.home2.fragments.menu;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +23,7 @@ import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
 import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.SimpleAnimator;
 
 import java.lang.ref.WeakReference;
 
@@ -71,6 +74,16 @@ public class SyncBehavior extends NavigationFragment {
         view.findViewById(R.id.syncBehaviorDefaults).setOnClickListener(c);
         view.findViewById(R.id.syncBehaviorSave).setOnClickListener(c);
         updater.sendEmptyMessage(-1);
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.syncBehaviorDefaults),
+                Color.parseColor("#444444")
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.syncBehaviorSave),
+                DataLoader.getAppResources().getColor(R.color.colorPrimary)
+        );
     }
 
     private void loadDefaults() {

@@ -21,6 +21,7 @@
     <dimen name="inter64">64dp</dimen>
     <dimen name="inter80">80dp</dimen>
     <dimen name="inter128">128dp</dimen>
+    <dimen name="inter256">256dp</dimen>
 
     <dimen name="inter8sp">8sp</dimen>
     <dimen name="inter12sp">12sp</dimen>

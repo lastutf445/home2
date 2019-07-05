@@ -46,7 +46,7 @@
         app:layout_constraintTop_toTopOf="@+id/textView25" />
 
     <Button
-        android:id="@+id/craeteModuleList"
+        android:id="@+id/createModuleList"
         style="@style/StyledButtonIcon"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
         android:textAlignment="textStart"
         android:textAllCaps="true"
         android:textColor="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="@+id/craeteModuleList"
+        app:layout_constraintEnd_toEndOf="@+id/createModuleList"
         app:layout_constraintStart_toStartOf="@+id/createModuleTitle"
-        app:layout_constraintTop_toBottomOf="@+id/craeteModuleList" />
+        app:layout_constraintTop_toBottomOf="@+id/createModuleList" />
 </androidx.constraintlayout.widget.ConstraintLayout>

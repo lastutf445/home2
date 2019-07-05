@@ -1,9 +1,11 @@
 package com.lastutf445.home2.fragments.dashboard;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -23,6 +25,7 @@ import com.lastutf445.home2.loaders.ModulesLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.WidgetsLoader;
 import com.lastutf445.home2.util.NavigationFragment;
+import com.lastutf445.home2.util.SimpleAnimator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,6 +92,11 @@ public class CreateWidget extends NavigationFragment {
     private View getTitleView() {
         View v = inflater.inflate(R.layout.widgets_title, content, false);
 
+        SimpleAnimator.drawableTint(
+                (Button) v.findViewById(R.id.createTitleApply),
+                DataLoader.getAppResources().getColor(R.color.colorPrimary)
+        );
+
         v.findViewById(R.id.createTitleApply).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +136,17 @@ public class CreateWidget extends NavigationFragment {
     private View getModuleView() {
         View v = inflater.inflate(R.layout.widgets_module, content, false);
 
-        v.findViewById(R.id.craeteModuleList).setOnClickListener(new View.OnClickListener() {
+        SimpleAnimator.drawableTint(
+                (Button) v.findViewById(R.id.createModuleList),
+                Color.parseColor("#333333")
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) v.findViewById(R.id.createModuleApply),
+                DataLoader.getAppResources().getColor(R.color.colorPrimary)
+        );
+
+        v.findViewById(R.id.createModuleList).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

@@ -67,6 +67,7 @@ public class Processing extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         if (d != null) d.onDismiss(dialog);
-        super.dismiss();
+        //super.dismiss();
+        super.dismissAllowingStateLoss();
     }
 }

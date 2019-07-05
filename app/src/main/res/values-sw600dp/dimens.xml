@@ -2,7 +2,7 @@
 <resources>
     <dimen name="iconSize">28dp</dimen>
     <dimen name="loginFieldWidth">380dp</dimen>
-    <dimen name="processingDialogWidth">400dp</dimen>
+    <dimen name="processingDialogWidth">456dp</dimen>
     <dimen name="peekColorDialogColorHeight">280dp</dimen>
     <dimen name="configureTop">144dp</dimen>
     <dimen name="configureBottom">80dp</dimen>
@@ -21,6 +21,7 @@
     <dimen name="inter64">72dp</dimen>
     <dimen name="inter80">112dp</dimen>
     <dimen name="inter128">256dp</dimen>
+    <dimen name="inter256">356dp</dimen>
 
     <dimen name="inter8sp">12sp</dimen>
     <dimen name="inter12sp">14sp</dimen>

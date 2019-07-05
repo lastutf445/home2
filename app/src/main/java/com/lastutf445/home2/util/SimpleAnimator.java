@@ -2,6 +2,7 @@ package com.lastutf445.home2.util;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -10,8 +11,10 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.ImageViewCompat;
 
 public class SimpleAnimator {
 
@@ -123,5 +126,11 @@ public class SimpleAnimator {
                 i.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
             }
         }
+    }
+
+    public static void drawableTint(@NonNull ImageView imageView, int color) {
+        ImageViewCompat.setImageTintList(
+                imageView, ColorStateList.valueOf(color)
+        );
     }
 }

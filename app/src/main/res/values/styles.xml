@@ -23,12 +23,12 @@
     <style name="StyledButtonIcon" parent="@style/StyledBasicButton">
         <item name="android:textAlignment">textStart</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:drawableTint">#333</item>
+        <!--item name="android:drawableTint">#333</item-->
     </style>
 
     <style name="StyledButtonIcon.Chevron">
         <item name="android:drawableEnd">@drawable/chevron_right</item>
-        <item name="android:drawableTint">#666</item>
+        <!--item name="android:drawableTint">#666</item-->
     </style>
 
     <style name="StyledTitle">

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/introIcon"
+        android:layout_width="@dimen/inter64"
+        android:layout_height="@dimen/inter64"
+        android:tint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        app:srcCompat="@drawable/looks" />
+
+    <TextView
+        android:id="@+id/introTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/introTitle7"
+        android:textColor="#333"
+        android:textSize="@dimen/inter24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/introIcon"
+        app:layout_constraintStart_toStartOf="@+id/introIcon"
+        app:layout_constraintTop_toBottomOf="@+id/introIcon"
+        app:layout_constraintVertical_bias="0.35" />
+
+    <Button
+        android:id="@+id/introEnd"
+        style="@style/StyledButtonIcon"
+        android:layout_width="@dimen/inter256"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text="@string/authEnter"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/inter16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/introTitle"
+        app:layout_constraintStart_toStartOf="@+id/introTitle"
+        app:layout_constraintTop_toBottomOf="@+id/introTitle"
+        app:layout_constraintVertical_bias="0.2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

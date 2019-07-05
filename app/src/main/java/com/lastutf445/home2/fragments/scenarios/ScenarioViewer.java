@@ -1,6 +1,7 @@
 package com.lastutf445.home2.fragments.scenarios;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -232,6 +234,26 @@ public class ScenarioViewer extends NavigationFragment {
         scenarioButtons.findViewById(R.id.scenarioSchedule).setOnClickListener(d);
         scenarioButtons.findViewById(R.id.scenarioDelete).setOnClickListener(d);
 
+        SimpleAnimator.drawableTint(
+                (Button) scenarioButtons.findViewById(R.id.scenarioExecute),
+                Color.parseColor("#00897B")
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) scenarioButtons.findViewById(R.id.scenarioRename),
+                Color.parseColor("#666666")
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) scenarioButtons.findViewById(R.id.scenarioSchedule),
+                Color.parseColor("#666666")
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) scenarioButtons.findViewById(R.id.scenarioDelete),
+                Color.parseColor("#AD1457")
+        );
+
         ScenariosLoader.createVerifier(
                 scenarioId, updater
         );
@@ -309,6 +331,11 @@ public class ScenarioViewer extends NavigationFragment {
         adapter.setData(scenarioData);
         adapter.setShowSerials(true);
         content.setAdapter(adapter);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         reload();
     }
 
@@ -321,11 +348,19 @@ public class ScenarioViewer extends NavigationFragment {
         adapter.setData(scenarioData);
         reloadUi();
 
-        if (!hasBeenLoaded && processing.isInactive()) {
-            //processing.show(getChildFragmentManager(), "processing");
-            getChildFragmentManager().beginTransaction().add(
-                    processing, "processing"
-            ).commitAllowingStateLoss();
+        if (!hasBeenLoaded) {
+            try {
+                if (processing.isInactive()){
+                    if (!getChildFragmentManager().getFragments().contains(processing)) {
+                        getChildFragmentManager().beginTransaction()
+                                .add(processing, "processing")
+                                .commitAllowingStateLoss();
+                    }
+                }
+
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -559,7 +594,16 @@ public class ScenarioViewer extends NavigationFragment {
         );
 
         if (processing.isInactive()) {
-            processing.show(getChildFragmentManager(), "processing");
+            if (!getChildFragmentManager().getFragments().contains(processing)) {
+                getChildFragmentManager().beginTransaction()
+                        .add(processing, "processing")
+                        .commitAllowingStateLoss();
+            } else {
+                return;
+            }
+
+        } else {
+            return;
         }
 
         ScenariosLoader.lock(creatorMode);
@@ -585,7 +629,9 @@ public class ScenarioViewer extends NavigationFragment {
         );
 
         if (processing.isInactive()) {
-            processing.show(getChildFragmentManager(), "processing");
+            getChildFragmentManager().beginTransaction()
+                    .add(processing, "processing")
+                    .commitAllowingStateLoss();
         }
 
         saveState = new AsyncSaveState(this);
@@ -613,7 +659,16 @@ public class ScenarioViewer extends NavigationFragment {
         );
 
         if (processing.isInactive()) {
-            processing.show(getChildFragmentManager(), "processing");
+            if (!getChildFragmentManager().getFragments().contains(processing)) {
+                getChildFragmentManager().beginTransaction()
+                        .add(processing, "processing")
+                        .commitAllowingStateLoss();
+            } else {
+                return;
+            }
+
+        } else {
+            return;
         }
 
         ScenariosLoader.execute(true);

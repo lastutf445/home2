@@ -25,14 +25,14 @@ public final class FragmentsLoader {
         fragment.setParent(fragment);
     }
 
-    public static void addChild(@NonNull NavigationFragment fragment, NavigationFragment parent) {
+    public synchronized static void addChild(@NonNull NavigationFragment fragment, NavigationFragment parent) {
         addFragment(fragment);
         parent.setChild(fragment);
         fragment.setParent(parent);
         changeFragment(fragment, parent, false, true);
     }
 
-    public static void changeFragment(@NonNull NavigationFragment fragment, @Nullable NavigationFragment previous, boolean animRemove, boolean animAdd) {
+    public synchronized static void changeFragment(@NonNull NavigationFragment fragment, @Nullable NavigationFragment previous, boolean animRemove, boolean animAdd) {
         FragmentTransaction ft = manager.beginTransaction();
 
         if (previous != null) {
@@ -74,7 +74,7 @@ public final class FragmentsLoader {
         fragment.setChild(null);
     }
 
-    public static void removeFragment2(@NonNull NavigationFragment fragment) {
+    public synchronized static void removeFragment2(@NonNull NavigationFragment fragment) {
         manager.beginTransaction().remove(fragment).commitAllowingStateLoss();
         fragment.setParent(null);
         fragment.setChild(null);
@@ -86,7 +86,7 @@ public final class FragmentsLoader {
         return base;
     }
 
-    public static boolean pop(@NonNull NavigationFragment base) {
+    public synchronized static boolean pop(@NonNull NavigationFragment base) {
         NavigationFragment top = getTop(base);
         NavigationFragment parent = top.getParent();
 
@@ -103,7 +103,7 @@ public final class FragmentsLoader {
         return parent != top;
     }
 
-    public static void pop2(@NonNull NavigationFragment base) {
+    public synchronized static void pop2(@NonNull NavigationFragment base) {
         NavigationFragment top = getTop(base);
         NavigationFragment parent = top.getParent();
 

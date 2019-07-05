@@ -48,6 +48,7 @@ public class DataLoader {
         ops.put("SuppressModulesStateSyncFailed", false);
         ops.put("SuppressUserDataSync", false);
         ops.put("SuppressUserDataSyncFailed", false);
+        ops.put("FirstStart", true);
         // master server
         if (!syncableOnly) ops.put("MasterServer", false);
         if (!syncableOnly) ops.put("MasterServerAddress", null);

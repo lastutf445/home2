@@ -33,6 +33,7 @@ import com.lastutf445.home2.adapters.WidgetsAdapter;
 import com.lastutf445.home2.containers.Module;
 import com.lastutf445.home2.containers.Widget;
 import com.lastutf445.home2.util.Configure;
+import com.lastutf445.home2.util.SimpleAnimator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,6 +84,11 @@ public class WidgetsLoader {
 
         bottomSheetView.findViewById(R.id.bottomSheetConfigure).setOnClickListener(c);
         bottomSheetView.findViewById(R.id.bottomSheetDelete).setOnClickListener(c);
+
+        SimpleAnimator.drawableTint(
+                (Button) bottomSheetView.findViewById(R.id.bottomSheetDelete),
+                Color.parseColor("#AD1457")
+        );
 
         WidgetsLoader.handler = handler;
         reload();
@@ -786,7 +792,8 @@ public class WidgetsLoader {
                             Color.parseColor("#333333")
                     );
 
-                    ((ImageView) bottomSheet.findViewById(R.id.bottomSheetConfigureIcon)).setColorFilter(
+                    SimpleAnimator.drawableTint(
+                            (ImageView) bottomSheet.findViewById(R.id.bottomSheetConfigureIcon),
                             Color.parseColor("#333333")
                     );
 
@@ -797,7 +804,8 @@ public class WidgetsLoader {
                             Color.parseColor("#999999")
                     );
 
-                    ((ImageView) bottomSheet.findViewById(R.id.bottomSheetConfigureIcon)).setColorFilter(
+                    SimpleAnimator.drawableTint(
+                            (ImageView) bottomSheet.findViewById(R.id.bottomSheetConfigureIcon),
                             Color.parseColor("#999999")
                     );
                 }

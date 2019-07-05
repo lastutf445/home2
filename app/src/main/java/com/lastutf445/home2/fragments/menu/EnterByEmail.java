@@ -1,6 +1,7 @@
 package com.lastutf445.home2.fragments.menu;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -119,6 +120,21 @@ public class EnterByEmail extends NavigationFragment {
         view.findViewById(R.id.emailSend).setOnClickListener(c);
         view.findViewById(R.id.emailCodeReceiveAgain).setOnClickListener(c);
         view.findViewById(R.id.emailCodeSend).setOnClickListener(c);
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.emailSend),
+                DataLoader.getAppResources().getColor(R.color.colorPrimary)
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.emailCodeReceiveAgain),
+                Color.parseColor("#666666")
+        );
+
+        SimpleAnimator.drawableTint(
+                (Button) view.findViewById(R.id.emailCodeSend),
+                DataLoader.getAppResources().getColor(R.color.colorPrimary)
+        );
     }
 
     public void setConnector(@Nullable NoPopConnector connector) {

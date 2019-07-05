@@ -4,9 +4,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.util.SparseArray;
@@ -137,23 +139,41 @@ public class Sync {
 
     public static void updateNetworkState2() {
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        Network network = connectivityManager.getActiveNetwork();
-        NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
 
-        if (capabilities == null) {
-            setNetworkState(0, null);
-            Sender.publish(-1);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Network network = connectivityManager.getActiveNetwork();
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
 
-        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-            setNetworkState(1, null);
+            if (capabilities == null) {
+                setNetworkState(0, null);
+                Sender.publish(-1);
 
-        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-            setNetworkState(2, wifiInfo.getBSSID());
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                setNetworkState(1, null);
+
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                setNetworkState(2, wifiInfo.getBSSID());
+
+            } else {
+                setNetworkState(0, null);
+                Sender.publish(-1);
+            } // todo: ethernet or vpn?
 
         } else {
-            setNetworkState(0, null);
-            Sender.publish(-1);
-        } // todo: ethernet or vpn?
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+            if (networkInfo != null && networkInfo.isConnected()) {
+                if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                    setNetworkState(1, null);
+
+                } else {
+                    setNetworkState(2, wifiInfo.getBSSID());
+                }
+
+            } else {
+                setNetworkState(0, null);
+            }
+        }
 
         callTriggers();
     }

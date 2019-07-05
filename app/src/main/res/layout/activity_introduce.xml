@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/introContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.viewpager.widget.ViewPager>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/inter80"
+        android:layout_gravity="bottom">
+
+        <SeekBar
+            android:id="@+id/introIndicator"
+            android:layout_width="@dimen/inter256"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:clickable="false"
+            android:focusable="false"
+            android:max="6"
+            android:progress="0"
+            android:progressDrawable="@drawable/seekbar_custom_progress"
+            android:splitTrack="false"
+            android:thumb="@drawable/seekbar_custom_thumb"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tickMark="@drawable/seekbar_custom_tick" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
