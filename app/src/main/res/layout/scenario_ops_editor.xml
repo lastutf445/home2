@@ -43,13 +43,42 @@
             android:translationZ="0dp"
             app:elevation="0dp">
 
-            <TextView
-                android:id="@+id/textView69"
-                style="@style/StyledTitle"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/scenarioOpsEditor"
-                android:textColor="#00796B" />
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView69"
+                    style="@style/StyledTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/scenarioOpsEditor"
+                    android:textColor="#00796B"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/opsInfo"
+                    style="@style/StyledFAB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/stdPadding"
+                    android:clickable="true"
+                    android:elevation="0dp"
+                    android:focusable="true"
+                    android:tint="@color/colorPrimary"
+                    app:backgroundTint="#fafafa"
+                    app:borderWidth="0dp"
+                    app:elevation="0dp"
+                    app:fabCustomSize="@dimen/inter48"
+                    app:hoveredFocusedTranslationZ="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/textView69"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:pressedTranslationZ="0dp"
+                    app:rippleColor="#6026A69A"
+                    app:srcCompat="@drawable/info_outline" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
 

@@ -104,10 +104,12 @@
             <TextView
                 android:id="@+id/scenarioTitle"
                 style="@style/StyledTitle"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/stdPadding"
                 android:text="@string/scenariosDefaultTitle"
                 android:textColor="#00796B"
+                app:layout_constraintEnd_toStartOf="@+id/scenarioSave"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -131,7 +133,7 @@
                 android:background="?android:selectableItemBackground"
                 android:tint="#666"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/scenarioTitle"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/expand_more" />
         </androidx.constraintlayout.widget.ConstraintLayout>

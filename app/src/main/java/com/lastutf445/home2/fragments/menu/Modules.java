@@ -2,9 +2,7 @@ package com.lastutf445.home2.fragments.menu;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -28,7 +26,7 @@ import com.lastutf445.home2.util.NavigationFragment;
 public class Modules extends NavigationFragment {
 
     private SparseArray<com.lastutf445.home2.containers.Module> modules;
-    private FloatingActionButton modulesDiscovery;
+    private FloatingActionButton modulesDiscovery, modulesDelete;
     private FloatingActionButton selectAllButton;
     private boolean returnSerial = false;
     private NoPopConnector connector;
@@ -52,6 +50,7 @@ public class Modules extends NavigationFragment {
         content = view.findViewById(R.id.modulesContent);
         content.setLayoutManager(new LinearLayoutManager(DataLoader.getAppContext()));
         modulesDiscovery = view.findViewById(R.id.modulesDiscovery);
+        modulesDelete = view.findViewById(R.id.modulesDelete);
         selectAllButton = view.findViewById(R.id.modulesSelectAll);
         selectAllButton.hide();
 
@@ -85,6 +84,7 @@ public class Modules extends NavigationFragment {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
+                    case R.id.modulesDelete:
                     case R.id.modulesDiscovery:
                         if (adapter.getSelected().size() == 0) {
                             FragmentsLoader.addChild(new ModulesDiscovery(), Modules.this);
@@ -108,9 +108,14 @@ public class Modules extends NavigationFragment {
             }
         };
 
-        if (!hasAddButton) modulesDiscovery.hide();
+        if (!hasAddButton) {
+            modulesDiscovery.hide();
+            modulesDelete.hide();
+        }
+
         modulesDiscovery.setOnClickListener(e);
         selectAllButton.setOnClickListener(e);
+        modulesDelete.setOnClickListener(e);
 
         adapter = new ModulesAdapter(getLayoutInflater(), returnSerial ? d : c);
         content.setAdapter(adapter);
@@ -126,20 +131,35 @@ public class Modules extends NavigationFragment {
                         selectAllButton.show();
                         //selectAllButton.setEnabled(true);
 
+                        modulesDiscovery.hide();
+                        modulesDelete.show();
+
+
+/*
                         modulesDiscovery.setImageResource(
                                 R.drawable.delete
                         );
 
                         modulesDiscovery.setBackgroundTintList(
                                 ColorStateList.valueOf(
-                                        Color.parseColor("#C2185B")
+                                        //Color.parseColor("#C2185B")
+                                        Color.parseColor("#fafafa")
                                 )
                         );
+
+                        modulesDiscovery.setImageTintList(
+                                ColorStateList.valueOf(
+                                        DataLoader.getAppResources().getColor(R.color.colorAccent)
+                                )
+                        );*/
                     }
 
                 } else if (adapter.getSelected().size() == 0) {
                     adapter.setSelectMode(false);
 
+                    modulesDiscovery.show();
+                    modulesDelete.hide();
+/*
                     modulesDiscovery.setImageResource(
                             R.drawable.add
                     );
@@ -149,6 +169,12 @@ public class Modules extends NavigationFragment {
                                     DataLoader.getAppResources().getColor(R.color.colorPrimary)
                             )
                     );
+
+                    modulesDiscovery.setImageTintList(
+                            ColorStateList.valueOf(
+                                    Color.parseColor("#ffffff")
+                            )
+                    );*/
 
                     selectAllButton.hide();
                     //selectAllButton.setEnabled(false);

@@ -94,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
                 R.id.content
         );
 
+        DataLoader.setWithoutSync("FirstStart", false);
+        DataLoader.save();
+
         dashboard = new Dashboard();
         messages = new Messages();
         notifications = new Notifications();

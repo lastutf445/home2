@@ -23,6 +23,8 @@
         android:ems="10"
         android:hint="@string/createTitleExample"
         android:inputType="textPersonName"
+        android:maxLength="60"
+        android:singleLine="true"
         android:textSize="@dimen/inter18sp" />
 
     <Button

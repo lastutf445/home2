@@ -218,6 +218,8 @@ public class ModulesDiscovery extends NavigationFragment {
                     NotificationsLoader.makeToast("Unexpected error", true);
 
                 } else {
+                    DataLoader.save();
+
                     NotificationsLoader.makeToast("Added", true);
                     toParent.putBoolean("reload", true);
                     adapter.update(pos);
@@ -255,6 +257,8 @@ public class ModulesDiscovery extends NavigationFragment {
                 for (int i = 0; i < modules.size(); ++i) {
                     if (ModulesLoader.addModule(modules.valueAt(i), override)) ++added;
                 }
+
+                DataLoader.save();
 
                 NotificationsLoader.makeToast("Added " + added + " modules", true);
                 toParent.putBoolean("reload", true);

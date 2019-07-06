@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/stdPadding"
+    android:paddingTop="@dimen/stdPadding"
+    android:paddingEnd="@dimen/stdPadding"
+    android:paddingBottom="@dimen/stdPadding">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView68"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Explorer mode:"
+            android:textColor="#333"
+            android:textSize="@dimen/inter16sp" />
+
+        <TextView
+            android:id="@+id/opsInfoCurrent1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/inter8"
+            android:text="current"
+            android:textColor="#999"
+            android:textSize="@dimen/inter14sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView79"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/inter16"
+        android:text="Swipe left to view details"
+        android:textColor="#666"
+        android:textSize="@dimen/inter16sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView69"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/inter24"
+            android:fontFamily="sans-serif-medium"
+            android:text="Editor mode:"
+            android:textColor="#333"
+            android:textSize="@dimen/inter16sp" />
+
+        <TextView
+            android:id="@+id/opsInfoCurrent2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/inter8"
+            android:layout_marginTop="@dimen/inter24"
+            android:text="current"
+            android:textColor="#999"
+            android:textSize="@dimen/inter14sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView80"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/inter16"
+        android:text="Swipe left to edit"
+        android:textColor="#666"
+        android:textSize="@dimen/inter16sp" />
+
+    <TextView
+        android:id="@+id/textView81"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/inter4"
+        android:text="Swipe right to delete"
+        android:textColor="#666"
+        android:textSize="@dimen/inter16sp" />
+</LinearLayout>

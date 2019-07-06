@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 
 import com.lastutf445.home2.R;
 import com.lastutf445.home2.activities.MainActivity;
-import com.lastutf445.home2.loaders.DataLoader;
 
 public class IntroFragment extends Fragment {
 
@@ -68,9 +67,6 @@ public class IntroFragment extends Fragment {
             enter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DataLoader.setWithoutSync("FirstStart", false);
-                    DataLoader.save();
-
                     Intent i = new Intent(getActivity(), MainActivity.class);
                     startActivity(i);
                     getActivity().finish();

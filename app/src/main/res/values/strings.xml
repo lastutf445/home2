@@ -91,7 +91,7 @@
     <string name="closeSessions">Close all sessions</string>
     <string name="closingSessions">Terminating sessions&#8230;</string>
 
-    <string name="closeSessionsMessage">Other devices associated to this user will be deauthenticated</string>
+    <string name="closeSessionsMessage">Other devices associated with this user will be deauthenticated</string>
     <string name="closeSessionsContinue">Continue</string>
 
     <string name="credentialsEditor">Credentials editor</string>
@@ -181,7 +181,7 @@
 
     <string name="scenarioOpsEditor">Options editor</string>
     <string name="scenariosOpCreatorTitle">Choose an option</string>
-    <string name="scenarioOpGetterTitle">Info</string>
+    <string name="scenarioOpGetterTitle">Details</string>
     <string name="scenarioOpSetterTitle">Set a value</string>
     <string name="scenarioOpSetterKey">Key:</string>
     <string name="scenarioOpSetterType">Type:</string>
@@ -194,6 +194,8 @@
     <string name="scenarioOpsEditorReloadMessage">All unsaved changes will be erased</string>
     <string name="reload">Reload</string>
     <string name="ok">OK</string>
+
+    <string name="opsInfo">\n<b>Explorer mode:</b>\nSwipe left to view details\n\n<b>Editor mode:</b>\nSwipe left to edit\nSwipe right to delete</string>
 
     <string name="moduleEditTitle">Edit title</string>
     <string name="moduleConfigure">Configure</string>
@@ -230,7 +232,7 @@
 
     <string name="syncBehavior">Behavior</string>
 
-    <string name="syncMasterServerDesc">This technique let you define an address to \"core\" of your home network to transfer each packet through it. Application of the method is only limited by your imagination.</string>
+    <string name="syncMasterServerDesc">This technique let you define an address to \"core\" of your home network to transfer each packet through it.</string>
 
     <string name="syncExternalAddress">External address</string>
     <string name="syncExternalAddressDesc">In case of being outside your home network, the application will use this address to access Master Server.</string>
@@ -243,8 +245,8 @@
     <string name="syncBehaviorClientDesc">Define a client port on this device.</string>
     <string name="syncClientPort">Local port</string>
 
-    <string name="syncBehaviorDiscovery">Nodes discovery</string>
-    <string name="syncBehaviorDiscoveryDesc">Define a port for searching nodes and timeout.</string>
+    <string name="syncBehaviorDiscovery">Modules discovery</string>
+    <string name="syncBehaviorDiscoveryDesc">Define a port for searching modules and timeout.</string>
 
     <string name="syncDiscoveryPort">Discovery port</string>
     <string name="syncDiscoveryAttempts">Timeout (sec)</string>

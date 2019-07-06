@@ -18,40 +18,44 @@
 
     <TextView
         android:id="@+id/modulesItemTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stdPadding"
+        android:layout_marginEnd="@dimen/stdPadding"
+        android:singleLine="true"
         android:text="@string/unknownModule"
         android:textColor="#666"
         android:textSize="@dimen/inter14sp"
         app:layout_constraintBottom_toBottomOf="@+id/modulesItemIcon"
+        app:layout_constraintEnd_toStartOf="@+id/frameLayout2"
         app:layout_constraintStart_toEndOf="@+id/modulesItemIcon"
         app:layout_constraintTop_toTopOf="@+id/modulesItemIcon" />
 
-    <TextView
-        android:id="@+id/modulesItemSerial"
+    <FrameLayout
+        android:id="@+id/frameLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/stdPadding"
-        android:textAlignment="textStart"
-        android:textColor="#999"
-        android:textSize="@dimen/inter14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/modulesItemTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/modulesItemTitle" />
-
-    <CheckBox
-        android:id="@+id/modulesItemCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="@dimen/stdPadding"
-        android:layout_marginBottom="8dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/modulesItemSerial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:textColor="#999"
+            android:textSize="@dimen/inter14sp" />
+
+        <CheckBox
+            android:id="@+id/modulesItemCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/colorAccent"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

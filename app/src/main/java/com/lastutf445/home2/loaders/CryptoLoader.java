@@ -6,6 +6,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.lastutf445.home2.network.Sync;
+
+import org.json.JSONException;
+
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -52,6 +56,22 @@ public class CryptoLoader {
             secureRandom.setSeed(
                     Calendar.getInstance().getTimeInMillis()
             );
+        }
+
+        if (AESKey.getEncoded().length != DataLoader.getInt("AESBytes", 16)) {
+            if (UserLoader.isAuthenticated() && DataLoader.getSyncTime("AESBytes") > 0) {
+                try {
+                    Sync.addSyncProvider(
+                            new UserLoader.KeyChanger(
+                                    null,
+                                    CryptoLoader.createAESKey()
+                            )
+                    );
+
+                } catch (JSONException e) {
+                    //e.printStackTrace();
+                }
+            }
         }
     }
 

@@ -7,12 +7,15 @@
 
     <TextView
         android:id="@+id/opsItemTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/stdPadding"
+        android:layout_marginEnd="@dimen/stdPadding"
+        android:singleLine="true"
         android:text="@string/unknownTitle"
         android:textSize="@dimen/inter14sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

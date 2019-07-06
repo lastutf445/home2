@@ -8,10 +8,13 @@
     <TextView
         android:id="@+id/widgetTitle"
         style="@style/WidgetTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stdPadding"
+        android:layout_marginEnd="@dimen/stdPadding"
         android:text="@string/defaultTitleSocket"
         android:textSize="@dimen/inter14sp"
+        app:layout_constraintEnd_toStartOf="@+id/widgetValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.network.Sync;
 
 import org.json.JSONArray;
@@ -150,6 +151,14 @@ public class DataLoader {
     }
 
     public static SQLiteDatabase getDb() {
+        if (db == null) {
+            MainActivity m = MainActivity.getInstance();
+            init(
+                    m.getApplicationContext(),
+                    m.getResources()
+            );
+        }
+
         return db;
     }
 
@@ -308,7 +317,7 @@ public class DataLoader {
             NotificationsLoader.removeById(Sync.SYNC_USER_DATA_FAILED_EVENT);
 
         } else if (getInt("AESBytes", 16) != CryptoLoader.getInstalledAESKeyLength()) {
-            if (UserLoader.isAuthenticated()) {
+            if (UserLoader.isAuthenticated() && getSyncTime("AESBytes") > 0) {
                 try {
                     Sync.addSyncProvider(
                             new UserLoader.KeyChanger(

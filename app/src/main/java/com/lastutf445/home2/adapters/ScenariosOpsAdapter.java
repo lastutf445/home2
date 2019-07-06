@@ -25,8 +25,8 @@ public class ScenariosOpsAdapter extends RecyclerView.Adapter<ScenariosOpsAdapte
 
     private int FLAG = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
 
-    private ArrayList<String> data = new ArrayList<>();
-    private HashMap<String, Object> verifier = new HashMap<>();
+    private final ArrayList<String> data = new ArrayList<>();
+    private final HashMap<String, Object> verifier = new HashMap<>();
     private ScenarioOpsEditor.Connector connector;
     private ItemTouchHelper itemTouchHelper;
     private LayoutInflater inflater;
@@ -71,11 +71,6 @@ public class ScenariosOpsAdapter extends RecyclerView.Adapter<ScenariosOpsAdapte
             } else if (i == ItemTouchHelper.RIGHT) {
                 connector.requestDelete(pos);
             }
-        }
-
-        @Override
-        public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
-            return 0.3f;
         }
 
         @Override

@@ -33,13 +33,37 @@
             app:backgroundTint="#fafafa"
             app:borderWidth="0dp"
             app:hoveredFocusedTranslationZ="0dp"
-            app:layout_constraintBottom_toBottomOf="@+id/modulesDiscovery"
-            app:layout_constraintEnd_toStartOf="@+id/modulesDiscovery"
-            app:layout_constraintTop_toTopOf="@+id/modulesDiscovery"
+            app:layout_constraintBottom_toBottomOf="@+id/modulesDummy"
+            app:layout_constraintEnd_toStartOf="@+id/modulesDummy"
+            app:layout_constraintTop_toTopOf="@+id/modulesDummy"
             app:maxImageSize="@dimen/inter24"
             app:pressedTranslationZ="0dp"
             app:rippleColor="#6026A69A"
             app:srcCompat="@drawable/select_all" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/modulesDummy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/stdPadding"
+            android:backgroundTint="#00000000"
+            android:clickable="false"
+            android:elevation="0dp"
+            android:focusable="false"
+            android:tint="@android:color/transparent"
+            android:tintMode="src_in"
+            android:translationZ="0dp"
+            app:backgroundTint="#fafafa"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
+            app:fabCustomSize="@dimen/inter48"
+            app:hoveredFocusedTranslationZ="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textView18"
+            app:layout_constraintTop_toTopOf="parent"
+            app:pressedTranslationZ="0dp"
+            app:rippleColor="#00000000"
+            app:srcCompat="@drawable/dnd" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/modulesDiscovery"
@@ -50,11 +74,37 @@
             android:clickable="true"
             android:focusable="true"
             android:tint="#fff"
+            app:borderWidth="0dp"
             app:backgroundTint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/add" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/modulesDelete"
+            style="@style/StyledFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/stdPadding"
+            android:clickable="true"
+            android:elevation="0dp"
+            android:focusable="true"
+            android:tint="@color/colorAccent"
+            android:translationZ="0dp"
+            android:visibility="invisible"
+            app:backgroundTint="#fafafa"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
+            app:fabCustomSize="@dimen/inter48"
+            app:hoveredFocusedTranslationZ="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textView18"
+            app:layout_constraintTop_toTopOf="parent"
+            app:pressedTranslationZ="0dp"
+            app:rippleColor="#50F06292"
+            app:srcCompat="@drawable/delete" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout

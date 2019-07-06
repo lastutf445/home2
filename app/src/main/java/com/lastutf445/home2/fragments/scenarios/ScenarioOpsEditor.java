@@ -101,6 +101,9 @@ public class ScenarioOpsEditor extends NavigationFragment {
                     case R.id.opsInvisibleLayer:
                         onOpsEditClicked();
                         break;
+                    case R.id.opsInfo:
+                        opsInfo();
+                        break;
                 }
             }
         };
@@ -118,6 +121,7 @@ public class ScenarioOpsEditor extends NavigationFragment {
         opsApply.setClickable(false);
         opsReload.setClickable(false);
 
+        view.findViewById(R.id.opsInfo).setOnClickListener(c);
         opsAdd.setOnClickListener(c);
         opsApply.setOnClickListener(c);
         opsReload.setOnClickListener(c);
@@ -446,6 +450,29 @@ public class ScenarioOpsEditor extends NavigationFragment {
         }
 
         opsEditExpanded = !opsEditExpanded;
+    }
+
+    private void opsInfo() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity()
+        );
+
+        View v = getLayoutInflater().inflate(
+                R.layout.scenario_ops_editor_info, null, false
+        );
+
+        v.findViewById(R.id.opsInfoCurrent1).setVisibility(
+                (editMode || creatorMode) ? View.GONE : View.VISIBLE
+        );
+
+        v.findViewById(R.id.opsInfoCurrent2).setVisibility(
+                (editMode || creatorMode) ? View.VISIBLE : View.GONE
+        );
+
+        builder.setView(v);
+        builder.setPositiveButton(R.string.ok, null);
+
+        builder.create().show();
     }
 
     public void setModule(@NonNull Module module) {
