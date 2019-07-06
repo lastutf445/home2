@@ -99,7 +99,7 @@ public class ExternalAddress extends NavigationFragment {
 
         SimpleAnimator.drawableTint(
                 (Button) view.findViewById(R.id.externalAddressCheck),
-                Color.parseColor("#444")
+                Color.parseColor("#444444")
         );
 
         SimpleAnimator.drawableTint(

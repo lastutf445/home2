@@ -99,7 +99,7 @@ public class MasterServer extends NavigationFragment {
 
         SimpleAnimator.drawableTint(
                 (Button) view.findViewById(R.id.masterServerCheck),
-                Color.parseColor("#444")
+                Color.parseColor("#444444")
         );
 
         SimpleAnimator.drawableTint(
