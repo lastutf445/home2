@@ -58,7 +58,7 @@ public class CryptoLoader {
             );
         }
 
-        if (AESKey.getEncoded().length != DataLoader.getInt("AESBytes", 16)) {
+        if (AESKey != null && AESKey.getEncoded().length != DataLoader.getInt("AESBytes", 16)) {
             if (UserLoader.isAuthenticated() && DataLoader.getSyncTime("AESBytes") > 0) {
                 try {
                     Sync.addSyncProvider(
