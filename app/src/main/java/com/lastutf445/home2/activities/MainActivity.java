@@ -51,7 +51,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
+        NotificationsLoader.unmute();
         handler.postDelayed(new WakeUp(), 800);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        NotificationsLoader.mute();
     }
 
     @Override
@@ -81,10 +88,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         Thread.currentThread().setPriority(8);
+        instance = new WeakReference<>(this);
 
         stack = new ArrayDeque<>();
         handler = new Handler();
 
+        DataLoader.getDb();
         CryptoLoader.init();
         ModulesLoader.init();
         UserLoader.init();
@@ -102,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         notifications = new Notifications();
         menu = new Menu();
 
-        instance = new WeakReference<>(this);
         active = dashboard;
 
         FragmentsLoader.clear();

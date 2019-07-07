@@ -90,6 +90,7 @@
 
     <style name="StyledCheckbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:drawableEnd">?android:attr/listChoiceIndicatorMultiple</item>
+        <item name="android:drawableTint">@color/colorAccent</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:button">@null</item>
         <item name="android:paddingStart">@dimen/stdPadding</item>

@@ -32,6 +32,8 @@ public final class NotificationsLoader {
     private static final int LENGTH_SHORT = 2000;
     private static final int LENGTH_LONG = 3500;
 
+    private static boolean mutedByActivity = false;
+
     public static void init(BottomNavigationView bottomNav) {
         weakBottomNav = new WeakReference<>(bottomNav);
 
@@ -42,6 +44,16 @@ public final class NotificationsLoader {
         } catch (JSONException e) {
             //e.printStackTrace();
         }
+    }
+
+    public static void mute() {
+        Log.d("LOGTAG", "MUTED!!!!!!!!!!!!!!!!!!");
+        mutedByActivity = true;
+    }
+
+    public static void unmute() {
+        Log.d("LOGTAG", "UNMUTED////////////////");
+        mutedByActivity = false;
     }
 
     @NonNull
