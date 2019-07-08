@@ -104,6 +104,9 @@ public class Sender {
                             //just that for now
                             if (last + 1000 > time) continue;
                             break;
+                        case Sync.SYNC_GET_PUBLIC_KEY:
+                            if (last + 5000 > time) continue;
+                            break;
                         default:
                             if (last + 1000 > time) continue;
                             break;

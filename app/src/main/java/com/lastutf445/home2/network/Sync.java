@@ -32,6 +32,7 @@ public class Sync {
     public static final int SYNC_PING = 0;
     public static final int SYNC_USER_DATA = 1;
     public static final int SYNC_MODULES_STATE = 2;
+    public static final int SYNC_GET_PUBLIC_KEY = 3;
 
     public static final int PROVIDER_DASHBOARD = 0;
     public static final int PROVIDER_MESSAGES = -1;
@@ -272,19 +273,15 @@ public class Sync {
     }
 
     public static void callProvider(int source, JSONObject data) {
-        synchronized (syncing) {
-            SyncProvider provider = syncing.get(source);
-            if (provider == null) return;
-            provider.onReceive(data);
-        }
+        SyncProvider provider = syncing.get(source);
+        if (provider == null) return;
+        provider.onReceive(data);
     }
 
     public static boolean isProviderEmergency(int source) {
-        synchronized (syncing) {
-            SyncProvider provider = syncing.get(source);
-            if (provider == null) return false;
-            return provider.getEmergencyStatus();
-        }
+        SyncProvider provider = syncing.get(source);
+        if (provider == null) return false;
+        return provider.getEmergencyStatus();
     }
 
     public static void removeSyncProvider(int source) {

@@ -46,11 +46,11 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/textView14"
+            android:id="@+id/textView15"
             style="@style/StyledSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/syncOther" />
+            android:text="@string/syncAdvanced" />
 
         <Button
             android:id="@+id/syncBehavior"
@@ -59,12 +59,19 @@
             android:layout_height="wrap_content"
             android:text="@string/syncBehavior" />
 
+        <Button
+            android:id="@+id/syncClearKey"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syncClearKeysCache" />
+
         <TextView
-            android:id="@+id/textView15"
+            android:id="@+id/textView14"
             style="@style/StyledSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/syncAdvanced" />
+            android:text="@string/SyncServer" />
 
         <Button
             android:id="@+id/syncMasterServer"

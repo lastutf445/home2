@@ -224,11 +224,15 @@
     <string name="modulesDeleteAllMessage">Are you sure you want to continue?</string>
 
     <string name="syncThreads">Sync threads</string>
-    <string name="syncOther">Other options</string>
+    <string name="SyncServer">Server settings</string>
     <string name="syncAdvanced">Advanced</string>
     <string name="syncLocalNetwork">Local network</string>
 
     <string name="syncPersistentConnection">Always connected</string>
+    <string name="syncClearKeysCache">Clear keys cache</string>
+
+    <string name="syncClearKeysCacheMessage">You will need to check keys integrity again</string>
+    <string name="clear">Clear</string>
 
     <string name="syncBehavior">Behavior</string>
 
@@ -236,6 +240,11 @@
 
     <string name="syncExternalAddress">External address</string>
     <string name="syncExternalAddressDesc">In case of being outside your home network, the application will use this address to access Master Server.</string>
+
+    <string name="authKey">Server auth key</string>
+    <string name="authKeyDesc">The key is required for security purposes when obtaining a public key. It must be the same as the other on the server</string>
+    <string name="enterAuthKey">Enter the key</string>
+    <string name="checkingIntegrity">Checking integrity&#8230;</string>
 
     <string name="syncMarkAsHomeNetwork">Mark as home network</string>
     <string name="syncUnknownNetwork">Connected to unknown network</string>

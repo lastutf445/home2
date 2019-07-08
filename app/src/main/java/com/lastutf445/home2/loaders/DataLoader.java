@@ -39,7 +39,6 @@ public class DataLoader {
         // authentication
         /*if (!syncableOnly)*/ ops.put("Session", null); // excluding this
         ops.put("Username", null);
-        /*if (!syncableOnly)*/ ops.put("BasicAccount", false);
         ops.put("AESBytes", 16);
         ops.put("AESKey", null);
         ops.put("AllowAltAuth", true);
@@ -49,11 +48,13 @@ public class DataLoader {
         ops.put("SuppressModulesStateSyncFailed", false);
         ops.put("SuppressUserDataSync", false);
         ops.put("SuppressUserDataSyncFailed", false);
-        ops.put("FirstStart", true);
+        if (!syncableOnly) ops.put("FirstStart", true);
         // master server
         if (!syncableOnly) ops.put("MasterServer", false);
         if (!syncableOnly) ops.put("MasterServerAddress", null);
         if (!syncableOnly) ops.put("MasterServerPort", null);
+        if (!syncableOnly) ops.put("PublicKeyModulus", "");
+        if (!syncableOnly) ops.put("PublicKeyExp", "");
         // proxy server
         if (!syncableOnly) ops.put("ExternalConnection", false);
         if (!syncableOnly) ops.put("ExternalAddress", null);
@@ -340,7 +341,8 @@ public class DataLoader {
 
             Log.d("LOGTAG", "SETSYNCED: " + key + " by " + (value == null ? "null" : value.toString()) + " " + syncedAt);
             Log.d("LOGTAG", getSyncTime(key) + " " + (isNull || a.getClass().getName().equals(value.getClass().getName())));
-            if (getSyncTime(key) <= syncedAt && (isNull || a.getClass().getName().equals(value.getClass().getName()))) {
+
+            if (getSyncTime(key) < syncedAt && (isNull || a.getClass().getName().equals(value.getClass().getName()))) {
                 UserLoader.removeFromSyncUserDataQueue(key);
                 sync.put(key, syncedAt);
                 setWithoutSync(key, value);

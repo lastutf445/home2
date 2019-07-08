@@ -24,6 +24,7 @@ import com.lastutf445.home2.activities.MainActivity;
 import com.lastutf445.home2.fragments.dialog.Processing;
 import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
+import com.lastutf445.home2.loaders.FragmentsLoader;
 import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Sync;
@@ -44,6 +45,7 @@ public class EnterByEmail extends NavigationFragment {
     private TextView emailValue;
     private Button resend;
 
+    private boolean falseCancellation = false;
     private boolean isEmailSent = false;
     private boolean authSuccess = false;
     private UiUpdate uiUpdate;
@@ -70,8 +72,10 @@ public class EnterByEmail extends NavigationFragment {
         processing.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                Sync.removeSyncProvider(Sync.PROVIDER_ENTER_BY_EMAIL);
-                Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
+                if (!falseCancellation) {
+                    UserLoader.cancelAuth();
+                }
+
                 dialog.cancel();
             }
         });
@@ -249,6 +253,24 @@ public class EnterByEmail extends NavigationFragment {
     }
 
     @Override
+    public void onResult(Bundle data) {
+        if (data.containsKey("authKey")) {
+            String key = data.getString("authKey", "");
+
+            if (key.length() != 0) {
+                if (processing.isInactive()) {
+                    processing.show(getChildFragmentManager(), "processing");
+                }
+
+                UserLoader.setAuthKey(key);
+
+            } else {
+                UserLoader.cancelAuth();
+            }
+        }
+    }
+
+    @Override
     public void onDestroy() {
         Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
         Sync.removeSyncProvider(Sync.PROVIDER_ENTER_BY_EMAIL);
@@ -312,7 +334,27 @@ public class EnterByEmail extends NavigationFragment {
                 case 15:
                     finish(R.string.altAuthDisabled);
                     break;
+                case 16:
+                    setTitle(R.string.checkingIntegrity);
+                    break;
+                case 17:
+                    getAuthKey();
+                    break;
             }
+        }
+
+        private void getAuthKey() {
+            EnterByEmail enter = weakEnter.get();
+            if (enter == null) return;
+
+            enter.falseCancellation = true;
+
+            if (!enter.processing.isInactive() && enter.processing.getDialog() != null) {
+                enter.processing.dismiss();
+            }
+
+            AuthKey authKey = new AuthKey();
+            FragmentsLoader.addChild(authKey, enter);
         }
 
         private void codeSent() {
@@ -368,9 +410,10 @@ public class EnterByEmail extends NavigationFragment {
 
             if (enter != null) {
                 Processing processing = enter.processing;
+                enter.falseCancellation = false;
 
                 if (processing != null && processing.getDialog() != null) {
-                    processing.getDialog().cancel();
+                    processing.dismiss();
                 }
             }
         }
@@ -429,14 +472,7 @@ public class EnterByEmail extends NavigationFragment {
             tainted = true;
 
             if (stage == 5) {
-                try {
-                    Sync.addSyncProvider(new UserLoader.GetPublicKey(this));
-
-                } catch (JSONException e) {
-                    NotificationsLoader.makeToast("Unexpected error", true);
-                    //e.printStackTrace();
-                    return;
-                }
+                UserLoader.getPublicKey(this);
 
             } else {
                 sendEmail();
@@ -455,6 +491,9 @@ public class EnterByEmail extends NavigationFragment {
          * 12 - code send
          * 13 - auth success
          * 14 - code incorrect
+         * 15 - altAuth disabled
+         * 16 - key check (integrity - mac verifying)
+         * 17 - key mismatch (need auth key)
          */
 
         @Override
@@ -475,6 +514,22 @@ public class EnterByEmail extends NavigationFragment {
             if (handler == null) return;
 
             handler.sendEmptyMessage(6);
+        }
+
+        @Override
+        public void onKeyCheck() {
+            Handler handler = weakUpdater.get();
+            if (handler == null) return;
+
+            handler.sendEmptyMessage(16);
+        }
+
+        @Override
+        public void onKeyMismatch() {
+            Handler handler = weakUpdater.get();
+            if (handler == null) return;
+
+            handler.sendEmptyMessage(17);
         }
 
         private synchronized void sendEmail() {

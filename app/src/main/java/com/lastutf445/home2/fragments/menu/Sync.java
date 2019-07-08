@@ -1,5 +1,8 @@
 package com.lastutf445.home2.fragments.menu;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,8 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.lastutf445.home2.R;
+import com.lastutf445.home2.loaders.CryptoLoader;
 import com.lastutf445.home2.loaders.DataLoader;
 import com.lastutf445.home2.loaders.FragmentsLoader;
+import com.lastutf445.home2.loaders.NotificationsLoader;
 import com.lastutf445.home2.loaders.UserLoader;
 import com.lastutf445.home2.network.Receiver;
 import com.lastutf445.home2.util.NavigationFragment;
@@ -26,7 +31,6 @@ import java.lang.ref.WeakReference;
 
 public class Sync extends NavigationFragment {
 
-    @Nullable
     private Updater updater;
 
     @Nullable
@@ -82,6 +86,10 @@ public class Sync extends NavigationFragment {
                         DataLoader.set("SyncPersistentConnection", !switcher.isChecked());
                         switcher.setChecked(!switcher.isChecked());
                         break;
+
+                    case R.id.syncClearKey:
+                        clearKey();
+                        break;
                 }
             }
         };
@@ -91,6 +99,7 @@ public class Sync extends NavigationFragment {
         view.findViewById(R.id.syncExternalConnection).setOnClickListener(c);
         view.findViewById(R.id.syncMarkAsHomeNetwork).setOnClickListener(c);
         view.findViewById(R.id.syncPersistentConnection).setOnClickListener(c);
+        view.findViewById(R.id.syncClearKey).setOnClickListener(c);
 
         com.lastutf445.home2.network.Sync.removeTrigger(com.lastutf445.home2.network.Sync.MENU_SYNC_TRIGGER);
         com.lastutf445.home2.network.Sync.addTrigger(
@@ -105,6 +114,37 @@ public class Sync extends NavigationFragment {
                 });
 
         updater.sendEmptyMessage(-1);
+    }
+
+    private void clearKey() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity()
+        );
+
+        Resources res = DataLoader.getAppResources();
+        builder.setTitle(res.getString(R.string.syncClearKeysCache));
+        builder.setMessage(res.getString(R.string.syncClearKeysCacheMessage));
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(@NonNull DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setPositiveButton(R.string.clear, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DataLoader.setWithoutSync("PublicKeyModulus", "");
+                DataLoader.setWithoutSync("PublicKeyExp", "");
+                DataLoader.save();
+
+                CryptoLoader.clearRSA();
+                NotificationsLoader.makeToast("Cleared", true);
+            }
+        });
+
+        builder.create().show();
     }
 
     @Override

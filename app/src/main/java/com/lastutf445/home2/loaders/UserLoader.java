@@ -1,6 +1,7 @@
 package com.lastutf445.home2.loaders;
 
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,7 +28,9 @@ public final class UserLoader {
     private static WeakReference<Handler> settingsHandler;
     private static UserDataSync userDataSync;
     private static UserDataSyncTransport userDataSyncTransport;
+    private static Authenticator authenticator;
     private static boolean allowUserDataSync;
+    private static GetPublicKey getPublicKey;
     private static long lastSync;
 
     public static void init() {
@@ -54,7 +57,7 @@ public final class UserLoader {
 
         for (String key: ops) {
             if (!DataLoader.isSyncable(key)) continue;
-            if (DataLoader.getSyncTime(key) >= lastSync) {
+            if (DataLoader.getSyncTime(key) > lastSync) {
                 Log.d("LOGTAG", "should be synced: " + key + " " + DataLoader.getSyncTime(key));
                 UserLoader.addToSyncUserDataQueue(key);
             } else {
@@ -78,15 +81,29 @@ public final class UserLoader {
         Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
 
         try {
-            Sync.addSyncProvider(new GetPublicKey(callback));
+            getPublicKey = new GetPublicKey(callback);
+            Sync.addSyncProvider(getPublicKey);
 
         } catch (JSONException e) {
             //e.printStackTrace();
         }
     }
 
+    public static void setAuthKey(@NonNull String authKey) {
+        if (getPublicKey != null) {
+            new AsyncTask<String, Void, Void>() {
+                @Override
+                protected Void doInBackground(String... strings) {
+                    getPublicKey.keyIntegrity(strings[0]);
+                    return null;
+                }
+
+            }.execute(authKey);
+        }
+    }
+
     public static void startAuth(@NonNull String login, @NonNull String password, @NonNull Handler handler) {
-        Authenticator auth = new Authenticator(
+        authenticator = new Authenticator(
                 login,
                 password,
                 handler
@@ -94,10 +111,22 @@ public final class UserLoader {
 
         if (!CryptoLoader.isPublicKeyValid()) {
             handler.sendEmptyMessage(1);
-            getPublicKey(auth);
+            getPublicKey(authenticator);
 
         } else {
-            auth.sendCredentials();
+            authenticator.sendCredentials();
+        }
+    }
+
+    public static void cancelAuth() {
+        Log.d("LOGTAG", "auth canceled");
+
+        Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
+        Sync.removeSyncProvider(Sync.PROVIDER_CREDENTIALS);
+        Sync.removeSyncProvider(Sync.PROVIDER_ENTER_BY_EMAIL);
+
+        if (authenticator != null) {
+            authenticator.weakHandler = new WeakReference<>(null);
         }
     }
 
@@ -172,6 +201,7 @@ public final class UserLoader {
     }
 
     public final static class GetPublicKey extends SyncProvider {
+        String modulus, pubExp, salt, mac;
         private Callback callback;
 
         public GetPublicKey(@NonNull Callback callback) throws JSONException {
@@ -185,6 +215,7 @@ public final class UserLoader {
 
             encrypted = false;
             this.callback = callback;
+            setGroup(Sync.SYNC_GET_PUBLIC_KEY);
         }
 
         @Override
@@ -194,23 +225,57 @@ public final class UserLoader {
 
         @Override
         public void onReceive(JSONObject data) {
-            if (!data.has("modulus") || !data.has("pubExp")) return;
+            Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
 
             try {
-                String modulus = data.getString("modulus");
-                String pubExp = data.getString("pubExp");
+                modulus = data.getString("modulus");
+                pubExp = data.getString("pubExp");
+                salt = data.getString("salt");
+                mac = data.getString("mac");
 
-                if (CryptoLoader.isPublicKeyValid(modulus, pubExp)) {
-                    callback.onValid(modulus, pubExp);
-
-                } else {
-                    callback.onInvalid();
+                if (!modulus.equals(DataLoader.getString("PublicKeyModulus", "")) ||
+                        !pubExp.equals(DataLoader.getString("PublicKeyExp", ""))
+                ) {
+                    callback.onKeyMismatch();
+                    return;
                 }
 
-                Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
+                callback.onValid(modulus, pubExp);
 
             } catch (Exception e) {
                 e.printStackTrace();
+                callback.onInvalid();
+            }
+        }
+
+        private void keyIntegrity(@NonNull String authKey) {
+            callback.onKeyCheck();
+
+            Log.d("LOGTAG", "got AuthKey: " + authKey);
+
+            if(!CryptoLoader.compareMAC(modulus.concat(pubExp), authKey, mac, salt)) {
+                callback.onKeyMismatch();
+                return;
+            }
+
+            keyValidity();
+        }
+
+        private void keyValidity() {
+            Log.d("LOGTAG", "key validating...");
+
+            if (CryptoLoader.isPublicKeyValid(modulus, pubExp)) {
+                DataLoader.setWithoutSync("PublicKeyModulus", modulus);
+                DataLoader.setWithoutSync("PublicKeyExp", pubExp);
+                DataLoader.save();
+
+                Log.d("LOGTAG", "its ok");
+                Log.d("LOGTAG", "new RSA keys is set");
+
+                CryptoLoader.setPublicKey(modulus, pubExp);
+                callback.onValid(modulus, pubExp);
+
+            } else {
                 callback.onInvalid();
             }
         }
@@ -219,6 +284,8 @@ public final class UserLoader {
             void onValid(@NonNull String modulus, @NonNull String pubExp);
             void onInvalid();
             void onPostPublish(int statusCode);
+            void onKeyCheck();
+            void onKeyMismatch();
         }
     }
 
@@ -433,12 +500,14 @@ public final class UserLoader {
          * 7 - sending credentials
          * 8 - auth failed
          * 9 - ok
+         * 10 - key check (integrity - mac verifying)
+         * 11 - key mismatch (need auth key)
          */
 
         @Override
         public void onValid(@NonNull String modulus, @NonNull String pubExp) {
             try {
-                CryptoLoader.setPublicKey(modulus, pubExp);
+                if (weakHandler.get() == null) return;
                 sendCredentials();
 
             } catch (NumberFormatException e) {
@@ -455,12 +524,31 @@ public final class UserLoader {
             handler.sendEmptyMessage(6);
         }
 
+        @Override
+        public void onKeyCheck() {
+            Handler handler = weakHandler.get();
+            if (handler == null) return;
+
+            handler.sendEmptyMessage(10);
+        }
+
+        @Override
+        public void onKeyMismatch() {
+            Handler handler = weakHandler.get();
+            if (handler == null) return;
+
+            handler.sendEmptyMessage(11);
+        }
+
         public void sendCredentials() {
             Handler handler = weakHandler.get();
             stage = 7;
 
             if (handler != null) {
                 handler.sendEmptyMessage(7);
+
+            } else {
+                return;
             }
 
             JSONObject data = new JSONObject();
@@ -475,9 +563,7 @@ public final class UserLoader {
 
             } catch (JSONException e) {
                 //e.printStackTrace();
-                if (handler != null) {
-                    handler.sendEmptyMessage(0);
-                }
+                handler.sendEmptyMessage(0);
             }
         }
 

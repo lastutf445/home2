@@ -28,8 +28,8 @@ import java.lang.ref.WeakReference;
 
 public class Auth extends NavigationFragment {
 
+    private boolean falseCancellation;
     private Processing processing;
-    @Nullable
     private Updater updater;
 
     @Nullable
@@ -42,14 +42,16 @@ public class Auth extends NavigationFragment {
 
     @Override
     protected void init() {
-        updater = new Updater(view, toParent, getActivity());
+        updater = new Updater(this, toParent, getActivity());
         processing = new Processing();
 
         processing.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(@NonNull DialogInterface dialog) {
-                Sync.removeSyncProvider(Sync.PROVIDER_CREDENTIALS);
-                Sync.removeSyncProvider(Sync.PROVIDER_GET_PUBLIC_KEY);
+                if (!falseCancellation) {
+                    UserLoader.cancelAuth();
+                }
+
                 dialog.cancel();
             }
         });
@@ -83,7 +85,7 @@ public class Auth extends NavigationFragment {
 
         } else {
             processing.setTitle(DataLoader.getAppResources().getString(R.string.waitingForAConnection));
-            processing.show(getActivity().getSupportFragmentManager(), "processing");
+            processing.show(getChildFragmentManager(), "processing");
             UserLoader.startAuth(login, password, updater);
         }
     }
@@ -107,6 +109,24 @@ public class Auth extends NavigationFragment {
     }
 
     @Override
+    public void onResult(Bundle data) {
+        if (data.containsKey("authKey")) {
+            String key = data.getString("authKey", "");
+
+            if (key.length() != 0) {
+                if (processing.isInactive()) {
+                    processing.show(getChildFragmentManager(), "processing");
+                }
+
+                UserLoader.setAuthKey(key);
+
+            } else {
+                UserLoader.cancelAuth();
+            }
+        }
+    }
+
+    @Override
     public void onDestroy() {
         MainActivity.hideKeyboard();
 
@@ -121,13 +141,13 @@ public class Auth extends NavigationFragment {
     }
 
     private static class Updater extends Handler {
-        private WeakReference<View> weakView;
+        private WeakReference<Auth> weakAuth;
         private WeakReference<Bundle> weakToParent;
         private WeakReference<Activity> weakActivity;
         private WeakReference<Processing> weakProcessing;
 
-        public Updater(@NonNull View view, @NonNull Bundle toParent, Activity activity) {
-            weakView = new WeakReference<>(view);
+        public Updater(@NonNull Auth auth, @NonNull Bundle toParent, Activity activity) {
+            weakAuth = new WeakReference<>(auth);
             weakToParent = new WeakReference<>(toParent);
             weakActivity = new WeakReference<>(activity);
         }
@@ -167,7 +187,27 @@ public class Auth extends NavigationFragment {
                 case 9:
                     ok();
                     break;
+                case 10:
+                    setTitle(R.string.checkingIntegrity);
+                    break;
+                case 11:
+                    getAuthKey();
+                    break;
             }
+        }
+
+        private void getAuthKey() {
+            Auth auth = weakAuth.get();
+            if (auth == null) return;
+
+            auth.falseCancellation = true;
+
+            if (!auth.processing.isInactive() && auth.processing.getDialog() != null) {
+                auth.processing.dismiss();
+            }
+
+            AuthKey authKey = new AuthKey();
+            FragmentsLoader.addChild(authKey, auth);
         }
 
         private void ok() {
@@ -207,7 +247,12 @@ public class Auth extends NavigationFragment {
         }
 
         private void closeDialog() {
+            Auth auth = weakAuth.get();
             Processing dialog = weakProcessing.get();
+
+            if (auth != null) {
+                auth.falseCancellation = false;
+            }
 
             if (dialog != null && dialog.getDialog() != null) {
                 dialog.getDialog().cancel();

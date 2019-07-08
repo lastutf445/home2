@@ -88,6 +88,7 @@ public final class NotificationsLoader {
 
     public static void makeToast(final String msg, boolean lengthShort) {
         if (toasts.contains(msg.hashCode())) return;
+        if (mutedByActivity) return;
         toasts.add(msg.hashCode());
 
         Toast.makeText(DataLoader.getAppContext(), msg, lengthShort ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show();

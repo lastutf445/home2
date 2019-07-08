@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView82"
+        style="@style/StyledTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/authKey"
+        android:textColor="#00796B" />
+
+    <TextView
+        android:id="@+id/textView83"
+        style="@style/StyledDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/authKeyDesc" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stdPadding"
+        android:layout_marginTop="@dimen/inter32"
+        android:layout_marginEnd="@dimen/stdPadding"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/authKeyField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/inter32"
+            android:ems="10"
+            android:hint="@string/enterAuthKey"
+            android:inputType="text"
+            android:maxLength="60"
+            android:singleLine="true"
+            android:textSize="@dimen/inter18sp" />
+
+        <Button
+            android:id="@+id/authKeyCancel"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/clear"
+            android:drawableTint="@color/colorAccent"
+            android:text="@string/cancel"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/inter14sp" />
+
+        <Button
+            android:id="@+id/authKeyApply"
+            style="@style/StyledButtonIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/done"
+            android:drawableTint="@color/colorPrimary"
+            android:text="@string/apply"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/inter14sp" />
+    </LinearLayout>
+
+</LinearLayout>

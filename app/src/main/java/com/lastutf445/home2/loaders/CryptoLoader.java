@@ -23,8 +23,11 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Calendar;
 
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class CryptoLoader {
@@ -73,6 +76,20 @@ public class CryptoLoader {
                 }
             }
         }
+
+        try {
+            if (!UserLoader.isAuthenticated()) {
+                String modulus = DataLoader.getString("PublicKeyModulus", "");
+                String pubExp = DataLoader.getString("PublicKeyExp", "");
+
+                if (modulus.length() + pubExp.length() > 0) {
+                    setPublicKey(modulus, pubExp);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void clearRSA() {
@@ -111,6 +128,38 @@ public class CryptoLoader {
 
     public static boolean hasAESKey() {
         return AESKey != null;
+    }
+
+    public static byte[] pbkdf2(char[] password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        PBEKeySpec spec = new PBEKeySpec(password, salt, 32000, 128);
+        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        return skf.generateSecret(spec).getEncoded();
+    }
+
+    public static boolean compareMAC(@NonNull String msg, @NonNull String authKeyRaw, @NonNull String mac, @NonNull String salt) {
+        try {
+            byte[] authKey = pbkdf2(
+                    authKeyRaw.toCharArray(),
+                    salt.getBytes(StandardCharsets.UTF_8)
+            );
+
+            SecretKeySpec secretKey = new SecretKeySpec(
+                    authKey, "HmacSHA256"
+            );
+
+            Mac macGen = Mac.getInstance("HmacSHA256");
+            macGen.init(secretKey);
+
+            byte[] hmacRaw = macGen.doFinal(msg.getBytes());
+            String hmac = bytesToHex(hmacRaw).toLowerCase();
+
+            Log.d("LOGTAG", "computed hmac: " + hmac);
+            return mac.equals(hmac);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void setPublicKey(@NonNull String modulus, @NonNull String pubExp) throws NumberFormatException {
