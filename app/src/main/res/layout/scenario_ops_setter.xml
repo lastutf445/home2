@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/unknownTitle"
+        android:textSize="@dimen/inter14sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView75"
         app:layout_constraintStart_toEndOf="@+id/textView75"
         app:layout_constraintTop_toTopOf="@+id/textView75" />

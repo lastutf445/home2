@@ -65,6 +65,7 @@
         android:layout_marginStart="@dimen/inter8"
         android:layout_marginEnd="@dimen/stdPadding"
         android:singleLine="false"
+        android:textSize="@dimen/inter14sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView74"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView74"
